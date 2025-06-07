@@ -37,7 +37,8 @@
     display: block;
   }
   
-  .input-field input {
+  .input-field input,
+  .input-field select {
     width: 100%;
     padding: 12px;
     margin-top: 5px;
@@ -45,12 +46,13 @@
     border-radius: 5px;
     font-size: 1em;
     color: #333;
-    background-color: #f9f9f9;
+    background-color: #fff;
+    background-image: none;
     outline: none;
     transition: border-color 0.3s ease;
   }
-  
-  .input-field input:focus {
+ 
+  .input-field select:focus {
     border-color: #007bff;
   }
   
