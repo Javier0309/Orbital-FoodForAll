@@ -1,5 +1,5 @@
 # Orbital-FoodForAll
-Summer orbital project 
+A web application for the Orbital summer project that is designed for managing food orders, signups and verifications. 
 
 ## Getting Started
 
