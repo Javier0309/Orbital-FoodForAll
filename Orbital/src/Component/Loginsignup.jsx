@@ -30,7 +30,7 @@ const Loginsignup = () => {
             <div className="Forgot-password">Forgotten your password? <span>Click here</span></div>
             <div className="submit-container">
                 <Link to = "/signup" className="submit">Sign Up</Link>
-                <div className="submit">Login</div>
+                <Link to = "/custmain" className="submit">Log in</Link>
             </div>
 
 

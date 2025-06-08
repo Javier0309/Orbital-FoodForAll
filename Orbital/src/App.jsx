@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Loginsignup from './Component/Loginsignup'
 import SignupPage from './Component/SignupPage';
+import CustMain from './Component/CustMain';
+
 
 function App() {
   return (
@@ -11,6 +13,10 @@ function App() {
 
         {/* Route to a separate sign-up page */}
         <Route path="/signup" element={<SignupPage />} />
+
+        {/* Route to Customers' main menu page */}
+        <Route path="/custmain" element={<CustMain />} />
+        
       </Routes>
     </Router>
   );
