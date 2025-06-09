@@ -51,7 +51,8 @@
     margin: 0px 30px;
 }
 
-.input input{
+.input input,
+.input select {
     height: 50px;
     width: 400px;
     background: transparent;
@@ -60,6 +61,22 @@
     color: #797979;
     font-size: 19px;
 }
+
+.input select {
+    background-color: #fff;
+    padding: 12px;
+    font-size: 19px;
+    border-radius: 6px;
+    width: 400px;
+    color: #797979;
+    border: none;
+    margin-top: 5px;
+}
+
+.input select:focus {
+    border-color: #007bff
+}
+
 
 .Forgot-password{
     padding-left: 62px;

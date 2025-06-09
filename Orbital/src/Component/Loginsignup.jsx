@@ -13,6 +13,7 @@ const Loginsignup = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const navigate = useNavigate();
+    const [userType, setuserType] = useState('');
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -61,6 +62,23 @@ const Loginsignup = () => {
                     <img src={user_icon} alt="" />
                     <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
                 </div> )}
+
+                {!isLogin && (
+                    <div className="input">
+                        <label htmlFor="userType">Select User Type</label>
+                        <select
+                        id="userType"
+                        value={userType}
+                        onChange={handleUserTypeChange}
+                        className="dropdown"
+                        >
+                            <option value="">Select User Type</option>
+                            <option value="customer">Customer</option>
+                            <option value="F&B business">F&B Business</option>
+                            <option value="rider">Rider</option>
+                        </select>
+                    </div>
+                )}
 
                 <div className="input">
                     <img src={email_icon} alt="" />
