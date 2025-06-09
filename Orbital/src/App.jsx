@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Loginsignup from './Component/Loginsignup'
 import SignupPage from './Component/SignupPage';
+import Verification from'./Component/Verification';
 
 function App() {
   return (
