@@ -27,7 +27,7 @@ const Loginsignup = () => {
             if (error) alert('Login error: ' + error.message)
             else {
             alert('Logged in!')
-            navigate('/custmain');
+            navigate('/busmain');
             setLoading(false); 
             }
         }
@@ -36,7 +36,7 @@ const Loginsignup = () => {
             if (error) alert('Signup error: ' + error.message);
             else {
                 alert('Signup successful!');
-                navigate('/custmain');
+                navigate('/busmain');
                 setLoading(false);
             }
         }
