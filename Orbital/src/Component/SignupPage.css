@@ -1,4 +1,28 @@
 /* General page container */
+.dropdown {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #333;
+    background-color: #c83131;
+    background-image: none;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.dropdown:focus {
+    border-color: #007bff;
+}
+
+.dropdown option {
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+}
+
 .signup-container {
     display: flex;
     flex-direction: column;
@@ -65,7 +89,7 @@
   .signup-btn {
     width: 100%;
     padding: 12px 20px;
-    background-color: #dd9b4c;
+    background-color: #a77d4a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -103,4 +127,14 @@
       font-size: 1em;
     }
   }
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: flex-start;
+}
   
