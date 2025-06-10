@@ -23,21 +23,42 @@ const Loginsignup = () => {
             return;
         }
 
+        setLoading(true);
+
         if (isLogin) {
             const {error} = await supabase.auth.signInWithPassword({email,password})
             if (error) alert('Login error: ' + error.message)
             else {
+            // Fetch the user type from user metadata
+            const { data: { user } } = await supabase.auth.getUser();
+            const storedUserType = user?.user_metadata?.userType;
+
             alert('Logged in!')
-            navigate('/busmain');
-            setLoading(false); 
+            if (storedUserType === 'customer') {
+                navigate('/custmain');
+            } else {
+                navigate('/busmain');
+            }
+          
             }
         }
         else {
-            const {error} = await supabase.auth.signUp({email,password})
+            if (!userType) {
+                alert('Please select a user type');
+                setLoading(false);
+                return;
+            }
+
+            const {error} = await supabase.auth.signUp({
+                email,password,options: {data: {userType, name}}})
             if (error) alert('Signup error: ' + error.message);
             else {
                 alert('Signup successful!');
+            if (userType === 'customer') {
+                navigate('/custmain');
+            } else {
                 navigate('/busmain');
+            }
                 setLoading(false);
             }
         }
@@ -49,6 +70,10 @@ const Loginsignup = () => {
         if (error) alert('Logout error: ' + error.message)
         else alert('Logged out')
     } */
+
+    const handleUserTypeChange = (e) => {
+        setuserType(e.target.value);
+    }
 
     return (
         <div className='container' >
