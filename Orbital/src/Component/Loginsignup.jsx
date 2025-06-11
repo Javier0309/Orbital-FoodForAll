@@ -13,9 +13,13 @@ const Loginsignup = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const navigate = useNavigate();
-    const [userType, setuserType] = useState('');
+    const [userType, setUserType] = useState('');
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
+
+    const handleUserTypeChange = (event) => {
+        setUserType(event.target.value);
+    };
 
     const handleAuth = async () => {
         if (!email || !password){
