@@ -1,12 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Loginsignup from './Component/Loginsignup'
 import SignupPage from './Component/SignupPage';
-import CustMain from './Component/CustMain';
-import BusMain from './Component/BusMain';
+import CustMain from './Component/Customer shit/CustMain';
+import BusMain from './Component/Business shit/BusMain';
+import Menu from './Component/Business shit/Menu';
+import CustFoodDesc from './Component/Customer shit/CustFoodDesc'
+//import { Route, Routes } from 'react-router-dom'
+
 
 
 function App() {
   return (
+    <>
     <Router>
       <Routes>
         {/* Route to main login/signup landing page */}
@@ -18,11 +23,22 @@ function App() {
         {/* Route to Customers' main menu page */}
         <Route path="/custmain" element={<CustMain />} />
 
+        {/* Route to Customers' main menu page */}
+        <Route path="/cust-food-desc" element={<CustFoodDesc />} />
+        
+        {/* Route to Customers' cart page }
+        <Route path="/cart" element={<Cart />} /> */}
+
         {/* Route to Business' main menu page */}
         <Route path="/busmain" element={<BusMain />} />
+
+        {/* Route to Business' Menu page */}
+        <Route path="/busmenu" element={<Menu />} />
         
       </Routes>
     </Router>
+    
+    </>
   );
 }
 /*function App() {
