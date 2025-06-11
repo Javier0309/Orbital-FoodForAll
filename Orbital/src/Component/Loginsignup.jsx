@@ -7,6 +7,7 @@ import { supabase } from '../SupabaseClient.js';
 import user_icon from '../assets/person.png'
 import email_icon from '../assets/email.png'
 import password_icon from '../assets/password.png'
+import foodImage from '../assets/foood.jpeg'
 
 const Loginsignup = () => {
     const [email, setEmail] = useState('');
@@ -75,12 +76,13 @@ const Loginsignup = () => {
         else alert('Logged out')
     } */
 
-    const handleUserTypeChange = (e) => {
-        setuserType(e.target.value);
-    }
-
     return (
-        <div className='container' >
+        
+        <div className='container'>
+            <div className="left">
+                <img src={foodImage} alt="Food"/>
+            </div>
+            <div className="right">
             <div className="header">
                 <div className="text">Food For All</div>
                 <div className="underline"></div>
@@ -94,7 +96,7 @@ const Loginsignup = () => {
 
                 {!isLogin && (
                     <div className="input">
-                        <label htmlFor="userType">Select User Type</label>
+                        <label htmlFor="userType"></label>
                         <select
                         id="userType"
                         value={userType}
@@ -133,6 +135,7 @@ const Loginsignup = () => {
                 <Link to = "/custmain" className="submit">Log in</Link>
                 */}
             </div>
+        </div>
         </div>
     )
 }
