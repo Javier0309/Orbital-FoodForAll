@@ -1,5 +1,5 @@
 import './BusMain.css'
-import profile from '../assets/profile icon.png';
+import profile from '../../assets/profile icon.png';
 
 function BusHeader(){
     const handleClick = (e) => e.target.style.display = "none";

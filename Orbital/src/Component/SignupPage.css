@@ -100,15 +100,14 @@
       padding: 12px 15px;
       font-size: 1em;
     }
-  }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  justify-content: center;
-  align-items: flex-start;
+    body {
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: flex-start;
+    }
 }
-  
