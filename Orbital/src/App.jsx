@@ -12,7 +12,7 @@ import CustFoodDesc from './Component/Customer shit/CustFoodDesc'
 function App() {
   return (
     <>
-    <Router>
+    
       <Routes>
         {/* Route to main login/signup landing page */}
         <Route path="/" element={<Loginsignup />} />
@@ -36,7 +36,7 @@ function App() {
         <Route path="/busmenu" element={<Menu />} />
         
       </Routes>
-    </Router>
+    
     
     </>
   );
