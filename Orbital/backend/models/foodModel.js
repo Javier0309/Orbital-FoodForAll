@@ -2,12 +2,11 @@ import mongoose from "mongoose";
 
 const foodSchema = new mongoose.Schema({
     name: {type:String,required:true},
-    description: {type:String,required:true},
+    desc: {type:String,required:true},
     //cookedat: {type: , required:true}
     //expireat: {type: , required:true}
     quantity: {type:Number,required:true},
     image: {type:String,required:true},
-    category:{type:String,required:true}
 })
 
 // if this model is already there, use it, else create new model

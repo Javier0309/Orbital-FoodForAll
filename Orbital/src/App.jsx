@@ -5,6 +5,7 @@ import CustMain from './Component/Customer shit/CustMain';
 import BusMain from './Component/Business shit/BusMain';
 import Menu from './Component/Business shit/Menu';
 import CustFoodDesc from './Component/Customer shit/CustFoodDesc'
+ import { ToastContainer } from 'react-toastify';
 //import { Route, Routes } from 'react-router-dom'
 
 
@@ -12,7 +13,7 @@ import CustFoodDesc from './Component/Customer shit/CustFoodDesc'
 function App() {
   return (
     <>
-    
+      <ToastContainer/>
       <Routes>
         {/* Route to main login/signup landing page */}
         <Route path="/" element={<Loginsignup />} />
@@ -36,8 +37,7 @@ function App() {
         <Route path="/busmenu" element={<Menu />} />
         
       </Routes>
-    
-    
+
     </>
   );
 }
