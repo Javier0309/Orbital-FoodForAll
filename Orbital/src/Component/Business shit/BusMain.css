@@ -1,5 +1,161 @@
+.app{
+  width:100%;
+  margin: auto;
+}
+
+.bus-header{
+  background-color: rgb(170, 205, 237);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px;
+}
+
+.bus-header .logo{
+  width: 250px;
+  filter: hue-rotate(200deg);
+}
+
+.bus-header-menu{
+  display: flex;
+  list-style: none;
+  gap: 40px;
+  color: #424e59;
+  font-size: 18px;
+} 
+
+.bus-header li{
+  cursor: pointer;
+}
+
+.bus-header-right{
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.bus-header-right img{
+  height: 30px;
+}
 
 
+.bus-header .active{
+  padding-bottom: 2px;
+  border-bottom: 2px solid 
+}
+
+.bus-header-right .toggle-btn{
+  background-color: azure;
+  border: 1px solid whitesmoke;
+  border-radius: 99px;
+  width: 70px;
+  height: 35px;
+  transition: background-color 0.1s ease, border-color 0.2s ease;
+  cursor: pointer;
+  position: relative; 
+}
+
+.bus-header-right .toggle-btn .thumb{
+  height: 30px;
+  width: 30px;
+  background-color: rgb(141, 158, 174);
+  border-radius: 99px;
+  transform: translateX(0);
+  transition: left 0.15s ease;
+  position: absolute;
+  left:3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.toggle-btn.toggle{
+  background-color: rgb(37, 234, 37);
+}
+
+.toggle-btn:hover{
+  border-color: #424e59;
+}
+
+.toggle-btn.toggle .thumb{
+  left: calc(70px - 35px);
+  background-color: rgb(127, 255, 150);
+}
+
+.add-food-bg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-food-inner{
+  position: relative;
+  padding: 32px;
+  width: 100%;
+  max-width: 640px;
+  background-color: rgb(175, 213, 246);
+  justify-content: space-between;
+  border-radius: 35px;
+}
+
+.add-food-inner .save-btn{
+  position: absolute;
+  width: 75px;
+  bottom: 20px;
+  right: 110px;
+  font-size:small;
+  background-color: rgb(73, 237, 70);
+}
+
+.add-food-inner .save-btn:hover{
+  background-color: chartreuse;
+}
+
+.add-food-inner .close-btn{
+  position: absolute;
+  bottom: 20px;
+  right: 26px;
+  font-size:small;
+}
+
+.add-food-inner p{
+  font-size: small;
+}
+
+
+.add-food-inner .time{
+  display: block;
+}
+
+.add-food-inner .time2{
+  display: flex;
+}
+
+.add-food-inner .time1{
+  display: flex;
+  gap: 10px;
+}
+
+.add-food-inner .time button{
+  background-color: transparent;
+  color:blue;
+  font-size: small;
+  padding-top: 0px;
+}
+
+.add-food-inner .time button:hover{
+  background-color: transparent;
+  color:blue;
+  font-size: small;
+  transform: scale(1.0);
+}
+
+/*
 .busheader{
   background-color: rgb(133, 198, 239);
   width: 100%;
@@ -30,7 +186,7 @@
   color: rgb(42, 63, 165);
   font-size: 40px;
 }
-
+ */
 
 
 .bus-overlay{
@@ -56,9 +212,7 @@
     z-index: 1;
 }
 
-.bus-overlay .overlay:hover{
-  cursor: pointer;
-}
+
 
 .bus-content{
     z-index: 2;
@@ -89,7 +243,6 @@
     font-size: 1.5em;
     padding: 10px 20px;
     border: white;
-    
 }
 
 
@@ -105,4 +258,104 @@
   transform: scale(1.1);
   cursor: pointer;
 }
+
+.add-img-upload{
+  flex-direction: column;
+  display: flex;
+  gap: 60px;
+}
+
+.add-img-upload img{
+  height: 134px;
+  width: 174px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.food-qty img{
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+}
+
+.food-qty{
+  position: relative;
+  display:flex;
+  align-items: center;
+  gap: 27px;
+  padding-left: 26px;
+  padding-top: 6px;
+}
+
+.add-food-inner .flex-col{
+  display: flex;
+  gap: 34px;
+}
+
+.add-food-inner .flex-col .RHS{
+  column-gap: 60px;
+}
+
+.add-food-inner .add-img-upload{
+  display:block;
+}
+
+.add-food-inner .add-product-name{
+  display: block;
+}
+
+.add-food-inner .add-product-name input{
+  width: 370px;
+  height: 25px;
+  border: none;
+  border-radius: 5px;
+}
+
+.add-food-inner .add-product-desc{
+  display: block;
+}
+
+.add-food-inner .add-product-desc textarea{
+  width: 370px;
+  height: 82px;
+  border: none;
+  border-radius: 5px;
+}
+
+.add-food-inner .RHS{
+  position: relative;
+  display: flex;
+  gap:15px;
+  flex-direction: column;
+
+}
+
+.list-table .flex-col{
+  display: flex;
+  gap: 34px;
+}
+
+.list-table .RHS{
+  position: relative;
+  display: flex;
+  gap:20px;
+  flex-direction: column;
+  column-gap: 60px;
+}
+
+.list-table button{
+  background-color: transparent;
+  color:blue;
+  font-size: small;
+  padding-top: 0px;
+}
+
+.list-table button:hover{
+  background-color: transparent;
+  color:blue;
+  font-size: small;
+  transform: scale(1.0);
+}
+
+
 
