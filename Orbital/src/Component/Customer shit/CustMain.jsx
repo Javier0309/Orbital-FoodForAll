@@ -3,6 +3,7 @@ import './CustMain.css'
 import CustHeader from "./CustHeader.jsx";
 //import Footer from "./Footer.jsx"
 import FoodCard from "./FoodCard.jsx";
+import CustMenu from './CustMenu.jsx'
 import Restaurant from "./Restaurant.jsx";
 
 
@@ -16,7 +17,7 @@ function CustMain() {
         <>
         <div className="app"> 
             <CustHeader/>
-            <FoodCard/>
+            <CustMenu/>
         </div>
     
         </>
