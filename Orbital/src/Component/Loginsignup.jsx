@@ -1,8 +1,11 @@
 //ReadableStreamDefaultController
 import './Loginsignup.css'
+import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { supabase } from '../SupabaseClient.js';
+import { RecoveryContext } from "../App.jsx";
+import axios from 'axios';
 
 import user_icon from '../assets/person.png'
 import email_icon from '../assets/email.png'
@@ -10,20 +13,21 @@ import password_icon from '../assets/password.png'
 import foodImage from '../assets/foood.jpeg'
 
 const Loginsignup = () => {
-    const [email, setEmail] = useState('');
+    const [localEmail, setLocalEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const navigate = useNavigate();
     const [userType, setUserType] = useState('');
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
+    const { setOTP, setEmail } = useContext(RecoveryContext);
 
     const handleUserTypeChange = (event) => {
         setUserType(event.target.value);
     };
 
     const handleAuth = async () => {
-        if (!email || !password){
+        if (!localEmail || !password){
             alert('Please enter email and password');
             return;
         }
@@ -31,7 +35,7 @@ const Loginsignup = () => {
         setLoading(true);
 
         if (isLogin) {
-            const {error} = await supabase.auth.signInWithPassword({email,password})
+            const {error} = await supabase.auth.signInWithPassword({email: localEmail,password})
             if (error) alert('Login error: ' + error.message)
             else {
             // Fetch the user type from user metadata
@@ -55,7 +59,7 @@ const Loginsignup = () => {
             }
 
             const {error} = await supabase.auth.signUp({
-                email,password,options: {data: {userType, name}}})
+                email: localEmail,password,options: {data: {userType, name}}})
             if (error) alert('Signup error: ' + error.message);
             else {
                 alert('Signup successful!');
@@ -67,8 +71,24 @@ const Loginsignup = () => {
                 setLoading(false);
             }
         }
-    }
+    };
 
+    const navigateToOTP = async () => {
+        if (!localEmail) {
+            alert('Please enter your email');
+            return;
+        }
+        try {
+            setEmail(localEmail);
+            await axios.post("http://localhost:4000/api/recovery/send_recovery_email", {
+                recipient_email: localEmail,
+            });
+            navigate('otp');  // Navigate to OTP input page after OTP is sent
+        } catch (error) {
+            console.error("Error sending OTP:", error);
+            alert("Error sending OTP. Please try again.");
+        }
+    };
     /*
     const handleLogOut = async () => {
         const {error} = await supabase.auth.signOut();
@@ -113,7 +133,7 @@ const Loginsignup = () => {
 
                 <div className="input">
                     <img src={email_icon} alt="" />
-                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    <input type="email" placeholder="Email" value={localEmail} onChange={(e) => setLocalEmail(e.target.value)}/>
                 </div>
 
                 <div className="input">
@@ -122,7 +142,7 @@ const Loginsignup = () => {
                 </div>
             </div>
             
-            <div className="Forgot-password">Forgotten your password? <span>Click here</span></div>
+            <div className="Forgot-password" onClick={navigateToOTP}>Forgotten your password? <span>Click here</span></div>
             <div className="submit-container">
                 <button className="submit" onClick={handleAuth}>
                     {isLogin ? 'Log In' : 'Sign Up'}
