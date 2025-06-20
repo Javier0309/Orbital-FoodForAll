@@ -1,29 +1,34 @@
-import express from "express"
-import cors from "cors"
-import { connectDB } from "./config/db.js"
-import foodRouter from "./routes/foodRoute.js"
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import { connectDB } from "./config/db.js";
+import foodRouter from "./routes/foodRoute.js";
+import recoveryRoutes from "./routes/recoveryRoutes.js";
+import { createClient } from "@supabase/supabase-js";
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// app config
-const app = express()       //initialising app using express package
-const port = 4000   //port number where our server will be running
+const app = express();
+const port = process.env.PORT || 4000;
 
-// middleware
-app.use(express.json())     //whenever get request from frontend to backend, passed here
-app.use(cors())             //can access the backend from any frontend
+app.use(express.json());
+app.use(cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true
+}));
 
-// db connection
 connectDB();
 
-//api endpoints, provide endpoint address
-app.use('/api/food', foodRouter)
-app.use('/images', express.static('uploads'))
+app.use('/api/food', foodRouter);
+app.use('/api/recovery', recoveryRoutes);
+app.use('/images', express.static('uploads'));
 
-app.get("/", (req,res)=>{
-    res.send("API Working")
-})            //get data from this server
+app.get("/", (req, res) => {
+    res.send("API Working");
+});
 
-app.listen(port,()=>{
-    //whenever server running
-    console.log(`Server started on http://localhost:${port}`)
-})
+app.listen(port, () => {
+    console.log(`Server started on http://localhost:${port}`);
+});

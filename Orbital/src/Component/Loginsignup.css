@@ -1,12 +1,30 @@
 .container{
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     margin: auto;
     margin-top: 200px;
-    margin-left: 800px;
+    margin-left: 1000px;
     background: #fff;
     width: 600px;
-    padding-bottom: 30px;
+    padding: 0 20px;
+}
+
+.container img {
+    max-width: 150%;
+    object-fit: cover;
+    border-radius: 12px;
+    position: absolute;
+    left: 0;
+    top: 10;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 50%;
+    width: 100%
 }
 
 .header{
@@ -49,6 +67,7 @@
 
 .input img{
     margin: 0px 30px;
+    display: flex;
 }
 
 .input input,
@@ -76,7 +95,6 @@
 .input select:focus {
     border-color: #007bff
 }
-
 
 .Forgot-password{
     padding-left: 62px;
@@ -111,6 +129,3 @@
     margin-top: -20px;
     padding-top: 22px;
 }
-
-
-
