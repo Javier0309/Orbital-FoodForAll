@@ -4,17 +4,20 @@ import { StoreContext } from './StoreContext';
 import { useContext } from 'react';
 import FoodCard from './FoodCard';
 import CustHeader from './CustHeader';
+import Plus from '../../assets/plus.png';
+import Minus from '../../assets/minus.png';
 
 function CustFoodDesc(){
 
     const navigate = useNavigate();
-    const {url} = useContext(StoreContext);
     const { state } = useLocation();
+    const {url, cartItems, addToCart, removeFromCart} = useContext(StoreContext);
+    
 
     if (!state) {
         return <p>Error: No food data found</p>
     }
-    const {name, desc, image} = state;
+    const {id, name, desc, image} = state;
 
     return(
         <>
@@ -24,6 +27,11 @@ function CustFoodDesc(){
                 <div>
                     <h2 className='card-title'>{name}</h2>
                     <p className='card-text'>{desc}</p>
+                    <div className='food-qty'>
+                        <img onClick={()=>removeFromCart(id)} src={Minus} alt=""/>
+                        <div>{cartItems[id]}</div>
+                        <img onClick={()=>addToCart(id)} src={Plus} alt=""/>
+                    </div>
                     <h2>Momo's Buffet Diner</h2>
                     <button>View Restaurant</button>
                 </div>

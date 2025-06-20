@@ -6,7 +6,7 @@ import { useContext } from 'react'
 function FoodCard({id,name,desc,image}){
     const navigate = useNavigate();
     const handleClick = () => navigate('/cust-food-desc', {
-        state: {name, desc, image}
+        state: {id, name, desc, image}
     });
     const {url} = useContext(StoreContext);
 

@@ -1,18 +1,18 @@
 import './CustMain.css'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import logo from '../../assets/foodforall logo.png'
 import searchicon from '../../assets/searchicon.png'
 import basketicon from '../../assets/basketicon.png'
 
 function CustHeader() {
 
-    const [menu, setMenu] = useState("Home");
+    const [menu, setMenu] = useState("home");
     const navigate = useNavigate();
 
     return(
         <div className='cust-header'>
-            <img src={logo} alt="" className="logo"></img>
+            <img src={logo} alt="" className="logo" onClick={()=>{setMenu("home"), navigate('/custmain')}}></img>
             <ul className='cust-header-menu'>
                 {/* className='active': underlined when clicked
                     className='': not underlined because not clicked
@@ -27,7 +27,7 @@ function CustHeader() {
             <div className='cust-header-right'>
                 <img src={searchicon} alt=""></img>
                 <div className="search-icon">
-                    <img src={basketicon} alt="" />
+                    <Link to={'/cart'}><img src={basketicon} alt="" /></Link>
                     <div className="dot"></div>
                 </div>
                 <button>Sign in</button>

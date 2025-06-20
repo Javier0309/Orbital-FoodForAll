@@ -10,6 +10,9 @@ import { useState, createContext } from 'react';
 import OTPInput from './Component/OTPInput';
 import Reset from './Component/Reset';
 import Recovered from './Component/Recovered';
+import Cart from './Component/Customer shit/Cart';
+//import { Route, Routes } from 'react-router-dom'
+
 
 export const RecoveryContext = createContext();
 
@@ -29,6 +32,7 @@ function App() {
           <Route path="/recovered" element={<Recovered />} />
           <Route path="/custmain" element={<CustMain />} />
           <Route path="/cust-food-desc" element={<CustFoodDesc />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/busmain" element={<BusMain />} />
           <Route path="/busmenu" element={<Menu />} />
         </Routes>

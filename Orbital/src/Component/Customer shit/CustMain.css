@@ -1,5 +1,5 @@
 .app{
-  width:100%;
+  width: 100%;
   margin: auto;
 }
 
@@ -13,6 +13,7 @@
 
 .cust-header .logo{
   width: 250px;
+  cursor: pointer;
 }
 
 .cust-header-menu{
@@ -82,11 +83,13 @@
   margin: 10px;
   position: relative;
   text-align: center;
+  width: 100%;
   max-width: 200px;
   overflow: hidden;
   display: inline-block;
   background-color:rgb(220, 151, 151);
 }
+
 
 
 .foodcard .content .card-image{
@@ -124,6 +127,65 @@
   cursor: pointer;
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+.food-display h2{
+  font-size: max(2vw, 24px);
+  font-weight: 300;
+}
+
+.food-display{
+  max-width: 1200px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+
+.food-display-list{
+  position: relative;
+  overflow: visible;
+}
+
+.food-qty{
+  z-index: 5;
+}
+
+.cart-items-list{
+  max-width: 1200px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+  margin: 0 auto;
+}
+
+.cart-bottom {
+  background-color: rgb(213, 213, 213);
+  display: flex;
+  align-items: left;
+  justify-content: space-between;
+  padding: 10px 10px;
+}
+
+
+.cart-bottom .collect-option{
+  list-style: none;
+  gap: 10px;
+  color: #594842;
+  font-size: 18px;
+} 
+
+.cart-bottom li{
+  cursor: pointer;
+}
+
+
+.cart-bottom .active{
+  background-color: #d39e97;
+  border-radius: 20%;
+}
+
+
 
 /*
 .foodcard .card-button{
