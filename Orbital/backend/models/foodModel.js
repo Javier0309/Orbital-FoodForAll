@@ -7,6 +7,11 @@ const foodSchema = new mongoose.Schema({
     //expireat: {type: , required:true}
     quantity: {type:Number,required:true},
     image: {type:String,required:true},
+    businessId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Business',
+        required: true
+    }
 })
 
 // if this model is already there, use it, else create new model

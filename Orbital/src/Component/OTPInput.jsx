@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { supabase } from '../SupabaseClient.js';
+import { supabase } from '../../backend/SupabaseClient.js';
 import axios from "axios";
 import { RecoveryContext } from "../App.jsx";
 

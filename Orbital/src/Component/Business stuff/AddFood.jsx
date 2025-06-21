@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Plus from '../../assets/plus.png';
 import Minus from '../../assets/minus.png';
 import Upload from '../../assets/upload_area.jpg';
@@ -38,7 +38,8 @@ function AddFood(props) {
        formData.append("desc", data.desc)
        formData.append("quantity", Number(data.quantity))
        formData.append("image", image)
-       
+       formData.append("businessId", localStorage.getItem("businessId"))
+       console.log("businessId in localStorage:", localStorage.getItem("businessId"));
        const response = await axios.post(`${url}/api/food/add`,formData)  //since created Add using post
        if (response.data.success) { //to reset after save
             setData({
@@ -54,6 +55,10 @@ function AddFood(props) {
             toast.error(response.data.message)
        }
     }
+
+    useEffect(() => {
+        setData((prev) => ({ ...prev, quantity: itemCount}))
+    }, [itemCount])
 
 
     return (props.trigger) ? (
@@ -71,7 +76,7 @@ function AddFood(props) {
                     </div>
 
                     <div className='food-qty'>
-                        <img onClick={()=>setItemCount(prev=>prev-1)} src={Minus} alt=""/>
+                        <img onClick={()=>setItemCount(prev=> Math.max(prev-1, 0))} src={Minus} alt=""/>
                         <div>{itemCount}</div>
                         <img onClick={()=>setItemCount(prev=>prev+1)} src={Plus} alt=""/>
                     </div>

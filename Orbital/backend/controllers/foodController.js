@@ -10,7 +10,8 @@ const addFood = async (req,res) => {
         name:req.body.name,
         desc: req.body.desc,
         quantity: req.body.quantity,
-        image: image_filename
+        image: image_filename,
+        businessId: req.body.businessId
 
     })
 
@@ -26,7 +27,13 @@ const addFood = async (req,res) => {
 //to display the food added
 const listFood = async (req,res) => {
     try {
-        const foods = await foodModel.find({});
+        const {businessId} = req.params;
+        let query = {};
+        if (businessId) {
+            query.businessId = businessId;
+        }
+
+        const foods = await foodModel.find(query).populate('businessId', 'name');
         res.json({success:true,data:foods})
     } catch (error) {
         console.log(error);

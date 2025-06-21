@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from '../SupabaseClient.js';
+import { supabase } from '../../backend/SupabaseClient.js';
 
 export default function Reset() {
   const [password, setPassword] = useState("");

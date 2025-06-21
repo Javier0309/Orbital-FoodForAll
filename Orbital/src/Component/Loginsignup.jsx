@@ -1,9 +1,9 @@
-//ReadableStreamDefaultController
+
 import './Loginsignup.css'
 import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { supabase } from '../SupabaseClient.js';
+import { supabase } from '../../backend/SupabaseClient.js';
 import { RecoveryContext } from "../App.jsx";
 import axios from 'axios';
 
@@ -63,10 +63,18 @@ const Loginsignup = () => {
             if (error) alert('Signup error: ' + error.message);
             else {
                 alert('Signup successful!');
-            if (userType === 'customer') {
-                navigate('/custmain');
-            } else {
+            if (userType === 'F&B business') {
+                const res = await axios.post("http://localhost:4000/api/signup/create-business", {
+                    name, 
+                    email: localEmail,
+                }) 
+
+                if (res.data.success) {
+                    localStorage.setItem('businessId', res.data.businessId);
+                }
                 navigate('/busmain');
+            } else {
+                navigate('/custmain');
             }
                 setLoading(false);
             }

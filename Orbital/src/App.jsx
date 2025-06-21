@@ -1,16 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
 import Loginsignup from './Component/Loginsignup'
 import SignupPage from './Component/SignupPage';
-import CustMain from './Component/Customer shit/CustMain';
-import BusMain from './Component/Business shit/BusMain';
-import Menu from './Component/Business shit/Menu';
-import CustFoodDesc from './Component/Customer shit/CustFoodDesc'
+import CustMain from './Component/Customer stuff/CustMain';
+import BusMain from './Component/Business stuff/BusMain';
+import Menu from './Component/Business stuff/Menu';
+import CustFoodDesc from './Component/Customer stuff/CustFoodDesc'
 import { ToastContainer } from 'react-toastify';
 import { useState, createContext } from 'react';
 import OTPInput from './Component/OTPInput';
 import Reset from './Component/Reset';
 import Recovered from './Component/Recovered';
-import Cart from './Component/Customer shit/Cart';
+import Cart from './Component/Customer stuff/Cart';
 //import { Route, Routes } from 'react-router-dom'
 
 

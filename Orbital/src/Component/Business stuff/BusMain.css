@@ -91,6 +91,7 @@
   display:flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 }
 
 .add-food-inner{
@@ -285,6 +286,7 @@
   gap: 27px;
   padding-left: 26px;
   padding-top: 6px;
+  z-index: 10;
 }
 
 .add-food-inner .flex-col{
