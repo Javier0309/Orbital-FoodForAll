@@ -10,6 +10,8 @@ import cartRouter from "./routes/cartRoute.js";
 import jwt from "jsonwebtoken";
 import verifyUser from "./middleware/verifyUser.js";
 import signupRouter from "./routes/signupRoute.js";
+import busRouter from "./routes/businessRoute.js";
+import orderRoute from "./routes/orderRoute.js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -31,6 +33,8 @@ app.use('/api/recovery', recoveryRoutes);
 app.use('/images', express.static('uploads'));
 app.use('/api/cart',cartRouter)
 app.use('/api/signup', signupRouter)
+app.use('/api/business', busRouter)
+app.use('/api/order', orderRoute)
 
 app.get("/", (req, res) => {
     res.send("API Working");

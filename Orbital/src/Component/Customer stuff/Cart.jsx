@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 
 const Cart = () => {
-    const {cartItems, food_list, removeFromCart} = useContext(StoreContext);
+    const {cartItems, food_list, removeFromCart, placeOrder} = useContext(StoreContext);
 
     const settings = {centerMode: false, accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 5, slidesToScroll: 1, arrows: true, responsive: [
         {breakpoint: 704, settings: {slidesToShow: 2, slidesToScroll: 1}},
@@ -80,9 +80,12 @@ const Cart = () => {
             </div>
 
             <div className="cart-bottom">
-                <ul className='collect-option'></ul>
+                <ul className='collect-option'>
                 <li onClick={()=>setCollect("pickup")} className={collect==="pickup"?"active":""}>Pickup</li>
                 <li onClick={()=>setCollect("delivery")} className={collect==="delivery"?"active":""}>Delivery</li>
+                </ul>
+
+                <button className="submit" onClick={placeOrder} disabled={Object.keys(cartItems).length === 0}>Place Order</button>
             </div>
         </div>
     )

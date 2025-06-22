@@ -11,7 +11,8 @@ const Menu = () => {
     const [popUp, setPopUp] = useState(false);
     const [menu, setMenu] = useState([]);
     const fetchMenu = async () => {
-        const response = await axios.get(`${url}/api/food/list`)
+        const businessId = localStorage.getItem('businessId')
+        const response = await axios.get(`${url}/api/food/list/${businessId}`)
         console.log(response.data);
         if (response.data.success) {
             setMenu(response.data.data)

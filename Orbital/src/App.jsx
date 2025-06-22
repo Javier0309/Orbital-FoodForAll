@@ -11,6 +11,7 @@ import OTPInput from './Component/OTPInput';
 import Reset from './Component/Reset';
 import Recovered from './Component/Recovered';
 import Cart from './Component/Customer stuff/Cart';
+import Orders from './Component/Business stuff/Orders';
 //import { Route, Routes } from 'react-router-dom'
 
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/busmain" element={<BusMain />} />
           <Route path="/busmenu" element={<Menu />} />
+          <Route path="/busorders" element={<Orders />} />
         </Routes>
       </RecoveryContext.Provider>
     </>

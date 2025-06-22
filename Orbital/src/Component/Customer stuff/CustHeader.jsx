@@ -25,7 +25,7 @@ function CustHeader() {
             </ul>
 
             <div className='cust-header-right'>
-                <img src={searchicon} alt=""></img>
+                
                 <div className="search-icon">
                     <Link to={'/cart'}><img src={basketicon} alt="" /></Link>
                     <div className="dot"></div>
