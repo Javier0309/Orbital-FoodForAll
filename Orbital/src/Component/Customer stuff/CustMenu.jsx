@@ -1,4 +1,5 @@
-import { useContext, useRef, useEffect } from "react";
+import React from 'react';
+import { useContext, useRef, useEffect, useState } from "react";
 import './CustMain.css'
 import FoodCard from "./FoodCard.jsx";
 import { StoreContext } from "./StoreContext.jsx";
@@ -10,6 +11,14 @@ import "slick-carousel/slick/slick-theme.css"
 const FoodDisplay = () => {
 
     const {food_list} = useContext(StoreContext)
+
+    //search bar
+    const [searchQuery, setSearchQuery] = useState("")
+    const filteredFood = food_list.filter(item => 
+        (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
+
     const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 5, slidesToScroll: 1, arrows: true, responsive: [
         {breakpoint: 704, settings: {slidesToShow: 2, slidesToScroll: 1}},
         {breakpoint: 480, settings: {slidesToShow: 1, slidesToScroll: 1}},
@@ -17,7 +26,7 @@ const FoodDisplay = () => {
     ]};
     const sliderRef = useRef({});
 
-    const groupedFood = food_list.reduce((acc, item) => {
+    const groupedFood = filteredFood.reduce((acc, item) => {
         const key = item.businessId || 'unknown';
         if (!acc[key]) acc[key] = [];
         acc[key].push(item);
@@ -56,6 +65,14 @@ const FoodDisplay = () => {
     return (
         <div id='food-display' className="food-display">
         <h2>Food near you, for you</h2>
+
+        <div className="search-bar">
+            <input 
+                type = "text"
+                placeholder="Search food..."
+                value = {searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}/>
+        </div>
 
         {Object.entries(groupedFood).map(([businessId, items], index) => (
             <div key={businessId} className="restaurant-slider">

@@ -73,6 +73,22 @@
 }
 
 
+.search-bar {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  height: 40px;
+}
+
+.search-bar input{
+  padding: 20px;
+  width: 97%;
+  max-width: 100;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: medium;
+}
+
 
 
 .foodcard{
