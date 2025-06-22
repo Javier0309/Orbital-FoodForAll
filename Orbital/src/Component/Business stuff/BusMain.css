@@ -360,4 +360,19 @@
 }
 
 
+.orders {
+  padding: 20px;
+}
 
+.orders .order-card{
+  border: 1px solid hsl(0, 0%, 80%);
+  background-color: rgb(174, 212, 237);
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.orders .order-card .actions button {
+  margin-right: 8px;
+  padding: 6px 10px;
+}

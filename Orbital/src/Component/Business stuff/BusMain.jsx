@@ -2,6 +2,7 @@ import './BusMain.css'
 
 import BusHeader from "./BusHeader.jsx";
 import BusOverlay from "./BusOverlay.jsx";
+import Orders from './Orders.jsx';
 //import Footer from "./Footer.jsx"
 //import FoodCard from "./FoodCard.jsx";
 //import Restaurant from "./Restaurant.jsx";
@@ -16,6 +17,7 @@ function BusMain() {
         <>
            <BusHeader/>
            <BusOverlay/>
+           <Orders/>
         </>
     );
 }

@@ -1,5 +1,6 @@
 import { supabase } from '../SupabaseClient.js';
 import userModel from '../models/userModel.js';
+import { getFullCartItems } from '../utils/cartUtils.js';
 
 // add items to user cart
 const addToCart = async (req, res) => {
@@ -66,15 +67,11 @@ const getCart = async (req, res) => {
     try {
         const {email} = req.user;
 
-        let user = await userModel.findOne({email: req.user.email});
-        if (!user){
-            user = await userModel.create({
-                email: req.user.email,
-                cartData: {}
-            })
-        }
+        let user = await userModel.findOne({email});
+        if (!user) user = await userModel.create({email, cartData: {}})
     
-        res.json({success: true, cartData: user.cartData || {} })
+        const fullCart = await getFullCartItems(user.cartData)
+        res.json({success: true, cartData: fullCart })
     } catch (error) {
         console.error("Fetch cart error:", error)
         res.status(500).json({success:false, message:"Error fetching cart"})

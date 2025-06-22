@@ -46,7 +46,32 @@ const StoreContextProvider = (props) => {
         }
     }
     
+    const placeOrder = async () => {
+        try {
+            const session = await supabase.auth.getSession();
+            const token = session.data.session?.access_token;
+            if (!token) {
+                alert("User not logged in");
+                return;
+            } 
 
+            const res = await axios.post(
+                url + "/api/order/place",
+                {},
+                {headers: {Authorization: `Bearer ${token}`}}
+            )
+
+            if (res.data.success){
+                alert("Order placed successfully")
+                setCartItems({});
+            } else {
+                alert ("Failed to place order")
+            }
+        } catch (error) {
+            console.error("Error placing order:", error)
+            alert("An error occured while placing the order")
+        }
+    }
 
     useEffect(()=>{
         console.log(cartItems);
@@ -92,7 +117,7 @@ const StoreContextProvider = (props) => {
     }, [])
 
     const contextValue = {
-        food_list, setFoodList, url, cartItems, setCartItems, addToCart, removeFromCart, fetchFoodList
+        food_list, setFoodList, url, cartItems, setCartItems, addToCart, removeFromCart, fetchFoodList, placeOrder
     };
     
     return (
