@@ -1,5 +1,6 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
+import foodModel from "../models/foodModel.js";
 import { getFullCartItems, groupCartByBusiness } from "../utils/cartUtils.js";
 
 const placeOrder = async (req, res) => {
@@ -28,12 +29,24 @@ const placeOrder = async (req, res) => {
                     image: i.image
                 }))
             })
-
+            // minus off the food ordered from the orignal quantity
+        for (const item of items){
+            const food = await foodModel.findById(item._id)
+            if (food && food.quantity >= item.quantity) {
+                await foodModel.updateOne(
+                    {_id: item._id},
+                    {$inc: { quantity: -item.quantity }}
+                )
+            } else {
+                return res.status(400).json({success: false, message: `Not enough quantity for ${item.name}`})
+            }
+        }
             createdOrders.push(order);
         }
 
         // Clear user cart
         await userModel.updateOne({email}, {cartData: {}})
+        
 
         res.json({ success: true, message: "Order(s) placed", orders: createdOrders})
     } catch (error) {

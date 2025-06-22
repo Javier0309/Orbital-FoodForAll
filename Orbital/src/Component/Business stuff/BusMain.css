@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 10px;
+  width: 100%;
 }
 
 .bus-header .logo{
@@ -102,12 +103,17 @@
   background-color: rgb(175, 213, 246);
   justify-content: space-between;
   border-radius: 35px;
+  z-index: 11;
+}
+
+.add-food-inner input {
+  bottom: 40px;
 }
 
 .add-food-inner .save-btn{
   position: absolute;
   width: 75px;
-  bottom: 20px;
+  bottom: 10px;
   right: 110px;
   font-size:small;
   background-color: rgb(73, 237, 70);
@@ -119,13 +125,13 @@
 
 .add-food-inner .close-btn{
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   right: 26px;
   font-size:small;
 }
 
 .add-food-inner p{
-  font-size: small;
+  font-size: smaller;
 }
 
 
@@ -237,6 +243,11 @@
     
 }
 
+.busmenu {
+  position: relative;
+  z-index: 1;
+}
+
 .busmenu button{
     border-radius: 30px;
     background-color: rgb(133, 198, 239);
@@ -260,6 +271,11 @@
   cursor: pointer;
 }
 
+.busmenu .food-qty{
+  padding: 20px;
+
+}
+
 .add-img-upload{
   flex-direction: column;
   display: flex;
@@ -273,13 +289,13 @@
   border-radius: 5px;
 }
 
-.food-qty img{
+.add-food-inner .food-qty img{
   height: 30px;
   width: 30px;
   cursor: pointer;
 }
 
-.food-qty{
+.add-food-inner .food-qty{
   position: relative;
   display:flex;
   align-items: center;

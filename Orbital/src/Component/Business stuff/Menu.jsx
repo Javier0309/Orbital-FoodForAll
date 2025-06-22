@@ -19,7 +19,25 @@ const Menu = () => {
         } else {
             toast.error("Error")
         }
-    }   
+    }
+    
+    const handleRemove = async (id) => {
+        const confirm = window.confirm("Are you sure you want to remove this item?");
+        if (!confirm) return;
+
+        try {
+            const response = await axios.post(`${url}/api/food/remove`, {id})
+            if (response.data.success){
+                toast.success('Item removed');
+                fetchMenu(); //refresh menu
+            } else {
+                toast.error('Failed to remove')
+            }
+        } catch (error) {
+            console.error(error)
+            toast.error('Error removing item')
+        }
+    }
 
     useEffect(() => {
         fetchMenu();
@@ -61,15 +79,15 @@ const Menu = () => {
                         
                                     <div className='time'>
                                         <div className='time1'>
-                                            <p>Cooked at:</p>
+                                            <p>Cooked at: {new Date(item.cookedAt).toLocaleString()}</p>
                                         </div>
                                         <div className='time2'>
-                                            <p>Consume by:</p>
+                                            <p>Consume by: {new Date(item.consumeBy).toLocaleString()}</p>
                                         </div>
                                     </div>
 
                                     <div className='remove'>
-                                        <button>Remove</button>
+                                        <button onClick={() => handleRemove(item._id)}>Remove</button>
                                     </div>
                                     </div>
                                 </div>

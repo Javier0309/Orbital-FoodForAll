@@ -12,7 +12,9 @@ function AddFood(props) {
     const [data, setData] = useState({
         name:"",
         desc:"",
-        quantity:0,
+        quantity: 'setItemCount(0)',
+        cookedAt: "",
+        consumeBy: "",
     })
 
     const onChangeHandler = (e) => {
@@ -25,7 +27,9 @@ function AddFood(props) {
         setData({
             name:"",
             desc:"",
-            quantity:0,
+            quantity:setItemCount(0),
+            cookedAt: "",
+            consumeBy: "",
         })
         setImage(false)
         props.setTrigger(false)
@@ -39,13 +43,17 @@ function AddFood(props) {
        formData.append("quantity", Number(data.quantity))
        formData.append("image", image)
        formData.append("businessId", localStorage.getItem("businessId"))
-       console.log("businessId in localStorage:", localStorage.getItem("businessId"));
+       formData.append("cookedAt", data.cookedAt)
+       formData.append("consumeBy", data.consumeBy)
+
        const response = await axios.post(`${url}/api/food/add`,formData)  //since created Add using post
        if (response.data.success) { //to reset after save
             setData({
                 name:"",
                 desc:"",
-                quantity:0,
+                quantity:setItemCount(0),
+                cookedAt: "",
+                consumeBy: "",
             })
             setImage(false)
             toast.success(response.data.message)
@@ -96,11 +104,11 @@ function AddFood(props) {
                     <div className='time'>
                         <div className='time1'>
                         <p>Cooked at:</p>
-                        <button>Add cooked time</button>
+                        <input type='datetime-local' name='cookedAt' value={data.cookedAt} onChange={onChangeHandler} required/>
                         </div>
                         <div className='time2'>
                         <p>Consume by:</p>
-                        <button>Add consume by time</button>
+                        <input type='datetime-local' name='consumeBy' value={data.consumeBy} onChange={onChangeHandler} required/>
                         </div>
                         </div>
                     </div>

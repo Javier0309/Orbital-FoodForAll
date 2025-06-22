@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const foodSchema = new mongoose.Schema({
     name: {type:String,required:true},
     desc: {type:String,required:true},
-    //cookedat: {type: , required:true}
-    //expireat: {type: , required:true}
+    cookedAt: {type: Date, required:true},
+    consumeBy: {type: Date, required:true},
     quantity: {type:Number,required:true},
     image: {type:String,required:true},
     businessId: {
