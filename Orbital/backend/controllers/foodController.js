@@ -11,6 +11,8 @@ const addFood = async (req,res) => {
         desc: req.body.desc,
         quantity: req.body.quantity,
         image: image_filename,
+        cookedAt: new Date(req.body.cookedAt),
+        consumeBy: new Date(req.body.consumeBy),
         businessId: req.body.businessId
 
     })
@@ -28,13 +30,15 @@ const addFood = async (req,res) => {
 const listFood = async (req,res) => {
     try {
         const {businessId} = req.params;
-        let query = {};
+        const now = new Date();
+        const query = { quantity: { $gt: 0}, consumeBy: { $gt: now }};
         if (businessId) {
             query.businessId = businessId;
         }
 
-        const foods = await foodModel.find(query).populate('businessId', 'name');
-        res.json({success:true,data:foods})
+        const foods = await foodModel.find(query).populate('businessId', 'isOpen name');
+        const openShops = foods.filter(food => food.businessId?.isOpen)  // doesnt show food if shop closed
+        res.json({success:true,data:openShops})
     } catch (error) {
         console.log(error);
         res.json({success:false,message:'Error'})
