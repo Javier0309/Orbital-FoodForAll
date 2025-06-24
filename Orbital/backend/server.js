@@ -40,6 +40,7 @@ app.use('/api/signup', signupRouter);
 app.use('/api/business', busRouter);
 app.use('/api/order', orderRoute);
 app.use('/api/user', userRouter);
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.get("/", (req, res) => {
     res.send("API Working");

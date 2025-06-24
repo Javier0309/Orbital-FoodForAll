@@ -1,37 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import businessModel from "../models/businessModel.js";
-<<<<<<< HEAD
 import mongoose from "mongoose";
-=======
-
-// Open or closed
-const openOrClosed = async (req,res) => {
-    const {businessId, isOpen} = req.body;
-
-    try {
-        await businessModel.findByIdAndUpdate(businessId, {isOpen})
-        res.json({success: true, message: `Shop is now ${isOpen? 'open' : 'closed'}`})
-    } catch (error) {
-        console.error(error)
-        res.json({success:false, message:'Failed to update shop status'})
-    }
-}
-
-const getOpenOrClosed = async (req, res) => {
-    try {
-        const business = await businessModel.findById(req.params.id).select('isOpen')
-        if (business) {
-           res.json({success: true, isOpen: business.isOpen}) 
-        } else {
-           res.json({success:false, message:'Shop not found'})
-        }
-    } catch (error) {
-        console.error(error)
-        res.json({success:false, message:'Failed to fetch shop status'})
-
-    }
-}
->>>>>>> 1e8085ae733a8fedee9187bcb75a980c175fabf0
 
 // GET orders for a specific business
 const getOrdersForBusiness = async (req, res) => {
@@ -59,7 +28,6 @@ const updateOrderStatus = async (req,res) => {
     }
 }
 
-<<<<<<< HEAD
 // GET business profile by userId
 const getBusinessProfile = async (req, res) => {
     try {
@@ -106,6 +74,3 @@ export {
     getBusinessProfile, 
     updateBusinessProfile 
 }
-=======
-export { openOrClosed, getOpenOrClosed,getOrdersForBusiness, updateOrderStatus }
->>>>>>> 1e8085ae733a8fedee9187bcb75a980c175fabf0
