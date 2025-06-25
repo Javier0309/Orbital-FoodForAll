@@ -47,7 +47,7 @@ const Cart = () => {
         }
     }, [cartItems]);
 
-    const cartFoodItems = food_list.filter(food => cartItems[food._id] > 0)
+    const cartFoodItems = food_list.filter(food => cartItems[food._id]?.quantity > 0)
     const groupedFood = cartFoodItems.reduce((acc, item) => {
         const key = item.businessId?._id || 'unknown';
         if (!acc[key]) acc[key] = [];
@@ -67,9 +67,9 @@ const Cart = () => {
                     <h3>{items[0].businessId?.name}</h3>
                     <Slider ref={(ref) => (sliderRef.current[businessId] = ref)} {...settings}>
                     {items.map((item)=>{
-                        if(cartItems[item._id]>0) {
+                        if(cartItems[item._id]?.quantity>0) {
                             return(
-                                <CartFoodCard key={item._id} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} image={item.image}/>
+                                <CartFoodCard key={item._id} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} cookedAt={item.cookedAt} consumeBy={item.consumeBy} comment={cartItems[item._id]?.comment || ""} image={item.image} businessId={item.businessId}/>
                             )
                         }
                     })}

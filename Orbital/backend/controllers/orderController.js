@@ -26,6 +26,7 @@ const placeOrder = async (req, res) => {
                     foodId: i._id,
                     name: i.name,
                     quantity: i.quantity,
+                    comment: i.comment,
                     image: i.image
                 }))
             })
@@ -46,7 +47,7 @@ const placeOrder = async (req, res) => {
 
         // Clear user cart
         await userModel.updateOne({email}, {cartData: {}})
-        
+
 
         res.json({ success: true, message: "Order(s) placed", orders: createdOrders})
     } catch (error) {

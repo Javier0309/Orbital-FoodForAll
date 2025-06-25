@@ -5,6 +5,7 @@ const foodSchema = new mongoose.Schema({
     desc: {type:String,required:true},
     cookedAt: {type: Date, required:true},
     consumeBy: {type: Date, required:true},
+    comment: {type:String},
     quantity: {type:Number,required:true},
     image: {type:String,required:true},
     businessId: {

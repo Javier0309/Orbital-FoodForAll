@@ -52,6 +52,7 @@ const Orders = () => {
                             {order.items.map(item => (
                                 <li key={item.foodId}>
                                     {item.name} - qty: {item.quantity} 
+                                    <p>Comments: {item.comment} </p>
                                 </li>
                             ))}
                         </ul>

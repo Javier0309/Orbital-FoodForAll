@@ -62,7 +62,7 @@ const Menu = () => {
                                         <img src={`${url}/images/` +item.image} alt="" />
                                     </div>
                         
-                                    <div className='food-qty'>
+                                    <div className='food-qty-menu'>
                                         <p>{item.quantity}</p>
                                     </div>
                                 </div>

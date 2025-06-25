@@ -24,4 +24,18 @@ signupRouter.post('/create-business', async (req, res) => {
     }
 })
 
+signupRouter.get('/business-by-email/:email', async (req, res) => {
+    try {
+        const business = await businessModel.findOne({ email: req.params.email });
+        if (business) {
+            res.json({ success: true, business });
+        } else {
+            res.json({ success: false, message: "Business not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Server error", error: err.message });
+    }
+});
+
+
 export default signupRouter;

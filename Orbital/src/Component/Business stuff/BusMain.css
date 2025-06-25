@@ -289,13 +289,13 @@
   border-radius: 5px;
 }
 
-.add-food-inner .food-qty img{
+.food-qty img{
   height: 30px;
   width: 30px;
   cursor: pointer;
 }
 
-.add-food-inner .food-qty{
+.food-qty{
   position: relative;
   display:flex;
   align-items: center;

@@ -60,6 +60,26 @@ const Loginsignup = () => {
                 alert('Logged in!');
                 if (storedUserType === 'customer') {
                     navigate('/custmain');
+                } else if (storedUserType === 'F&B business') {
+                    try {
+                        const bizRes = await axios.get(`http://localhost:4000/api/signup/business-by-email/${user.email}`);
+                        if (bizRes.data.success && bizRes.data.business && bizRes.data.business._id) {
+                            localStorage.setItem("businessId", bizRes.data.business._id);
+                        } else {
+                            // Handle missing business profile
+                            localStorage.removeItem("businessId");
+                            alert("Business profile not found. Please sign up as a business.");
+                            setLoading(false);
+                            return;
+                        }
+                    } catch (err) {
+                        console.error("Error fetching business doc:", err);
+                        localStorage.removeItem("businessId");
+                        alert("Business profile not found. Please sign up as a business.");
+                        setLoading(false);
+                        return;
+                    }
+                    navigate('/busmain');
                 } else {
                     navigate('/busmain');
                 }
@@ -96,10 +116,15 @@ const Loginsignup = () => {
                     const res = await axios.post("http://localhost:4000/api/signup/create-business", {
                         name, 
                         email: localEmail
-                    }) 
+                    });
 
-                    if (res.data.success) {
+                    if (res.data.success && res.data.businessId) {
                         localStorage.setItem('businessId', res.data.businessId);
+                    } else {
+                        localStorage.removeItem("businessId");
+                        alert("Failed to create business profile. Please try again or contact support.");
+                        setLoading(false);
+                        return;
                     }
                     navigate('/busmain');
                 } else {
