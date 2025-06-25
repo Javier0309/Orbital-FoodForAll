@@ -1,5 +1,6 @@
 import { supabase } from '../SupabaseClient.js';
 import userModel from '../models/userModel.js';
+import foodModel from '../models/foodModel.js';
 import { getFullCartItems } from '../utils/cartUtils.js';
 
 // add items to user cart
@@ -7,6 +8,12 @@ const addToCart = async (req, res) => {
     try {
         const {email} = req.user;
         const {itemId} = req.body;
+
+        // Check if food item exists and has sufficient quantity
+        const foodItem = await foodModel.findById(itemId);
+        if (!foodItem) {
+            return res.status(404).json({success: false, message: "Food item not found"});
+        }
 
         let user = await userModel.findOne({email: req.user.email});
         if (!user){
@@ -17,7 +24,18 @@ const addToCart = async (req, res) => {
         }
 
         const cart = user.cartData || {};
-        cart[itemId] = (cart[itemId] || 0) + 1;
+        const currentCartQuantity = cart[itemId] || 0;
+        const newQuantity = currentCartQuantity + 1;
+
+        // Check if adding this item would exceed available quantity
+        if (newQuantity > foodItem.quantity) {
+            return res.status(400).json({
+                success: false, 
+                message: `Cannot add more items. Only ${foodItem.quantity} available.`
+            });
+        }
+
+        cart[itemId] = newQuantity;
 
         await userModel.updateOne({email}, {cartData: cart})
 
@@ -70,8 +88,7 @@ const getCart = async (req, res) => {
         let user = await userModel.findOne({email});
         if (!user) user = await userModel.create({email, cartData: {}})
     
-        const fullCart = await getFullCartItems(user.cartData)
-        res.json({success: true, cartData: fullCart })
+        res.json({success: true, cartData: user.cartData })
     } catch (error) {
         console.error("Fetch cart error:", error)
         res.status(500).json({success:false, message:"Error fetching cart"})

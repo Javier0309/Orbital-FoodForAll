@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { StoreContext } from './StoreContext';
 import { useContext } from 'react'
 
-function FoodCard({id,name,desc,image}){
+function FoodCard({id,name,desc,image, quantity, cookedAt, consumeBy, businessId}){
     const navigate = useNavigate();
     const handleClick = () => navigate('/cust-food-desc', {
-        state: {id, name, desc, image}
+        state: {id, name, desc, image, quantity,  cookedAt, consumeBy, businessId}
     });
     const {url} = useContext(StoreContext);
 

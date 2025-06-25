@@ -15,8 +15,9 @@ const FoodDisplay = () => {
     //search bar
     const [searchQuery, setSearchQuery] = useState("")
     const filteredFood = food_list.filter(item => 
-        (item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()))
+        ((item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()))) && 
+        item.quantity > 0
     )
 
     const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 5, slidesToScroll: 1, arrows: true, responsive: [
@@ -80,7 +81,7 @@ const FoodDisplay = () => {
                 {/*<div className='food-display-list'>*/}
                 <Slider ref={(ref) => (sliderRef.current[businessId] = ref)} {...settings}>
                 {items.map((item) => {
-                    return <FoodCard key={index} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} image={item.image}/>
+                    return <FoodCard key={index} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} cookedAt={item.cookedAt} consumeBy={item.consumeBy} image={item.image} businessId={item.businessId}/>
                 })}
                 </Slider>
             </div>

@@ -19,6 +19,11 @@ const StoreContextProvider = (props) => {
             }
         } catch (error) {
             console.error("Error adding to cart:", error)
+            if (error.response?.data?.message) {
+                alert(error.response.data.message);
+            } else {
+                alert("Error adding item to cart");
+            }
         }
     }
 

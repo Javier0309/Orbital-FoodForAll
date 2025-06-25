@@ -5,7 +5,7 @@ export const getFullCartItems = async (cartData = {}) => {
     const foodItems = await foodModel.find({ _id: { $in: foodIds }});
     const detailedCart = foodItems.map(item => ({
         ...item.toObject(),
-        quantity: cartData[item._id] || 0,
+        quantity: Number(cartData[item._id]) || 0,
     }))
 
     return detailedCart;

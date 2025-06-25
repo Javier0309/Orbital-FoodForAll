@@ -73,6 +73,7 @@
 }
 
 
+
 .search-bar {
   margin: 20px 0;
   display: flex;
@@ -200,6 +201,142 @@
   background-color: #d39e97;
   border-radius: 20%;
 }
+
+
+.custfooddesc{
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.custfooddesc .bg{
+  background-color: #f4c7c1;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  max-width: 800px;
+  margin: 0px auto 40px auto;
+}
+
+.custfooddesc .card-image{
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+
+.custfooddesc .business-stuff{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+  color:#3f3f3f
+}
+
+
+
+.custfooddesc .business-stuff button{
+  background-color: #a89c9b;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.custfooddesc .business-stuff button:hover{
+  background-color: #c2b8b7;
+}
+
+.custfooddesc .food-desc-content{
+  margin-bottom: 20px;
+}
+
+.custfooddesc .card-title {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.custfooddesc .card-text{
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555
+}
+
+.custfooddesc .food-qty{
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin: 20px 0;
+}
+
+.custfooddesc .food-qty p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.custfooddesc textarea{
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 14px;
+  color: #333
+}
+
+
+.custfooddesc .card-button{
+  background:rgb(244, 163, 149);
+  font-size: 20px;
+  color: rgb(0, 0, 0);
+  border: 1px solid whitesmoke;
+  padding: 14px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  width: 100%;
+  transition-property: 0.3s;
+  margin-top: 20px;
+}
+
+.custfooddesc .card-button:hover{
+  background-color: #f4c7c1;
+}
+
+
+@media screen and (max-width: 600px){
+  .custfooddesc {
+    padding: 20px;
+  }
+
+  .business-stuff{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .business-stuff button{
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .food-qty{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card-button{
+    font-size: 15px;
+  }
+}
+
+
 
 
 
