@@ -1,4 +1,3 @@
-
 import './Loginsignup.css'
 import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +10,8 @@ import user_icon from '../assets/person.png'
 import email_icon from '../assets/email.png'
 import password_icon from '../assets/password.png'
 import foodImage from '../assets/foood.jpeg'
+
+import { handleLogin, handleSignup } from '../utils/auth'; // Import helpers
 
 const Loginsignup = () => {
     const [localEmail, setLocalEmail] = useState('');
@@ -35,20 +36,34 @@ const Loginsignup = () => {
         setLoading(true);
 
         if (isLogin) {
-            const {error} = await supabase.auth.signInWithPassword({email: localEmail,password})
-            if (error) alert('Login error: ' + error.message)
-            else {
-            // Fetch the user type from user metadata
-            const { data: { user } } = await supabase.auth.getUser();
-            const storedUserType = user?.user_metadata?.userType;
-
-            alert('Logged in!')
-            if (storedUserType === 'customer') {
-                navigate('/custmain');
+            // Use the helper function
+            const { error, data } = await handleLogin(localEmail, password);
+            if (error) {
+                alert('Login error: ' + error.message);
+                setLoading(false);
             } else {
-                navigate('/busmain');
-            }
-          
+                // Fetch the user type from user metadata
+                const { user } = data;
+                const storedUserType = user?.user_metadata?.userType;
+
+                // ===== ADDED: Fetch MongoDB user by email and store _id =====
+                try {
+                    const res = await axios.get(`http://localhost:4000/api/user/by-email/${user.email}`);
+                    if (res.data.success && res.data.user) {
+                        localStorage.setItem("mongoUserId", res.data.user._id);
+                    }
+                } catch (err) {
+                    console.error("Error fetching MongoDB user:", err);
+                }
+                // ===== END ADDED =====
+
+                alert('Logged in!');
+                if (storedUserType === 'customer') {
+                    navigate('/custmain');
+                } else {
+                    navigate('/busmain');
+                }
+                setLoading(false);
             }
         }
         else {
@@ -58,24 +73,38 @@ const Loginsignup = () => {
                 return;
             }
 
-            const {error} = await supabase.auth.signUp({
-                email: localEmail,password,options: {data: {userType, name}}})
-            if (error) alert('Signup error: ' + error.message);
-            else {
-                alert('Signup successful!');
-            if (userType === 'F&B business') {
-                const res = await axios.post("http://localhost:4000/api/signup/create-business", {
-                    name, 
-                    email: localEmail,
-                }) 
-
-                if (res.data.success) {
-                    localStorage.setItem('businessId', res.data.businessId);
-                }
-                navigate('/busmain');
+            // Use your signup helper
+            const { error, data } = await handleSignup(localEmail, password, { userType, name });
+            if (error) {
+                alert('Signup error: ' + error.message);
+                setLoading(false);
             } else {
-                navigate('/custmain');
-            }
+                try {
+                    const userRes = await axios.post("http://localhost:4000/api/user/create", {
+                        email: localEmail,
+                        name,
+                        userType
+                    });
+                    if (userRes.data.success && userRes.data.userId) {
+                        localStorage.setItem("mongoUserId", userRes.data.userId);
+                    }
+                } catch (e) {
+                    console.error("Error creating MongoDB user:", e);
+                }
+                alert('Signup successful!');
+                if (userType === 'F&B business') {
+                    const res = await axios.post("http://localhost:4000/api/signup/create-business", {
+                        name, 
+                        email: localEmail,
+                    }) 
+
+                    if (res.data.success) {
+                        localStorage.setItem('businessId', res.data.businessId);
+                    }
+                    navigate('/busmain');
+                } else {
+                    navigate('/custmain');
+                }
                 setLoading(false);
             }
         }
@@ -97,15 +126,8 @@ const Loginsignup = () => {
             alert("Error sending OTP. Please try again.");
         }
     };
-    /*
-    const handleLogOut = async () => {
-        const {error} = await supabase.auth.signOut();
-        if (error) alert('Logout error: ' + error.message)
-        else alert('Logged out')
-    } */
 
     return (
-        
         <div className='container'>
             <div className="left">
                 <img src={foodImage} alt="Food"/>
@@ -152,16 +174,12 @@ const Loginsignup = () => {
             
             <div className="Forgot-password" onClick={navigateToOTP}>Forgotten your password? <span>Click here</span></div>
             <div className="submit-container">
-                <button className="submit" onClick={handleAuth}>
+                <button className="submit" onClick={handleAuth} disabled={loading}>
                     {isLogin ? 'Log In' : 'Sign Up'}
                 </button>
                 <button className="submit" onClick={() => setIsLogin(!isLogin)}>
                     {isLogin ? 'Switch to Sign Up' : 'Switch to Log In'}
                 </button>
-                {/*
-                <Link to = "/signup" className="submit">Sign Up</Link>
-                <Link to = "/custmain" className="submit">Log in</Link>
-                */}
             </div>
         </div>
         </div>

@@ -12,6 +12,9 @@ import Reset from './Component/Reset';
 import Recovered from './Component/Recovered';
 import Cart from './Component/Customer stuff/Cart';
 import Orders from './Component/Business stuff/Orders';
+import EditProfile from './Component/Business stuff/EditProfile';
+import ViewProfile from './Component/Business stuff/ViewProfile';
+
 //import { Route, Routes } from 'react-router-dom'
 
 
@@ -20,6 +23,7 @@ export const RecoveryContext = createContext();
 function App() {
   const [email, setEmail] = useState('');
   const [otp, setOTP] = useState('');
+  const userId = localStorage.getItem("userId");
 
   return (
     <>
@@ -37,6 +41,8 @@ function App() {
           <Route path="/busmain" element={<BusMain />} />
           <Route path="/busmenu" element={<Menu />} />
           <Route path="/busorders" element={<Orders />} />
+          <Route path="/edit-profile" element={<EditProfile userId={userId} />} />
+          <Route path="/view-profile" element={<ViewProfile userId={userId} />} />
         </Routes>
       </RecoveryContext.Provider>
     </>

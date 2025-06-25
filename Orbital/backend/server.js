@@ -12,6 +12,9 @@ import verifyUser from "./middleware/verifyUser.js";
 import signupRouter from "./routes/signupRoute.js";
 import busRouter from "./routes/businessRoute.js";
 import orderRoute from "./routes/orderRoute.js";
+import path from "path";
+import userRouter from "./routes/userRoute.js";
+
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -30,11 +33,14 @@ connectDB();
 
 app.use('/api/food', foodRouter);
 app.use('/api/recovery', recoveryRoutes);
-app.use('/images', express.static('uploads'));
-app.use('/api/cart',cartRouter)
-app.use('/api/signup', signupRouter)
-app.use('/api/business', busRouter)
-app.use('/api/order', orderRoute)
+// Serve all uploads (including certs and images)
+app.use('/uploads', express.static('uploads'));
+app.use('/api/cart', cartRouter);
+app.use('/api/signup', signupRouter);
+app.use('/api/business', busRouter);
+app.use('/api/order', orderRoute);
+app.use('/api/user', userRouter);
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.get("/", (req, res) => {
     res.send("API Working");
