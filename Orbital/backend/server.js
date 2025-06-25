@@ -43,10 +43,10 @@ app.use('/api/user', userRouter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.get("/", (req, res) => {
-    res.send("API Working");
+    res.send("API is running!");
 });
 
-app.listen(port, () => {
-    console.log(`Server started on http://localhost:${port}`);
+app.listen(4000, () => {
+    console.log("Server running on port 4000");
 });
 

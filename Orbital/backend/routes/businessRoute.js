@@ -19,18 +19,18 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Business profile routes
-busRouter.get('/profile/:userId', async (req, res, next) => {
-  const { userId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ success: false, message: "Invalid userId" });
+busRouter.get('/profile/:businessId', async (req, res, next) => {
+  const { businessId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(businessId)) {
+    return res.status(400).json({ success: false, message: "Invalid businessId" });
   }
   return getBusinessProfile(req, res, next);
 });
 
-busRouter.put('/profile/:userId', upload.single("hygieneCert"), async (req, res, next) => {
-  const { userId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ success: false, message: "Invalid userId" });
+busRouter.put('/profile/:businessId', upload.single("hygieneCert"), async (req, res, next) => {
+  const { businessId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(businessId)) {
+    return res.status(400).json({ success: false, message: "Invalid businessId" });
   }
   return updateBusinessProfile(req, res, next);
 });

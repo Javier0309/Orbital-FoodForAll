@@ -28,11 +28,11 @@ const updateOrderStatus = async (req,res) => {
     }
 }
 
-// GET business profile by userId
+// GET business profile by businessId
 const getBusinessProfile = async (req, res) => {
     try {
-        const {userId} = req.params;
-        const business = await businessModel.findOne({ userId });
+        const {businessId} = req.params;
+        const business = await businessModel.findById(businessId);
         if (!business) return res.status(404).json({ success: false, message: "Business not found" });
         res.json({ success: true, business });
     } catch (error) {
@@ -40,10 +40,10 @@ const getBusinessProfile = async (req, res) => {
     }
 }
 
-// PUT business profile by userId (with file upload)
+// PUT business profile by businessId (with file upload)
 const updateBusinessProfile = async (req, res) => {
     try {
-        const {userId} = req.params;
+        const {businessId} = req.params;
         let updateData = req.body;
 
         // Handle recommendedItems as array
@@ -56,10 +56,10 @@ const updateBusinessProfile = async (req, res) => {
             updateData.foodHygieneCertUrl = `/uploads/certs/${req.file.filename}`;
         }
 
-        const business = await businessModel.findOneAndUpdate(
-            { userId },
+        const business = await businessModel.findByIdAndUpdate(
+            businessId,
             updateData,
-            { new: true, upsert: true }
+            { new: true }
         );
         res.json({ success: true, business });
     } catch (error) {

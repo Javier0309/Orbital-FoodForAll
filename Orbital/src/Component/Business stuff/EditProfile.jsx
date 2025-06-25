@@ -4,7 +4,7 @@ import './EditProfile.css';
 
 function EditProfile() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
-  const mongoUserId = localStorage.getItem("mongoUserId"); // <--- Always use this!
+  const businessId = localStorage.getItem("businessId"); // Use businessId instead of mongoUserId
 
   const [form, setForm] = useState({
     name: '',
@@ -17,11 +17,11 @@ function EditProfile() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (!mongoUserId) {
-      setMessage('User ID not found. Please log in again.');
+    if (!businessId) {
+      setMessage('Business ID not found. Please log in again.');
       return;
     }
-    fetch(`${API_BASE_URL}/business/profile/${mongoUserId}`)
+    fetch(`${API_BASE_URL}/business/profile/${businessId}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -35,7 +35,7 @@ function EditProfile() {
         }
       })
       .catch(() => setMessage('Failed to load profile.'));
-  }, [API_BASE_URL, mongoUserId]);
+  }, [API_BASE_URL, businessId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,8 +52,8 @@ function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!mongoUserId) {
-      setMessage('User ID not found. Please log in again.');
+    if (!businessId) {
+      setMessage('Business ID not found. Please log in again.');
       return;
     }
     const formData = new FormData();
@@ -65,7 +65,7 @@ function EditProfile() {
     if (certFile) formData.append('hygieneCert', certFile);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/business/profile/${mongoUserId}`, {
+      const response = await fetch(`${API_BASE_URL}/business/profile/${businessId}`, {
         method: 'PUT',
         body: formData,
       });

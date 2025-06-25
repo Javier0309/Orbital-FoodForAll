@@ -95,7 +95,7 @@ const Loginsignup = () => {
                 if (userType === 'F&B business') {
                     const res = await axios.post("http://localhost:4000/api/signup/create-business", {
                         name, 
-                        email: localEmail,
+                        email: localEmail
                     }) 
 
                     if (res.data.success) {

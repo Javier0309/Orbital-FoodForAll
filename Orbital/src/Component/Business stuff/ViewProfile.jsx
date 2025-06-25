@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import BusHeader from './BusHeader';
 import './EditProfile.css';
 
 function ViewProfile() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
   const BACKEND_BASE_URL = API_BASE_URL.replace('/api', '');
-  const mongoUserId = localStorage.getItem("mongoUserId");
+  const location = useLocation();
+
+  // Use businessId from navigation state, fallback to localStorage for business users
+  const businessId = location.state?.businessId || localStorage.getItem("businessId");
+
   const [profile, setProfile] = useState(null);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (!mongoUserId) {
-      setMessage('User ID not found. Please log in again.');
+    if (!businessId) {
+      setMessage('Business ID not found. Please log in again.');
       return;
     }
-    
-    fetch(`${API_BASE_URL}/business/profile/${mongoUserId}`)
+
+    fetch(`${API_BASE_URL}/business/profile/${businessId}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -25,7 +30,7 @@ function ViewProfile() {
         }
       })
       .catch(() => setMessage('Failed to load profile.'));
-  }, [API_BASE_URL, mongoUserId]);
+  }, [API_BASE_URL, businessId]);
 
   if (message) {
     return (
@@ -61,7 +66,7 @@ function ViewProfile() {
         {/* Header Card */}
         <div className="profile-header-card">
           <div className="profile-avatar">
-            {profile.name.charAt(0).toUpperCase()}
+            {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
           </div>
           <div className="profile-header-info">
             <h1 className="profile-name">{profile.name}</h1>
@@ -116,12 +121,11 @@ function ViewProfile() {
           {/* Certificate Section */}
           <div className="profile-card profile-cert-card">
             <h3 className="profile-card-title">
-              <span className="cert-icon">🏆</span>
               Food Hygiene Certificate
             </h3>
             <div className="certificate-status">
               {profile.foodHygieneCertUrl ? (
-                <a 
+                <a
                   href={`${BACKEND_BASE_URL}${profile.foodHygieneCertUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
