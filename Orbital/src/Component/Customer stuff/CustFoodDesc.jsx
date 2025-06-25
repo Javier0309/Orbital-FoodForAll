@@ -10,19 +10,20 @@ function CustFoodDesc(){
 
     const navigate = useNavigate();
     const { state } = useLocation();
-    const [comment, setComment] = useState('')
+    const {id, name, desc, image, quantity, businessId, cookedAt, consumeBy, comment: stateComment} = state;
     const {url, cartItems, addToCart, removeFromCart} = useContext(StoreContext);
+    const [localComment, setLocalComment] = useState(cartItems[id]?.comment ?? stateComment ?? '')
+
 
     if (!state) {
         return <p>Error: No food data found</p>
     }
-    const {id, name, desc, image, quantity, businessId, cookedAt, consumeBy} = state;
     
-    const initialQty = () => (Number(cartItems[id]) || 1);
+    const initialQty = () => (Number(cartItems[id]?.quantity) || 1);
     const [localQty, setLocalQty] = useState(initialQty)
 
     useEffect(() => {
-        const qty = Number(cartItems[id] || 1);
+        const qty = Number(cartItems[id]?.quantity || 1);
         setLocalQty(qty)
     }, [cartItems, id])
 
@@ -34,7 +35,7 @@ function CustFoodDesc(){
                 <div className='bg'> 
                 <img className='card-image' src={url+"/images/"+image} alt=""/>
                 <div className='business-stuff'>
-                    <h3>{businessId?.name}</h3>
+                    <h3>{businessId?.name}'s</h3>
                     <button>View Restaurant</button>
                 </div>
             
@@ -55,10 +56,11 @@ function CustFoodDesc(){
                     </div>
 
                     <label htmlFor="comment">Add a note to the restaurant</label>
-                    <textarea id='comment' placeholder='e.g. No onions' value={comment} onChange={(e) => setComment(e.target.value)} rows={3}
+                    <textarea id='comment' placeholder='e.g. No onions' value={localComment} onChange={(e) => setLocalComment(e.target.value)} rows={3}
                         style={{width: "100%", padding: "18px", marginTop: "8px"}}/>
+                        
                     <button className='card-button' onClick={() => {
-                        const alreadyInCart = cartItems[id] || 0
+                        const alreadyInCart = cartItems[id]?.quantity || 0
                         const totalRequested = localQty;
 
                         if (totalRequested > quantity) {
@@ -66,20 +68,32 @@ function CustFoodDesc(){
                             return;
                         }
 
-                        const safeQtyToAdd = totalRequested - alreadyInCart
-                        if (safeQtyToAdd > 0){
+                        if (alreadyInCart === totalRequested) {
+                            addToCart(id, localComment)
+                            removeFromCart(id)
+                            alert("Basket updated")
+                            return;
+                        }
+
+                        if (totalRequested > alreadyInCart) {
+                            const safeQtyToAdd = totalRequested - alreadyInCart;
                             for (let i = 0; i < safeQtyToAdd; i++){
-                                addToCart(id)
+                                addToCart(id, localComment)
                             }
                             alert("Item(s) added to basket")
-                        } else if (safeQtyToAdd === 0) {
-                            alert("This quantity is already in your basket")
+                            return
+                        }
 
-                        } else {
-                            alert("Please reduce the quantity to add to basket")
+                        if (totalRequested < alreadyInCart) {
+                            const safeQtyToRemove = alreadyInCart - totalRequested;
+                            for (let i = 0; i < safeQtyToRemove; i++){
+                                removeFromCart(id)
+                            }
+                            alert("Item(s) removed from basket")
+                            return;
                         }
                     }
-                    }>Add to basket</button>
+                    }>Update basket</button>
                 </div>
             </div>
             

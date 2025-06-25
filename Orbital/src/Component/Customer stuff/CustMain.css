@@ -101,6 +101,7 @@
   position: relative;
   text-align: center;
   width: 100%;
+  height: 260px;
   max-width: 200px;
   overflow: hidden;
   display: inline-block;
@@ -120,6 +121,9 @@
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   margin: 0;
   font-size: 1.5em;
+  height: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .foodcard .content .card-text{

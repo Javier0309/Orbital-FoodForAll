@@ -7,7 +7,7 @@ import { getFullCartItems } from '../utils/cartUtils.js';
 const addToCart = async (req, res) => {
     try {
         const {email} = req.user;
-        const {itemId} = req.body;
+        const {itemId, comment} = req.body;
 
         // Check if food item exists and has sufficient quantity
         const foodItem = await foodModel.findById(itemId);
@@ -17,29 +17,22 @@ const addToCart = async (req, res) => {
 
         let user = await userModel.findOne({email: req.user.email});
         if (!user){
-            user = await userModel.create({
-                email: req.user.email,
-                cartData: {}
-            })
+            user = await userModel.create({email: req.user.email, cartData: {}})
         }
 
         const cart = user.cartData || {};
-        const currentCartQuantity = cart[itemId] || 0;
-        const newQuantity = currentCartQuantity + 1;
+        const currentCartQuantity = cart[itemId]?.quantity || 0;
 
         // Check if adding this item would exceed available quantity
-        if (newQuantity > foodItem.quantity) {
-            return res.status(400).json({
-                success: false, 
-                message: `Cannot add more items. Only ${foodItem.quantity} available.`
-            });
+        if (currentCartQuantity + 1 > foodItem.quantity) {
+            return res.status(400).json({success: false, message: `Cannot add more items. Only ${foodItem.quantity} available.`});
         }
 
-        cart[itemId] = newQuantity;
+        cart[itemId] = {quantity: currentCartQuantity + 1, comment: comment || cart[itemId]?.comment || ''};
 
         await userModel.updateOne({email}, {cartData: cart})
-
         res.json({success: true, message:"Item added to cart"})
+
     } catch (error) {
         console.error("Add to cart error:", error);
         res.status(500).json({success:false, message:"Error adding to cart"})
@@ -63,9 +56,9 @@ const removeFromCart = async (req, res) => {
 
         const cart = user.cartData || {};
 
-        if (cart[itemId]) {
-            if (cart[itemId] > 1){
-                cart[itemId] -= 1;
+        if (cart[itemId]?.quantity) {
+            if (cart[itemId]?.quantity > 1){
+                cart[itemId].quantity -= 1;
             } else {
                 delete cart[itemId];
             }

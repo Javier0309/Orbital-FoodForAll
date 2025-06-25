@@ -7,7 +7,8 @@ const orderSchema = new mongoose.Schema({
        foodId: { type: mongoose.Schema.Types.ObjectId, ref: 'foods'},
        name: String,
        quantity: Number,
-       image: String 
+       image: String,
+       comment: String, 
     }],
     status: { type: String, default: 'pending'},
     createdAt: { type: Date, default: Date.now}

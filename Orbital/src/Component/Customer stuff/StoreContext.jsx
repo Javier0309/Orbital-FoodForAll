@@ -7,15 +7,15 @@ export const StoreContext = createContext(null)
 const StoreContextProvider = (props) => {
 
     const [cartItems, setCartItems] = useState({});
-    const addToCart = async (itemId) => {
+    const addToCart = async (itemId, comment) => {
         try {
                 const session = await supabase.auth.getSession();
                 const token = session.data.session.access_token;
 
-                const res = await axios.post(url + "/api/cart/add", {itemId}, {headers: {Authorization: `Bearer ${token}`}});
+                const res = await axios.post(url + "/api/cart/add", {itemId, comment}, {headers: {Authorization: `Bearer ${token}`}});
 
             if (res.data.success) {
-                setCartItems (prev => ({...prev, [itemId]: (prev[itemId] || 0) + 1}))
+                setCartItems (prev => ({...prev, [itemId]: {quantity: (prev[itemId]?.quantity || 0) + 1, comment: comment || (prev[itemId]?.comment ?? "")}}))
             }
         } catch (error) {
             console.error("Error adding to cart:", error)
@@ -38,8 +38,8 @@ const StoreContextProvider = (props) => {
             if (res.data.success) {
                 setCartItems (prev => {
                     const updated = {...prev}; 
-                    if (updated[itemId] > 1) {
-                        updated[itemId] -= 1;
+                    if (updated[itemId]?.quantity > 1) {
+                        updated[itemId].quantity -= 1;
                     } else {
                         delete updated[itemId];
                     }

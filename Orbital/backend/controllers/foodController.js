@@ -13,6 +13,7 @@ const addFood = async (req,res) => {
         image: image_filename,
         cookedAt: new Date(req.body.cookedAt),
         consumeBy: new Date(req.body.consumeBy),
+        comment: req.body.comment,
         businessId: req.body.businessId
 
     })
