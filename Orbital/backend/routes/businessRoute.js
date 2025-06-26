@@ -39,18 +39,22 @@ busRouter.get('/profile/:userId', async (req, res, next) => {
   return getBusinessProfile(req, res, next);
 });
 
-// Support multiple cert uploads: hygieneCert, businessLicense, halalCert
-busRouter.put(
-  '/profile/:userId', 
-  upload.fields([
-    { name: "hygieneCert", maxCount: 1 },
-    { name: "businessLicense", maxCount: 1 },
-    { name: "halalCert", maxCount: 1 }
-  ]),
-  async (req, res, next) => {
-    const { userId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid userId" });
+busRouter.put('/profile/:businessId', upload.fields([{name: 'hygieneCert'}, {name: 'businessLicense'}, {name: 'halalCert'}]), async (req, res, next) => {
+  const { businessId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(businessId)) {
+    return res.status(400).json({ success: false, message: "Invalid businessId" });
+  }
+  return updateBusinessProfile(req, res, next);
+});
+
+busRouter.get('/business-by-email/:email', async (req, res) => {
+  try {
+    const Business = (await import('../models/businessModel.js')).default;
+    const business = await Business.findOne({ email: req.params.email });
+    if (business) {
+      res.json({ success: true, business });
+    } else {
+      res.json({ success: false, message: "Business not found" });
     }
     return updateBusinessProfile(req, res, next);
   }

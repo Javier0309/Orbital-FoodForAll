@@ -14,6 +14,7 @@ import Cart from './Component/Customer stuff/Cart';
 import Orders from './Component/Business stuff/Orders';
 import EditProfile from './Component/Business stuff/EditProfile';
 import ViewProfile from './Component/Business stuff/ViewProfile';
+import AwaitingVerification from './Component/AwaitingVerification';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -43,6 +44,8 @@ function App() {
           <Route path="/busorders" element={<Orders />} />
           <Route path="/edit-profile" element={<EditProfile userId={userId} />} />
           <Route path="/view-profile" element={<ViewProfile userId={userId} />} />
+          <Route path='/awaiting-verification' element={<AwaitingVerification />} />
+
         </Routes>
       </RecoveryContext.Provider>
     </>

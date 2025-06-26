@@ -22,6 +22,54 @@ const Loginsignup = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
     const { setOTP, setEmail } = useContext(RecoveryContext);
+    const [address, setAddress] = useState('');
+    const [files, setFiles] = useState({
+        businessLicense: null,
+        hygieneCert: null,
+        halalCert: null
+    });
+    const businessId = localStorage.getItem('businessId');
+    const [form, setForm] = useState({
+        name: '',
+        about: '',
+        address: '',
+      });
+
+  const handleFileChange = (fileType, file) => {
+    setFiles(prev => ({ ...prev, [fileType]: file }));
+  };
+
+    const FileUploadBox = ({ label, fileType, required = false, note = null }) => (
+    <div className="file-upload-section">
+      <label className="file-upload-label">
+        {label} {required && <span className="required">*</span>}
+        {note && <span className="note">{note}</span>}
+      </label>
+      <div 
+        className={`file-upload-box ${files[fileType] ? 'has-file' : ''}`}
+        onClick={() => document.getElementById(fileType).click()}
+      >
+        <input
+          id={fileType}
+          type="file"
+          accept="application/pdf,image/*"
+          onChange={(e) => handleFileChange(fileType, e.target.files[0])}
+          style={{ display: 'none' }}
+        />
+        {files[fileType] ? (
+          <div className="file-info">
+            <div className="file-icon">📄</div>
+            <div className="file-name">{files[fileType].name}</div>
+          </div>
+        ) : (
+          <div className="upload-placeholder">
+            <div className="upload-icon">🖼️</div>
+            <div className="upload-text">Click to upload</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
     const handleUserTypeChange = (event) => {
         setUserType(event.target.value);
@@ -32,7 +80,6 @@ const Loginsignup = () => {
             alert('Please enter email and password');
             return;
         }
-
         setLoading(true);
 
         if (isLogin) {
@@ -79,7 +126,15 @@ const Loginsignup = () => {
                         setLoading(false);
                         return;
                     }
-                    navigate('/busmain');
+                    const businessId = localStorage.getItem('businessId');
+                    if (!businessId) return;
+                    const res = await axios.get(`http://localhost:4000/api/signup/business-by-email/${localStorage.getItem('email')}`)
+
+                    if (res.data.success && res.data.business?.isVerified) {
+                        navigate("/busmain")
+                    } else {
+                    navigate('/awaiting-verification');
+                    }
                 } else {
                     navigate('/busmain');
                 }
@@ -98,41 +153,66 @@ const Loginsignup = () => {
             if (error) {
                 alert('Signup error: ' + error.message);
                 setLoading(false);
-            } else {
-                try {
-                    const userRes = await axios.post("http://localhost:4000/api/user/create", {
-                        email: localEmail,
-                        name,
-                        userType
-                    });
-                    if (userRes.data.success && userRes.data.userId) {
-                        localStorage.setItem("mongoUserId", userRes.data.userId);
-                    }
-                } catch (e) {
-                    console.error("Error creating MongoDB user:", e);
+                return
+            }
+            try {
+                const userRes = await axios.post("http://localhost:4000/api/user/create", {
+                    email: localEmail,
+                    name,
+                    userType,
+                    address,
+                });
+
+                if (!userRes.data.success || !userRes.data.userId){
+                    alert("Failed to create user in database");
+                    setLoading(false);
+                    return;
                 }
-                alert('Signup successful!');
+
+                const userId = userRes.data.userId;
+                localStorage.setItem("mongoUserId", userId)
+
+                
                 if (userType === 'F&B business') {
-                    const res = await axios.post("http://localhost:4000/api/signup/create-business", {
-                        name, 
-                        email: localEmail
-                    });
+                    const formData = new FormData();
+                    formData.append('name', name);
+                    formData.append('email', localEmail);
+                    formData.append('address', address);
+                    formData.append('userId', userId);
+                    
+                    // Add files if they exist
+                    if (files.businessLicense) formData.append('businessLicense', files.businessLicense);
+                    if (files.hygieneCert) formData.append('hygieneCert', files.hygieneCert);
+                    if (files.halalCert) formData.append('halalCert', files.halalCert);
+
+                    const res = await axios.post("http://localhost:4000/api/signup/create-business",
+                        formData, { headers: {"Content-Type" : "multipart/form-data"} }
+                    );
 
                     if (res.data.success && res.data.businessId) {
                         localStorage.setItem('businessId', res.data.businessId);
+                        localStorage.setItem('email', localEmail)
+                        alert('Signup successful');
+                        navigate('/awaiting-verification')
                     } else {
-                        localStorage.removeItem("businessId");
-                        alert("Failed to create business profile. Please try again or contact support.");
-                        setLoading(false);
-                        return;
+                        localStorage.removeItem("businessId")
+                        alert('Failed to create business profile')
+                        setLoading(false)
+                        return
                     }
-                    navigate('/busmain');
+
                 } else {
+                    alert('Signup successful')
                     navigate('/custmain');
                 }
                 setLoading(false);
+            } catch (error) {
+                console.error('Error during user creation', error);
+                alert('Signup failed. Please try again')
             }
-        }
+
+            setLoading(false)
+        } 
     };
 
     const navigateToOTP = async () => {
@@ -163,11 +243,6 @@ const Loginsignup = () => {
                 <div className="underline"></div>
             </div>
             <div className="inputs">
-                {!isLogin && (
-                <div className="input">
-                    <img src={user_icon} alt="" />
-                    <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
-                </div> )}
 
                 {!isLogin && (
                     <div className="input">
@@ -184,6 +259,29 @@ const Loginsignup = () => {
                             <option value="rider">Rider</option>
                         </select>
                     </div>
+                )}
+
+                {!isLogin && userType !== 'F&B business' &&(
+                <div className="input">
+                    <img src={user_icon} alt="" />
+                    <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
+                </div> )}
+
+                {!isLogin && userType === 'F&B business' && (
+                    <>
+                        <div className='input'>
+                            <input type='text' placeholder='Business Name' value={name} onChange={(e) => setName(e.target.value)}/>
+                        </div>
+
+                        <div className='input'>
+                            <input type='text' placeholder='Address of Shop' value={address} onChange={(e) => setAddress(e.target.value)}/>
+                        </div>
+
+                        <FileUploadBox label="BUSINESS LICENSE" fileType="businessLicense"/>
+                        <FileUploadBox label="RELEVANT HYGIENE CERTIFICATES" fileType="hygieneCert"/>
+                        <FileUploadBox label="HALAL CERTIFICATION" fileType="halalCert" note="if applicable"/>
+                        
+                    </>
                 )}
 
                 <div className="input">
@@ -212,3 +310,4 @@ const Loginsignup = () => {
 }
 
 export default Loginsignup
+

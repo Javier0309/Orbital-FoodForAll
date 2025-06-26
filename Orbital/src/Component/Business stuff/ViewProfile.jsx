@@ -10,6 +10,7 @@ function ViewProfile() {
 
   // Use businessId from navigation state, fallback to localStorage for business users
   const businessId = location.state?.businessId || localStorage.getItem("businessId");
+  const updatedAt = location.state?.updatedAt;
 
   const [profile, setProfile] = useState(null);
   const [message, setMessage] = useState('');
@@ -30,7 +31,7 @@ function ViewProfile() {
         }
       })
       .catch(() => setMessage('Failed to load profile.'));
-  }, [API_BASE_URL, businessId]);
+  }, [API_BASE_URL, businessId, updatedAt]);
 
   if (message) {
     return (
@@ -98,7 +99,7 @@ function ViewProfile() {
             </div>
           </div>
 
-          {/* Recommended Items Section */}
+          {/* Recommended Items Section 
           <div className="profile-card profile-items-card">
             <h3 className="profile-card-title">
               <span className="star-icon">⭐</span>
@@ -116,7 +117,7 @@ function ViewProfile() {
                 <div className="no-items">No recommended items listed</div>
               )}
             </div>
-          </div>
+          </div> */}
 
           {/* Certificate Section */}
           <div className="profile-card profile-cert-card">
@@ -124,9 +125,9 @@ function ViewProfile() {
               Food Hygiene Certificate
             </h3>
             <div className="certificate-status">
-              {profile.foodHygieneCertUrl ? (
+              {profile.hygieneCertUrl ? (
                 <a
-                  href={`${BACKEND_BASE_URL}${profile.foodHygieneCertUrl}`}
+                  href={`${BACKEND_BASE_URL}${profile.hygieneCertUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cert-link"

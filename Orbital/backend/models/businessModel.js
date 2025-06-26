@@ -1,14 +1,18 @@
 import mongoose from "mongoose";
 
 const businessSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true, ref: 'User'},
     name: { type: String, required: true },
     yearEstablished: { type: Number },
     about: { type: String },
     address: { type: String },
-    foodHygieneCertUrl: { type: String },
+    hygieneCertUrl: { type: String },
+    businessLicenseUrl: { type: String },
+    halalCertUrl: { type: String },
     recommendedItems: [{ type: String }],
     email: { type: String, required: true, unique: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    isVerified: {type:Boolean, default: false},
 });
 
 const businessModel = mongoose.models.business || mongoose.model("Business", businessSchema)

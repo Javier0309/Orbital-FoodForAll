@@ -6,7 +6,7 @@ const restaurantSchema = new mongoose.Schema({
   yearEstablished: { type: Number },
   about: { type: String },
   address: { type: String },
-  foodHygieneCertUrl: { type: String },
+  hygieneCertUrl: { type: String },
   recommendedItems: [{ type: String }],
 });
 
