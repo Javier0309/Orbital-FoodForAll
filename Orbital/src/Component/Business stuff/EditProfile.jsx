@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import BusHeader from './BusHeader';
 import './EditProfile.css';
 
 function EditProfile() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
-  const businessId = localStorage.getItem("businessId"); // Use businessId instead of mongoUserId
+  const mongoUserId = localStorage.getItem("mongoUserId"); // <--- Always use this!
+  const location = useLocation();
+  const errorFromState = location.state?.error;
 
   const [form, setForm] = useState({
     name: '',
-    yearEstablished: '',
     about: '',
     address: '',
-    recommendedItems: [''],
   });
-  const [certFile, setCertFile] = useState(null);
+  
+  const [files, setFiles] = useState({
+    businessLicense: null,
+    hygieneCert: null,
+    halalCert: null
+  });
+  
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!businessId) {
@@ -27,10 +35,8 @@ function EditProfile() {
         if (data.success) {
           setForm({
             name: data.business.name || '',
-            yearEstablished: data.business.yearEstablished || '',
             about: data.business.about || '',
             address: data.business.address || '',
-            recommendedItems: data.business.recommendedItems?.length > 0 ? data.business.recommendedItems : [''],
           });
         }
       })
@@ -42,13 +48,9 @@ function EditProfile() {
     setForm(f => ({ ...f, [name]: value }));
   };
 
-  const handleItemsChange = (idx, value) => {
-    const items = [...form.recommendedItems];
-    items[idx] = value;
-    setForm(f => ({ ...f, recommendedItems: items }));
+  const handleFileChange = (fileType, file) => {
+    setFiles(prev => ({ ...prev, [fileType]: file }));
   };
-
-  const addItem = () => setForm(f => ({ ...f, recommendedItems: [...f.recommendedItems, ''] }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,13 +58,17 @@ function EditProfile() {
       setMessage('Business ID not found. Please log in again.');
       return;
     }
+    
+    setIsLoading(true);
     const formData = new FormData();
     formData.append('name', form.name);
-    formData.append('yearEstablished', form.yearEstablished);
     formData.append('about', form.about);
     formData.append('address', form.address);
-    formData.append('recommendedItems', form.recommendedItems.join(','));
-    if (certFile) formData.append('hygieneCert', certFile);
+    
+    // Add files if they exist
+    if (files.businessLicense) formData.append('businessLicense', files.businessLicense);
+    if (files.hygieneCert) formData.append('hygieneCert', files.hygieneCert);
+    if (files.halalCert) formData.append('halalCert', files.halalCert);
 
     try {
       const response = await fetch(`${API_BASE_URL}/business/profile/${businessId}`, {
@@ -72,87 +78,132 @@ function EditProfile() {
 
       const data = await response.json();
       if (data.success) {
-        setMessage('Profile updated!');
+        setMessage('Profile updated successfully!');
       } else {
         setMessage('Update failed.');
       }
     } catch {
       setMessage('Update failed due to network error.');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const FileUploadBox = ({ label, fileType, required = false, note = null }) => (
+    <div className="file-upload-section">
+      <label className="file-upload-label">
+        {label} {required && <span className="required">*</span>}
+        {note && <span className="note">{note}</span>}
+      </label>
+      <div 
+        className={`file-upload-box ${files[fileType] ? 'has-file' : ''}`}
+        onClick={() => document.getElementById(fileType).click()}
+      >
+        <input
+          id={fileType}
+          type="file"
+          accept="application/pdf,image/*"
+          onChange={(e) => handleFileChange(fileType, e.target.files[0])}
+          style={{ display: 'none' }}
+        />
+        {files[fileType] ? (
+          <div className="file-info">
+            <div className="file-icon">📄</div>
+            <div className="file-name">{files[fileType].name}</div>
+          </div>
+        ) : (
+          <div className="upload-placeholder">
+            <div className="upload-icon">🖼️</div>
+            <div className="upload-text">Click to upload</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="edit-profile-bg">
       <BusHeader />
       <div className="edit-profile-container">
-        <h2>Edit Business Profile</h2>
-        {message && <div className="edit-profile-message">{message}</div>}
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <div className="row-flex">
-            <div className="input-group">
-              <label>Name:</label>
-              <input
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="input-group small">
-              <label>Year Established:</label>
-              <input
-                name="yearEstablished"
-                value={form.yearEstablished}
-                onChange={handleChange}
-                type="number"
-              />
-            </div>
+        <div className="edit-profile-header">
+          <h1>FOODFORALL</h1>
+          <h2>Edit Business Profile</h2>
+        </div>
+        
+        {(errorFromState || message) && (
+          <div className="edit-profile-message error">
+            {errorFromState || message}
           </div>
-          <div>
-            <label>About:</label>
+        )}
+        
+        <form onSubmit={handleSubmit} className="edit-profile-form">
+          <div className="form-section">
+            <label className="form-label">
+              WHAT IS THE NAME OF YOUR RESTAURANT? <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Add your restaurant name"
+              className="form-input"
+              required
+            />
+          </div>
+
+          <div className="form-section">
+            <label className="form-label">
+              ADDRESS <span className="required">*</span>
+            </label>
+            <textarea
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              placeholder="Add your restaurant address"
+              className="form-textarea"
+              rows="3"
+              required
+            />
+          </div>
+
+          <div className="form-section">
+            <label className="form-label">
+              ABOUT YOUR RESTAURANT
+            </label>
             <textarea
               name="about"
               value={form.about}
               onChange={handleChange}
-              rows={6}
+              placeholder="Tell us about your restaurant..."
+              className="form-textarea"
+              rows="4"
             />
           </div>
-          <div>
-            <label>Address:</label>
-            <input
-              type="text"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-              autoComplete="off"
-            />
-          </div>
-          <div>
-            <label>Recommended Items:</label>
-            <div className="recommended-items-group">
-              {form.recommendedItems.map((item, idx) => (
-                <input
-                  key={idx}
-                  value={item}
-                  onChange={e => handleItemsChange(idx, e.target.value)}
-                  placeholder={`Item #${idx + 1}`}
-                />
-              ))}
-            </div>
-            <button type="button" onClick={addItem}>Add Item</button>
-          </div>
-          <div>
-            <label>Food Hygiene Certificate:</label>
-            <div className="file-label-row">
-              <input
-                type="file"
-                accept="application/pdf,image/*"
-                onChange={e => setCertFile(e.target.files[0])}
-              />
-              {certFile && <span className="file-selected">{certFile.name}</span>}
-            </div>
-          </div>
-          <button type="submit">Save</button>
+
+          <FileUploadBox 
+            label="BUSINESS LICENSE" 
+            fileType="businessLicense"
+          />
+
+          <FileUploadBox 
+            label="RELEVANT HYGIENE CERTIFICATES" 
+            fileType="hygieneCert"
+          />
+
+          <FileUploadBox 
+            label="HALAL CERTIFICATION" 
+            fileType="halalCert" 
+            note="if applicable"
+          />
+
+          <button 
+            type="submit" 
+            className="submit-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'UPDATING...' : 'UPDATE PROFILE'}
+          </button>
         </form>
       </div>
     </div>

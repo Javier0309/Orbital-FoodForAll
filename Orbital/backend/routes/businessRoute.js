@@ -8,6 +8,11 @@ import { getBusinessProfile, updateBusinessProfile } from '../controllers/busine
 
 const busRouter = express.Router();
 
+busRouter.post('/openOrClosed', openOrClosed)
+busRouter.get('/status/:id', getOpenOrClosed)
+busRouter.get('/orders/:businessId', getOrdersForBusiness)
+busRouter.patch('/orders/:orderId/status', updateOrderStatus)
+
 const certsDir = path.join('uploads', 'certs');
 if (!fs.existsSync(certsDir)) {
     fs.mkdirSync(certsDir, { recursive: true });
