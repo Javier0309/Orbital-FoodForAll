@@ -1,36 +1,10 @@
 import orderModel from "../models/orderModel.js";
 import businessModel from "../models/businessModel.js";
 import mongoose from "mongoose";
-import { isProfileComplete } from "../utils/checkProfileComplete.js";
+//import { isProfileComplete } from "../utils/checkProfileComplete.js";
 
-// Open or closed
-const openOrClosed = async (req, res) => {
-    const { businessId, isOpen } = req.body;
 
-    try {
-        await businessModel.findByIdAndUpdate(businessId, { isOpen });
-        res.json({ success: true, message: `Shop is now ${isOpen ? 'open' : 'closed'}` });
-    } catch (error) {
-        console.error(error);
-        res.json({ success: false, message: 'Failed to update shop status' });
-    }
-};
-
-const getOpenOrClosed = async (req, res) => {
-    try {
-        const business = await businessModel.findById(req.params.id).select('isOpen');
-        if (business) {
-            res.json({ success: true, isOpen: business.isOpen });
-        } else {
-            res.json({ success: false, message: 'Shop not found' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.json({ success: false, message: 'Failed to fetch shop status' });
-    }
-};
-
-// POST: Set business open/closed status
+// POST: Set business open/closed status (using businessId)
 const openOrClosed = async (req, res) => {
     const { businessId, isOpen } = req.body;
     if (!mongoose.Types.ObjectId.isValid(businessId)) {
@@ -45,49 +19,33 @@ const openOrClosed = async (req, res) => {
     }
 };
 
-// GET: Get open/closed status
+// GET: Get open/closed status (using businessId as param)
 const getOpenOrClosed = async (req, res) => {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ success: false, message: "Invalid businessId" });
-    }
-    try {
-        const business = await businessModel.findById(id).select('isOpen');
-        if (business) {
-            res.json({ success: true, isOpen: business.isOpen });
-        } else {
-            res.json({ success: false, message: 'Shop not found' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.json({ success: false, message: 'Failed to fetch shop status' });
-    }
-};
-
-// GET: Orders for a specific business
-const getOrdersForBusiness = async (req, res) => {
     const { businessId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(businessId)) {
         return res.status(400).json({ success: false, message: "Invalid businessId" });
     }
     try {
-        const {businessId} = req.params;
-        const orders = await orderModel.find({businessId});
-        res.json({success: true, orders})
+        const business = await businessModel.findById(businessId).select('isOpen');
+        if (business) {
+            res.json({ success: true, isOpen: business.isOpen });
+        } else {
+            res.json({ success: false, message: 'Shop not found' });
+        }
     } catch (error) {
-        console.error("Error fetching orders:", error);
-        res.status(500).json({ success: false, message: "Error fetching orders" });
+        console.error(error);
+        res.json({ success: false, message: 'Failed to fetch shop status' });
     }
 };
 
 // PATCH to update order status 
-const updateOrderStatus = async (req,res) => {
+const updateOrderStatus = async (req, res) => {
     try {
-        const {orderId} = req.params;
-        const {status} = req.body;
+        const { orderId } = req.params;
+        const { status } = req.body;
 
-        await orderModel.findByIdAndUpdate(orderId, {status})
-        res.json({success: true, message: "Order status updated"})
+        await orderModel.findByIdAndUpdate(orderId, { status });
+        res.json({ success: true, message: "Order status updated" });
     } catch (error) {
         console.error("Error updating order status:", error);
         res.status(500).json({ success: false, message: "Error updating status" });
@@ -101,23 +59,34 @@ const getBusinessProfile = async (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid businessId" });
     }
     try {
-        const {userId} = req.params;
-        const business = await businessModel.findOne({ userId });
+        const business = await businessModel.findById(businessId);
         if (!business) return res.status(404).json({ success: false, message: "Business not found" });
         res.json({ success: true, business });
     } catch (error) {
-      res.status(500).json({ success: false, message: "Error fetching business profile" });
+        res.status(500).json({ success: false, message: "Error fetching business profile" });
     }
-}
+};
 
-// PUT business profile by userId (with file upload)
+const getOrdersForBusiness = async (req, res) => {
+    const { businessId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(businessId)) {
+      return res.status(400).json({ success: false, message: "Invalid businessId" });
+    }
+    try {
+      const orders = await orderModel.find({ businessId });
+      res.json({ success: true, orders });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Error fetching orders" });
+    }
+  };
+
+// PUT business profile by businessId (with file upload)
 const updateBusinessProfile = async (req, res) => {
     const { businessId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(businessId)) {
         return res.status(400).json({ success: false, message: "Invalid businessId" });
     }
     try {
-        const {userId} = req.params;
         let updateData = req.body;
 
         // Handle recommendedItems as array
@@ -154,8 +123,10 @@ const updateBusinessProfile = async (req, res) => {
 };
 
 export { 
-    getOrdersForBusiness, 
+    openOrClosed, 
+    getOpenOrClosed, 
     updateOrderStatus, 
     getBusinessProfile, 
-    updateBusinessProfile 
-}
+    updateBusinessProfile,
+    getOrdersForBusiness
+};
