@@ -21,11 +21,16 @@ cd Orbital-FoodForAll
 ```
 
 ### 3. Run the project locally
-To run the app in development mode, use the following command: 
+To run the app in development mode, use the following command to run the project on the frontend: 
 
 ```bash
 npm run dev
 ```
 
+Next, open a separate terminal and use the following command to run the project on its backend
+```bash
+cd backend
+npm run server
+```
 ### This will start the devlopment server and the website will be available at the shown local host
 
