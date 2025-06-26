@@ -1,3 +1,4 @@
+import { getOpenOrClosed, getOrdersForBusiness, openOrClosed, updateOrderStatus } from '../controllers/businessController.js';
 import express from 'express';
 import multer from "multer";
 import path from "path";
@@ -6,6 +7,11 @@ import mongoose from "mongoose";
 import { getBusinessProfile, updateBusinessProfile } from '../controllers/businessController.js';
 
 const busRouter = express.Router();
+
+busRouter.post('/openOrClosed', openOrClosed)
+busRouter.get('/status/:id', getOpenOrClosed)
+busRouter.get('/orders/:businessId', getOrdersForBusiness)
+busRouter.patch('/orders/:orderId/status', updateOrderStatus)
 
 const certsDir = path.join('uploads', 'certs');
 if (!fs.existsSync(certsDir)) {
