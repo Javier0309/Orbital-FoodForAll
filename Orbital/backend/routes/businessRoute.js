@@ -37,7 +37,7 @@ busRouter.get('/profile/:businessId', async (req, res, next) => {
   return getBusinessProfile(req, res, next);
 });
 
-busRouter.put('/profile/:businessId', upload.single("hygieneCert"), async (req, res, next) => {
+busRouter.put('/profile/:businessId', upload.fields([{name: 'hygieneCert'}, {name: 'businessLicense'}, {name: 'halalCert'}]), async (req, res, next) => {
   const { businessId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(businessId)) {
     return res.status(400).json({ success: false, message: "Invalid businessId" });

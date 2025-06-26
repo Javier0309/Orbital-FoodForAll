@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BusHeader from './BusHeader';
 import './EditProfile.css';
 
 function EditProfile() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
-  const mongoUserId = localStorage.getItem("mongoUserId"); // <--- Always use this!
+  const businessId = localStorage.getItem("businessId"); // <--- Always use this!
   const location = useLocation();
+  const navigate = useNavigate();
   const errorFromState = location.state?.error;
 
   const [form, setForm] = useState({
@@ -79,6 +80,7 @@ function EditProfile() {
       const data = await response.json();
       if (data.success) {
         setMessage('Profile updated successfully!');
+        navigate('/view-profile', {state: {businessId}})
       } else {
         setMessage('Update failed.');
       }

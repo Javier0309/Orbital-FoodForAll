@@ -2,11 +2,11 @@ const Restaurant = require('../models/restaurantModel');
 
 // Edit (create/update) profile
 exports.editProfile = async (req, res) => {
-  const { name, yearEstablished, about, address, recommendedItems, foodHygieneCertUrl } = req.body;
+  const { name, yearEstablished, about, address, recommendedItems, hygieneCertUrl } = req.body;
   const userId = req.user._id; // assuming JWT middleware sets req.user
 
   try {
-    const update = { name, yearEstablished, about, address, recommendedItems, foodHygieneCertUrl };
+    const update = { name, yearEstablished, about, address, recommendedItems, hygieneCertUrl };
     const profile = await Restaurant.findOneAndUpdate(
       { userId },
       update,

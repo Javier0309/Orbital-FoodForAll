@@ -17,12 +17,10 @@ function BusHeader() {
     const businessId = localStorage.getItem("businessId")
 
     useEffect(() => {
-         console.log("➡️ Fetching business open status…", businessId);
         const fetchStatus = async () => {
             try {
                 const res = await axios.get(`http://localhost:4000/api/business/status/${businessId}`)
                 if (res.data.success) {
-                    console.log("Setting toggle:", res.data.isOpen);
                     setToggle(res.data.isOpen);
                 }
             } catch (error) {
@@ -57,10 +55,10 @@ function BusHeader() {
                     className='': not underlined because not clicked
                     setMenu will decide whether it is underlined or not
                 eg. when i click on about, about will be underlined*/}
-                <li onClick={()=>{navigate("/busmain");setMenu("home")}} className={menu==="home"?"active":""}>Home</li>
+                <li onClick={()=>{navigate("/busmain"); setMenu("home")}} className={menu==="home"?"active":""}>Home</li>
                 <li onClick={()=>setMenu("edit-menu")} className={menu==="edit-menu"?"active":""}>Edit Menu</li>
-                <li onClick={()=>{navigate("/edit-profile"); setMenu("edit-profile")}} className={menu==="edit-profile"?"active":""}>Edit Profile</li>  
-                <li onClick={()=>{navigate("/view-profile"); setMenu("view-profile")}} className={menu==="view-profile"?"active":""}>View Profile</li>
+                <li onClick={()=>{navigate("/edit-profile");setMenu("edit-profile")}} className={menu==="edit-profile"?"active":""}>Edit Profile</li>
+                <li onClick={()=>{navigate("/view-profile");setMenu("view-profile")}} className={menu==="view-profile"?"active":""}>View Profile</li>
                 <li onClick={()=>setMenu("order-history")} className={menu==="order-history"?"active":""}>Order History</li>
                 <li onClick={()=>setMenu("reviews")} className={menu==="reviews"?"active":""}>Reviews</li>
                 <li onClick={()=>setMenu("about")} className={menu==="about"?"active":""}>About</li>
