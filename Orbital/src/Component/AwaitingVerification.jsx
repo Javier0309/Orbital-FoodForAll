@@ -5,30 +5,43 @@ import axios from 'axios';
 
 function AwaitingVerification(){
     const navigate = useNavigate();
-    const businessId = localStorage.getItem('businessId');
+    const email = localStorage.getItem('email');
+    const userType = localStorage.getItem('userType');
 
     useEffect(() => {
+        if (!email || !userType ){
+            console.warn('Missing email or userType')
+            return
+        }
+
         const interval = setInterval(async () => {
             try {
-                if (!businessId) return;
-                const res = await axios.get(`http://localhost:4000/api/signup/business-by-email/${localStorage.getItem('email')}`)
-                if (res.data.success && res.data.business?.isVerified) {
+                const normalizedType = userType === 'F&B business' ? 'business' : 'customer'
+                const url = normalizedType === 'business' 
+                ? `http://localhost:4000/api/signup/business-by-email/${localStorage.getItem('email')}`
+                : `http://localhost:4000/api/signup/customer-by-email/${localStorage.getItem('email')}`
+
+        
+                const res = await axios.get(url);
+                const doc = res.data[normalizedType]
+                if (res.data.success && doc?.isVerified) {
                     clearInterval(interval)
-                    navigate("/busmain")
+                    
+                    navigate (normalizedType === 'business' ? "/busmain" : "/custmain")
                 }
 
             } catch (error) {
                 console.error("Verification check error: ", error);
             }
-        }, 1000)
+        }, 3000)
 
         return () => clearInterval(interval);
-    }, [navigate, businessId])
+    }, [navigate, email, userType])
 
     return (
         <div className='verification-container'>
             <h1>Thanks for signing up!</h1>
-            <p>Your business details have been submitted.</p>
+            <p>Your details have been submitted.</p>
             <p>We will review and approve your account shortly.</p>
             <p>Once approved, you will be redirected automatically</p>
         </div>

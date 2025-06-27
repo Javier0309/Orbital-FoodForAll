@@ -1,18 +1,33 @@
 import express from 'express'
 import businessModel from '../models/businessModel.js'
+import custModel from '../models/customerModel.js';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+
+const proofsDir = path.join(process.cwd(), 'uploads/proofs');
+if (!fs.existsSync(proofsDir)) {
+    fs.mkdirSync(proofsDir, { recursive: true });
+}
 
 const signupRouter = express.Router();
 
-const storage = multer.diskStorage({
+const busStorage = multer.diskStorage({
     destination: (req,file,cb) => cb(null, 'uploads/certs'),
     filename:(req,file,cb) => cb(null, `${Date.now()}-${file.originalname}`),
 })
-const upload = multer({storage})
+const busUpload = multer({storage: busStorage})
+
+const custStorage = multer.diskStorage({
+    destination: (req,file,cb) => cb(null, 'uploads/proofs'),
+    filename:(req,file,cb) => cb(null, `${Date.now()}-${file.originalname}`),
+})
+const custUpload = multer({storage: custStorage})
+
+
 
 signupRouter.post('/create-business', 
-    upload.fields([{name: 'hygieneCert'}, {name: 'businessLicense'}, {name: 'halalCert'}]),
+    busUpload.fields([{name: 'hygieneCert'}, {name: 'businessLicense'}, {name: 'halalCert'}]),
     async (req, res) => {
     try {
         const { name, email, address, userId } = req.body;
@@ -56,7 +71,7 @@ signupRouter.get('/business-by-email/:email', async (req, res) => {
     }
 });
 
-signupRouter.patch('/verify/:businessId', async (req, res) => {
+signupRouter.patch('/verify/business/:businessId', async (req, res) => {
     try {
         const {businessId} = req.params;
         const business = await businessModel.findByIdAndUpdate(
@@ -72,6 +87,62 @@ signupRouter.patch('/verify/:businessId', async (req, res) => {
     }
 })
 
+
+signupRouter.post('/create-customer', 
+    custUpload.single('proofOfNeed'),
+    async (req, res) => {
+    try {
+        const { name, email, address, phone, userId, dietaryNeeds } = req.body;
+        if (!name || !email || !phone || !address || !userId || !dietaryNeeds){
+            return res.status(400).json({ success: false, message: "Missing required fields" })
+        }
+
+        const existing = await custModel.findOne( {email});
+        if (existing) {
+            return res.status(200).json({ success: true, customerId: existing._id })
+        }
+
+        const newCustomer = await custModel.create({ userType:'customer', name, email, phone, address, userId, dietaryNeeds, isVerified: false, 
+            proofOfNeedUrl: req.file ? `/uploads/proofs/${req.file.filename}` : null,
+        });
+
+        
+        res.status(201).json({ success: true, customerId: newCustomer._id })
+
+    } catch (error) {
+        console.error("Error creating customer:", error);
+        res.status(500).json( {success: false, message: "Server error"})
+    }
+})
+
+signupRouter.get('/customer-by-email/:email', async (req, res) => {
+    try {
+        const customer = await custModel.findOne({ email: req.params.email });
+        if (customer) {
+            res.json({ success: true, customer });
+        } else {
+            res.json({ success: false, message: "Customer not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Server error", error: err.message });
+    }
+});
+
+signupRouter.patch('/verify/customer/:customerId', async (req, res) => {
+    try {
+        const {customerId} = req.params;
+        const customer = await custModel.findByIdAndUpdate(
+            customerId, {isVerified:true}, {new:true}
+        );
+        if (!customer) {
+            return res.status(404).json({success: false, message: 'Customer not found'})
+        }
+        res.json({success: true, message: 'Customer verified', customer})
+    } catch (error) {
+        console.error("Error verifying customer:", error);
+        res.status(500).json( {success: false, message: "Server error"})
+    }
+})
 
 
 export default signupRouter;
