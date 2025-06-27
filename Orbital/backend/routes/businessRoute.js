@@ -1,3 +1,9 @@
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import mongoose from 'mongoose';
+
 import { 
   getOpenOrClosed, 
   getOrdersForBusiness, 
@@ -6,19 +12,12 @@ import {
   getBusinessProfile, 
   updateBusinessProfile 
 } from '../controllers/businessController.js';
-import express from 'express';
-import multer from "multer";
-import path from "path";
-import fs from "fs";
-import mongoose from "mongoose";
+
+import businessModel from '../models/businessModel.js';
 
 const busRouter = express.Router();
 
-busRouter.post('/openOrClosed', openOrClosed);
-busRouter.get('/status/:id', getOpenOrClosed);
-busRouter.get('/orders/:businessId', getOrdersForBusiness);
-busRouter.patch('/orders/:orderId/status', updateOrderStatus);
-
+// Ensure certs upload directory exists
 const certsDir = path.join('uploads', 'certs');
 if (!fs.existsSync(certsDir)) {
     fs.mkdirSync(certsDir, { recursive: true });
@@ -30,16 +29,33 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Business profile routes
-busRouter.get('/profile/:userId', async (req, res, next) => {
-  const { userId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ success: false, message: "Invalid userId" });
+// Open or close business
+busRouter.post('/openOrClosed', openOrClosed);
+
+// Get business open/closed status
+busRouter.get('/status/:businessId', getOpenOrClosed);
+
+// Get orders for business
+busRouter.get('/orders/:businessId', getOrdersForBusiness);
+
+// Update order status
+busRouter.patch('/orders/:orderId/status', updateOrderStatus);
+
+// Get business profile
+busRouter.get('/profile/:businessId', async (req, res, next) => {
+  const { businessId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(businessId)) {
+    return res.status(400).json({ success: false, message: "Invalid businessId" });
   }
   return getBusinessProfile(req, res, next);
 });
 
-busRouter.put('/profile/:businessId', upload.fields([{name: 'hygieneCert'}, {name: 'businessLicense'}, {name: 'halalCert'}]), async (req, res, next) => {
+// Update business profile with multiple cert uploads
+busRouter.put('/profile/:businessId', upload.fields([
+  { name: 'hygieneCert', maxCount: 1 },
+  { name: 'businessLicense', maxCount: 1 },
+  { name: 'halalCert', maxCount: 1 }
+]), async (req, res, next) => {
   const { businessId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(businessId)) {
     return res.status(400).json({ success: false, message: "Invalid businessId" });
@@ -47,19 +63,18 @@ busRouter.put('/profile/:businessId', upload.fields([{name: 'hygieneCert'}, {nam
   return updateBusinessProfile(req, res, next);
 });
 
+// Get business by email
 busRouter.get('/business-by-email/:email', async (req, res) => {
   try {
-    const Business = (await import('../models/businessModel.js')).default;
-    const business = await Business.findOne({ email: req.params.email });
+    const business = await businessModel.findOne({ email: req.params.email });
     if (business) {
       res.json({ success: true, business });
     } else {
       res.json({ success: false, message: "Business not found" });
     }
-    return updateBusinessProfile(req, res, next);
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error fetching business" });
   }
-);
+});
 
 export default busRouter;
-
-

@@ -9,6 +9,8 @@ const businessSchema = new mongoose.Schema({
     hygieneCertUrl: { type: String },
     businessLicenseUrl: { type: String },
     halalCertUrl: { type: String },
+
+    // Other business fields
     recommendedItems: [{ type: String }],
     email: { type: String, required: true, unique: true },
     createdAt: { type: Date, default: Date.now },

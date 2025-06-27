@@ -129,6 +129,5 @@ export {
     updateOrderStatus, 
     getBusinessProfile, 
     updateBusinessProfile,
-    openOrClosed,
-    getOpenOrClosed, 
+    getOrdersForBusiness,
 }
