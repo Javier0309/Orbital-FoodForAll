@@ -23,12 +23,14 @@ const Loginsignup = () => {
     const [loading, setLoading] = useState(false);
     const { setOTP, setEmail } = useContext(RecoveryContext);
     const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');
+    const [dietaryNeeds, setDietaryNeeds] = useState('');
+    const [proofFile, setProofFile] = useState(null);
     const [files, setFiles] = useState({
         businessLicense: null,
         hygieneCert: null,
         halalCert: null
     });
-    const businessId = localStorage.getItem('businessId');
     const [form, setForm] = useState({
         name: '',
         about: '',
@@ -39,7 +41,10 @@ const Loginsignup = () => {
     setFiles(prev => ({ ...prev, [fileType]: file }));
   };
 
-    const FileUploadBox = ({ label, fileType, required = false, note = null }) => (
+    const FileUploadBox = ({ label, fileType, required = false, note = null, customFileSetter = null }) => {
+    const selectedFile = customFileSetter ? proofFile : files[fileType]
+
+    return (
     <div className="file-upload-section">
       <label className="file-upload-label">
         {label} {required && <span className="required">*</span>}
@@ -53,13 +58,19 @@ const Loginsignup = () => {
           id={fileType}
           type="file"
           accept="application/pdf,image/*"
-          onChange={(e) => handleFileChange(fileType, e.target.files[0])}
-          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files[0]
+            if (customFileSetter) {
+                customFileSetter(file);
+            } else {
+                handleFileChange(fileType, file)}
+            }}
+            style={{ display: 'none' }}
         />
-        {files[fileType] ? (
+        {selectedFile ? (
           <div className="file-info">
             <div className="file-icon">📄</div>
-            <div className="file-name">{files[fileType].name}</div>
+            <div className="file-name">{selectedFile.name}</div>
           </div>
         ) : (
           <div className="upload-placeholder">
@@ -69,7 +80,7 @@ const Loginsignup = () => {
         )}
       </div>
     </div>
-  );
+  );}
 
     const handleUserTypeChange = (event) => {
         setUserType(event.target.value);
@@ -92,6 +103,9 @@ const Loginsignup = () => {
                 // Fetch the user type from user metadata
                 const { user } = data;
                 const storedUserType = user?.user_metadata?.userType;
+                localStorage.setItem('email', user.email);
+                localStorage.setItem('userType', storedUserType);
+
 
                 // ===== ADDED: Fetch MongoDB user by email and store _id =====
                 try {
@@ -106,7 +120,16 @@ const Loginsignup = () => {
 
                 alert('Logged in!');
                 if (storedUserType === 'customer') {
-                    navigate('/custmain');
+                    const res = await axios.get(`http://localhost:4000/api/signup/customer-by-email/${localStorage.getItem('email')}`)
+                    if (res.data.success && res.data.customer?._id){
+                        localStorage.setItem('customerId', res.data.customer._id)
+                    }
+
+                    if (res.data.success && res.data.customer?.isVerified) {
+                        navigate('/custmain');
+                    } else {
+                    navigate('/awaiting-verification');
+                    }
                 } else if (storedUserType === 'F&B business') {
                     try {
                         const bizRes = await axios.get(`http://localhost:4000/api/signup/business-by-email/${user.email}`);
@@ -192,6 +215,7 @@ const Loginsignup = () => {
                     if (res.data.success && res.data.businessId) {
                         localStorage.setItem('businessId', res.data.businessId);
                         localStorage.setItem('email', localEmail)
+                        localStorage.setItem('userType', userType)
                         alert('Signup successful');
                         navigate('/awaiting-verification')
                     } else {
@@ -201,6 +225,35 @@ const Loginsignup = () => {
                         return
                     }
 
+                } else if (userType === 'customer') {
+                    const custForm = new FormData();
+                    custForm.append('name', name);
+                    custForm.append('email', localEmail);
+                    custForm.append('address', address);
+                    custForm.append('phone', phone);
+                    custForm.append('dietaryNeeds', dietaryNeeds);
+                    custForm.append('userId', userId);
+                    custForm.append('userType', 'customer');
+                    
+                    // Add files if they exist
+                    if (proofFile) custForm.append('proofOfNeed', proofFile);
+                    const res = await axios.post("http://localhost:4000/api/signup/create-customer",
+                        custForm, { headers: {"Content-Type" : "multipart/form-data"} }
+                    );
+
+                    if (res.data.success && res.data.customerId) {
+                        localStorage.setItem('email', localEmail)
+                        localStorage.setItem('userType', userType)
+                        localStorage.setItem('customerId', res.data.customerId)
+                        alert('Signup successful');
+                        navigate('/awaiting-verification')
+                    } else {
+                        localStorage.removeItem("customerId")
+                        alert('Failed to create business profile')
+                        setLoading(false)
+                        return
+                    } 
+                
                 } else {
                     alert('Signup successful')
                     navigate('/custmain');
@@ -261,11 +314,34 @@ const Loginsignup = () => {
                     </div>
                 )}
 
-                {!isLogin && userType !== 'F&B business' &&(
+                {!isLogin && userType !== 'F&B business' && userType !== 'customer' && (
                 <div className="input">
                     <img src={user_icon} alt="" />
                     <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
                 </div> )}
+
+                {!isLogin && userType === 'customer' && (
+                    <>
+                        <div className='input'>
+                            <input type='text' placeholder='Full Name' value={name} onChange={(e) => setName(e.target.value)}/>
+                        </div>
+
+                        <div className='input'>
+                            <input type='text' placeholder='Home Address' value={address} onChange={(e) => setAddress(e.target.value)}/>
+                        </div>
+
+                        <div className='input'>
+                            <input type='text' placeholder='Phone Number' value={phone} onChange={(e) => setPhone(e.target.value)}/>
+                        </div>
+
+                        <div className='input'>
+                            <input type='text' placeholder='Dietary Requirements / Allergies' value={dietaryNeeds} onChange={(e) => setDietaryNeeds(e.target.value)}/>
+                        </div>
+
+                        <FileUploadBox label="Proof of Need (such as income statements, number of people in household, or any government assistance programs)" fileType="proofOfNeed" customFileSetter={setProofFile}/>
+
+                    </>
+                )}
 
                 {!isLogin && userType === 'F&B business' && (
                     <>
