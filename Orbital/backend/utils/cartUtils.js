@@ -2,7 +2,7 @@ import foodModel from "../models/foodModel.js";
 
 export const getFullCartItems = async (cartData = {}) => {
     const foodIds = Object.keys(cartData);
-    const foodItems = await foodModel.find({ _id: { $in: foodIds }});
+    const foodItems = await foodModel.find({ _id: { $in: foodIds }}).populate('businessId', 'name address');
     const detailedCart = foodItems.map(item => ({
         ...item.toObject(),
         quantity: Number(cartData[item._id]?.quantity) || 0,

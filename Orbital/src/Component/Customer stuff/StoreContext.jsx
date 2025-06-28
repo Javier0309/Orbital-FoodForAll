@@ -58,7 +58,9 @@ const StoreContextProvider = (props) => {
         try {
             const session = await supabase.auth.getSession();
             const token = session.data.session?.access_token;
-            if (!token) {
+            const email = session.data.session?.user?.email
+
+            if (!token || !email) {
                 alert("User not logged in");
                 return;
             } 
@@ -67,14 +69,14 @@ const StoreContextProvider = (props) => {
                 foodId, quantity, comment
             }))
 
-            const data = {
-                items: orderItems,
-                deliveryMode
-            }
 
-            const sendOrder = async() => {
+            const sendOrder = async(location = {}) => {
                 const res = await axios.post(
-                        url + "/api/order/place", data,
+                        url + "/api/order/place", {
+                            items: orderItems,
+                            deliveryMode,
+                            location
+                        },
                         {headers: {Authorization: `Bearer ${token}`}}
                 )
 
@@ -90,20 +92,17 @@ const StoreContextProvider = (props) => {
             }
 
             if (deliveryMode === 'delivery'){
-                if (!navigator.geolocation){
-                    alert('Geolocation not supported')
-                    return
-                }
-
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    data.location = {latitude: position.coords.latitude, longitude: position.coords.longitude}
-                await sendOrder();
+    
+                    const res = await axios.get(`${url}/api/signup/customer-by-email/${email}`);
+                    const custAddress = res.data.customer?.address;
+                    
+                    if (!custAddress) {
+                        alert("Address not found. Please update your profile")
+                        return
+                    }
+                    
+                await sendOrder({address: custAddress});
                    
-            }, () => {
-                alert("Failed to get location");
-            });
-
-
             } else {
                 await sendOrder();                
             }

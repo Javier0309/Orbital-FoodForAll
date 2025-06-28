@@ -19,7 +19,6 @@ function CustMain() {
         <div className="app"> 
             <CustHeader/>
             <br/>
-            <CustomerTrackDriver/>
             <CustMenu/>
         </div>
     

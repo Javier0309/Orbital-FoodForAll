@@ -24,11 +24,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Business profile routes
-busRouter.post('/openOrClosed', openOrClosed)
-busRouter.get('/status/:id', getOpenOrClosed)
-busRouter.get('/orders/:businessId', getOrdersForBusiness)
-busRouter.patch('/orders/:orderId/status', updateOrderStatus)
 busRouter.get('/profile/:businessId', async (req, res, next) => {
   const { businessId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(businessId)) {

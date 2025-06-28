@@ -12,7 +12,6 @@ function DriverMain() {
         <>
         <div className="app"> 
             <DriverHeader/>
-            <DriverTracking driverId={driverId}/>
             <AssignedOrders driverId={driverId}/>
             <AvailableOrders driverId={driverId}/>
 

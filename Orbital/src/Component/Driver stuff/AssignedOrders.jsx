@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios'
+import DriverTracking from "./DriverTracking";
 
 const AssignedOrders = () => {
     const driverId = localStorage.getItem("driverId"); 
@@ -32,7 +33,11 @@ const AssignedOrders = () => {
                                 <button onClick={()=> updateStatus(order._id, 'in_transit')}>Start Delivery</button>
                             )}
                             {order.deliveryStatus === 'in_transit' && (
-                            <button onClick={()=> updateStatus(order._id, 'delivered')}>Mark as Delivered</button>
+                                <>
+                                    <button onClick={()=> updateStatus(order._id, 'delivered')}>Mark as Delivered</button>
+                                    {/*tracking active only when 'in_transit'*/}
+                                    <DriverTracking driverId={driverId}/>
+                                </>
                             )}
                         </li>
                         ))}

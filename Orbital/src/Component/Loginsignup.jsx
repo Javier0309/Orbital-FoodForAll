@@ -258,7 +258,7 @@ const Loginsignup = () => {
                         navigate('/awaiting-verification')
                     } else {
                         localStorage.removeItem("customerId")
-                        alert('Failed to create business profile')
+                        alert('Failed to create customer profile')
                         setLoading(false)
                         return
                     } 

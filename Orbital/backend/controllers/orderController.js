@@ -2,7 +2,10 @@ import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import foodModel from "../models/foodModel.js";
 import driverModel from "../models/driverModel.js";
+import businessModel from "../models/businessModel.js";
+import custModel from "../models/customerModel.js";
 import { getFullCartItems, groupCartByBusiness } from "../utils/cartUtils.js";
+import axios from "axios";
 
 const placeOrder = async (req, res) => {
     try {
@@ -20,7 +23,30 @@ const placeOrder = async (req, res) => {
 
         const createdOrders = [];
 
-        for (const [businessId, items] of Object.entries(groupedByBusiness)) {
+            //geocode locations
+        let customerLocationData = null;
+        const businessLocationsCache = {};
+
+        if (deliveryMode === 'delivery'){
+            const customer = await custModel.findOne({email});
+            if (customer?.address) customerLocationData = await geocodeAddress(customer.address)
+                //if (business?.address) businessLocationData = await geocodeAddress(business.address);
+            }
+        
+
+        for (const[businessId, items] of Object.entries(groupedByBusiness)) {
+                let businessLocationData = businessLocationsCache[businessId];
+                if (!businessLocationData && deliveryMode === 'delivery'){
+                    const business = await businessModel.findById(businessId);
+                    if (business?.address) {
+                        businessLocationData = await geocodeAddress(business.address);
+                        businessLocationsCache[businessId] = businessLocationData
+                    }
+                }
+            
+            
+
+            //create the order
             const order = await orderModel.create({
                 customerEmail: email,
                 businessId, 
@@ -31,7 +57,11 @@ const placeOrder = async (req, res) => {
                     comment: i.comment,
                     image: i.image
                 })), 
-                deliveryMode, ...(deliveryMode === 'delivery' && location ? { location } : {})
+                deliveryMode, 
+                ...(deliveryMode === 'delivery' ? { 
+                    customerLocation: customerLocationData,
+                    businessLocation: businessLocationData,
+                } : {})
             })
             // minus off the food ordered from the orignal quantity
         for (const item of items){
@@ -65,7 +95,11 @@ const getOrderById = async (req, res) => {
         const order = await orderModel.findById(orderId).populate('businessId', 'name address')
 
         if (!order) return res.status(404).json({ success: false, message: "Order not found"})
-        res.json({ success: true, order})
+        res.json({ success: true, order: {
+            ...order.toObject(),
+            businessLocation: order.businessLocation,
+            customerLocation: order.customerLocation,
+        }})
 
     } catch (error) {
         res.status(500).json({success: false, message: "Error fetching order"})
@@ -199,6 +233,19 @@ const getAssignedOrdersForDriver = async (req, res) => {
     }
 }
 
+async function geocodeAddress(address) {
+    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+        params: {q: address, format: 'json', limit: 1}
+    })
+    if (response.data && response.data.length > 0){
+        return {
+            latitude: parseFloat(response.data[0].lat),
+            longitude: parseFloat(response.data[0].lon),
+        }
+    }
+    return null
+}
+
 export { placeOrder,
         getOrderById,
         assignDriverToOrder, 
@@ -206,4 +253,5 @@ export { placeOrder,
         getAvailableOrdersForDelivery, 
         selfAssignOrder,
         getAssignedOrdersForDriver, 
+        geocodeAddress,
         };
