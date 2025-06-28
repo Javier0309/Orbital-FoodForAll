@@ -1,11 +1,13 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import foodModel from "../models/foodModel.js";
+import driverModel from "../models/driverModel.js";
 import { getFullCartItems, groupCartByBusiness } from "../utils/cartUtils.js";
 
 const placeOrder = async (req, res) => {
     try {
         const { email } = req.user;
+        const { deliveryMode = 'pickup', location } = req.body
         const user = await userModel.findOne({email});
         const cartData = user?.cartData || {}
     
@@ -28,7 +30,8 @@ const placeOrder = async (req, res) => {
                     quantity: i.quantity,
                     comment: i.comment,
                     image: i.image
-                }))
+                })), 
+                deliveryMode, ...(deliveryMode === 'delivery' && location ? { location } : {})
             })
             // minus off the food ordered from the orignal quantity
         for (const item of items){
@@ -56,4 +59,151 @@ const placeOrder = async (req, res) => {
     }
 }
 
-export { placeOrder };
+const getOrderById = async (req, res) => {
+    try {
+        const {orderId} = req.params;
+        const order = await orderModel.findById(orderId).populate('businessId', 'name address')
+
+        if (!order) return res.status(404).json({ success: false, message: "Order not found"})
+        res.json({ success: true, order})
+
+    } catch (error) {
+        res.status(500).json({success: false, message: "Error fetching order"})
+    }
+}
+
+const assignDriverToOrder = async (req, res) => {
+    try {
+        const {driverId, orderId} = req.body;
+
+        const order = await orderModel.findById(orderId);
+        if (!order) return res.status(400).json({ success: false, message: "Order not found"})
+        if (order.deliveryStatus !== 'pending') {
+            return res.status(400).json({ success: false, message: "Order already assigned or delivered"})
+        }
+
+        const driver = await driverModel.findById(driverId);
+        if (!driver || !driver.isAvailable) {
+            return res.status(400).json({ success: false, message: "Driver not available"})
+        }
+
+        order.driverId = driverId;
+        order.deliveryStatus = 'assigned';
+        await order.save();
+
+        driver.isAvailable = false;
+        await driver.save();
+
+        res.json({ success: true, message: 'Driver assigned successfully', order})
+
+    } catch (error) {
+        res.status(500).json({success: false, message: "Error assigning driver"})
+    }
+}
+
+const updateDeliveryStatus = async (req, res) => {
+    try {
+        // 1. make function in controller, export
+        // 2. route: orderRoute.post('/driver/update-status', updateDeliveryStatus)
+        // 3. frontend: params for await API.post('/orders/driver/update-status' {driverId, orderId, newStatus})
+        const { driverId, orderId, newStatus } = req.body;
+
+        const validTransitions = ['assigned', 'in_transit', 'delivered'];
+
+        if (!validTransitions.includes(newStatus)) {
+            return res.status(400).json({ success: false, message: "Invalid delivery status"})
+        }
+
+        const order = await orderModel.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found"})
+        }
+
+        if (String(order.driverId) !== driverId){
+            return res.status(403).json({ success: false, message: "You are not assigned to this order"})
+        }
+
+        order.deliveryStatus = newStatus;
+        await order.save();
+
+        if (newStatus === 'delivered'){
+            await driverModel.findByIdAndUpdate(driverId, { isAvailable: true})
+        }
+
+        res.json({ success: true, message: `Order marked as ${newStatus}`, order})
+    } catch (error ){
+        console.error("Delivery status update error:", error);
+        res.status(500).json({success: false, message: "Error updating delivery status"})
+    }
+}
+
+const getAvailableOrdersForDelivery = async (req, res) => {
+    try {
+        const availableOrders = await orderModel.find({
+            deliveryMode: "delivery",
+            deliveryStatus: "pending",
+            driverId: null
+        }).populate('businessId', 'name address')
+        res.json({success: true, orders: availableOrders})
+    } catch (error) {
+        console.error("Error fetching available orders:", error);
+        res.status(500).json({success: false, message: "Error fetching available orders"})
+    }
+}
+
+const selfAssignOrder = async (req,res) => {
+    try {
+        const {driverId, orderId} = req.body;
+
+        // validate driver
+        const driver = await driverModel.findById(driverId);
+        if (!driver || !driver.isAvailable) {
+            return res.status(400).json({ success: false, message: "Driver not available or not found"})
+        }
+
+        // validate order
+        const order = await orderModel.findById(orderId);
+        if (!order || order.deliveryStatus !== 'pending' || order.driverId) {
+            return res.status(400).json({ success: false, message: "Order not available for assignment"})
+        }
+
+        // assign order
+        order.driverId = driverId;
+        order.deliveryStatus = 'assigned';
+        await order.save()
+
+        // set driver unavailable
+        driver.isAvailable = false;
+        await driver.save()
+
+        res.json({ success: true, message: 'Order self-assigned successfully', order})
+
+    } catch (error) {
+        console.error("Self-assignment error:", error);
+        res.status(500).json({success: false, message: "Error assigning order"})
+    }
+}
+
+const getAssignedOrdersForDriver = async (req, res) => {
+    try {
+        const { driverId } = req.params;
+
+        const orders = await orderModel.find({
+            driverId, deliveryStatus: { $ne: 'delivered'}
+        }).populate('businessId', 'name address')
+
+        res.json({success: true, orders})
+    } catch (error) {
+        console.error("Error fetching driver's assigned orders:", error);
+        res.status(500).json({success: false, message: "Error fetching assigned orders"})
+    }
+}
+
+export { placeOrder,
+        getOrderById,
+        assignDriverToOrder, 
+        updateDeliveryStatus, 
+        getAvailableOrdersForDelivery, 
+        selfAssignOrder,
+        getAssignedOrdersForDriver, 
+        };

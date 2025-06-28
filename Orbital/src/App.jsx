@@ -15,6 +15,9 @@ import Orders from './Component/Business stuff/Orders';
 import EditProfile from './Component/Business stuff/EditProfile';
 import ViewProfile from './Component/Business stuff/ViewProfile';
 import AwaitingVerification from './Component/AwaitingVerification';
+import DriverMain from './Component/Driver stuff/DriverMain';
+import DriverProfile from './Component/Driver stuff/DriverProfile';
+import TrackDelivery from './Component/Customer stuff/TrackDelivery';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -45,6 +48,9 @@ function App() {
           <Route path="/edit-profile" element={<EditProfile userId={userId} />} />
           <Route path="/view-profile" element={<ViewProfile userId={userId} />} />
           <Route path='/awaiting-verification' element={<AwaitingVerification />} />
+          <Route path='/drivermain' element={<DriverMain />} />
+          <Route path='/driverprofile' element={<DriverProfile />} />
+          <Route path='/track-delivery/:orderId' element={<TrackDelivery/>}/>
 
         </Routes>
       </RecoveryContext.Provider>

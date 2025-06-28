@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import http from 'http';
+import {Server} from 'socket.io'
 import mongoose from "mongoose";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
@@ -14,6 +16,7 @@ import busRouter from "./routes/businessRoute.js";
 import orderRoute from "./routes/orderRoute.js";
 import path from "path";
 import userRouter from "./routes/userRoute.js";
+import driverRoute from "./routes/driverRoute.js";
 
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -38,6 +41,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/cart', cartRouter);
 app.use('/api/signup', signupRouter);
 app.use('/api/business', busRouter);
+app.use('/api', driverRoute);
 app.use('/api/order', orderRoute);
 app.use('/api/user', userRouter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
@@ -46,7 +50,37 @@ app.get("/", (req, res) => {
     res.send("API is running!");
 });
 
+/*
 app.listen(4000, () => {
     console.log("Server running on port 4000");
-});
+}); */
+
+
+//location using socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true
+    }
+})
+
+io.on('connection', (socket) => {
+    console.log('Socket connected:', socket.id);
+
+    //Handle driver location updates
+    socket.on('driverLocationUpdate', ({driverId, latitude, longitude}) => {
+        console.log(`Driver ${driverId} location:`, latitude, longitude);
+        socket.broadcast.emit(`location-${driverId}`, { latitude, longitude })
+    })
+
+    socket.on('disconnect', () =>{
+        console.log('Socket disconnected:', socket.id);
+    })
+})
+
+// now start the unified server
+server.listen(port, () => {
+    console.log(`HTTP + Socket.IO server running on port ${port}`)
+})
 

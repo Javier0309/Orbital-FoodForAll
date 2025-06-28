@@ -1,6 +1,7 @@
 import express from 'express'
 import businessModel from '../models/businessModel.js'
 import custModel from '../models/customerModel.js';
+import driverModel from '../models/driverModel.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -8,6 +9,11 @@ import fs from 'fs';
 const proofsDir = path.join(process.cwd(), 'uploads/proofs');
 if (!fs.existsSync(proofsDir)) {
     fs.mkdirSync(proofsDir, { recursive: true });
+}
+
+const pfpDir = path.join(process.cwd(), 'uploads/pfp');
+if (!fs.existsSync(pfpDir)) {
+    fs.mkdirSync(pfpDir, { recursive: true });
 }
 
 const signupRouter = express.Router();
@@ -24,6 +30,11 @@ const custStorage = multer.diskStorage({
 })
 const custUpload = multer({storage: custStorage})
 
+const driverStorage = multer.diskStorage({
+    destination: (req,file,cb) => cb(null, 'uploads/pfp'),
+    filename:(req,file,cb) => cb(null, `${Date.now()}-${file.originalname}`),
+})
+const driverUpload = multer({storage: driverStorage})
 
 
 signupRouter.post('/create-business', 
@@ -143,6 +154,47 @@ signupRouter.patch('/verify/customer/:customerId', async (req, res) => {
         res.status(500).json( {success: false, message: "Server error"})
     }
 })
+
+signupRouter.post('/create-driver',
+    driverUpload.single('profilePicture'),
+
+    async (req, res) => {
+    try {
+        const { name, email, phone, userId, userType, vehicleType, licensePlate } = req.body;
+        if (!name || !email || !phone || !userId || !userType || !vehicleType || !licensePlate){
+            return res.status(400).json({ success: false, message: "Missing fields" })
+        }
+
+        const existing = await driverModel.findOne( {email});
+        if (existing) {
+            return res.status(200).json({ success: true, driverId: existing._id })
+        }
+
+        const newDriver = await driverModel.create({ name, email, phone, userId, userType, vehicleType, licensePlate,
+            profilePicUrl: req.file ? `/uploads/pfp/${req.file.filename}` : null
+         });
+
+        res.status(201).json({ success: true, driverId: newDriver._id })
+
+    } catch (error) {
+        console.error("Error creating driver:", error);
+        res.status(500).json( {success: false, message: "Server error"})
+    }
+})
+
+signupRouter.get('/driver-by-email/:email', async (req, res) => {
+    try {
+        const driver = await driverModel.findOne({ email: req.params.email });
+        if (driver) {
+            res.json({ success: true, driver });
+        } else {
+            res.json({ success: false, message: "Driver not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Server error", error: err.message });
+    }
+});
+
 
 
 export default signupRouter;
