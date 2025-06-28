@@ -69,9 +69,9 @@ io.on('connection', (socket) => {
     console.log('Socket connected:', socket.id);
 
     //Handle driver location updates
-    socket.on('driverLocationUpdate', ({driverId, latitude, longitude}) => {
+    socket.on('driverLocationUpdate', ({driverId, orderId, latitude, longitude}) => {
         console.log(`Driver ${driverId} location:`, latitude, longitude);
-        socket.broadcast.emit(`location-${driverId}`, { latitude, longitude })
+        socket.broadcast.emit(`location-${orderId}`, { latitude, longitude })
     })
 
     socket.on('disconnect', () =>{

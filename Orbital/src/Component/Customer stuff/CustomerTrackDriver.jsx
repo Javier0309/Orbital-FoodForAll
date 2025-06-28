@@ -1,34 +1,53 @@
-import { useEffect,useState } from "react";
+import { useEffect,useState,useRef } from "react";
 import io from 'socket.io-client'
 import { MapContainer, Marker, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import OrderMap from './OrderMap'
 
 const socket = io("http://localhost:4000")
 
-const CustomerTrackDriver = ({driverId}) => {
-    const [position, setPosition] = useState(null);
+const CustomerTrackDriver = ({orderId}) => {
+
+    //const [position, setPosition] = useState(null);
+    const [driverLocation, setDriverLocation] = useState(null);
+    const [orderDetails , setOrderDetails ] = useState(null);
+    const socketRef = useRef(null);
 
     useEffect(() => {
-        if (!driverId) return;
-        const eventName = `location-${driverId}`;
+        const fetchOrderDetails = async() => {
+            try {
+                //const email = localStorage.getItem('email');
+                const res = await fetch(`http://localhost:4000/api/order/${orderId}`)
+                const data = await res.json();
+                if (data.success) setOrderDetails(data.order)
+            } catch (error) {
+                console.error("Error fetching order details:", error)
+            }
+        }
 
-        socket.on(eventName, (data) => {
-            setPosition([data.latitude, data.longitude])
+        fetchOrderDetails();
+
+        // connect to socket for driver location
+        socketRef.current = io("http://localhost:4000")
+
+        socketRef.current.on(`location-${orderId}`, (location) => {
+            setDriverLocation(location)
         })
 
-        return () => socket.off(eventName)
-    }, [driverId])
+        return () => {if (socketRef.current) socketRef.current.disconnect()}
+    }, [orderId])
 
     return (
         <div>
-            <h3>Tracking your Delivery</h3>
-            {position ? (
-                <MapContainer center={position} zoom={15} style={{ height: "300px", width: "100%"}}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-                    <Marker position={position}/>
-                </MapContainer>
-            ) : (
-                <p>Waiting for driver location...</p>
+            <h3>Tracking your Order</h3>
+            
+            <OrderMap orderId={orderId}/>
+
+            {orderDetails && (
+                <div>
+                    <p>Order ID: {orderDetails._id}</p>
+                    <p>Found a rider!</p>
+                </div>
             )}
         </div>
     )

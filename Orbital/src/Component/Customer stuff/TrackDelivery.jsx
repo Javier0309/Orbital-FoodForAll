@@ -20,7 +20,7 @@ const TrackDelivery = () => {
     return (
         <div>
             <h2>Track Delivery</h2>
-            <CustomerTrackDriver driverId={driverId}/>
+            <CustomerTrackDriver orderId={orderId}/>
         </div>
     )
 }

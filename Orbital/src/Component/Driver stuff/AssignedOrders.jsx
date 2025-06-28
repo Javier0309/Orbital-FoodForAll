@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from 'axios'
 
-const AssignedOrders = () => {
-    const driverId = localStorage.getItem("driverId"); 
+const AssignedOrders = ({driverId, onOrderSelect}) => {
+    //const driverId = localStorage.getItem("driverId"); 
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const fetchAssigned = async () => {
             const res = await axios.get(`http://localhost:4000/api/order/driver/assigned/${driverId}`)
             setOrders(res.data.orders)
+
+            if (res.data.orders.length > 0 && onOrderSelect) onOrderSelect(res.data.orders[0]._id)
         };
         fetchAssigned();
-    }, [driverId]);
+    }, [driverId, onOrderSelect]);
 
     const updateStatus = async (orderId, newStatus) => {
         await axios.post('http://localhost:4000/api/order/driver/update-status', {driverId, orderId, newStatus})
