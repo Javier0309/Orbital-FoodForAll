@@ -1,27 +1,10 @@
 import express from 'express';
-<<<<<<< HEAD
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import mongoose from 'mongoose';
-
-import { 
-  getOpenOrClosed, 
-  getOrdersForBusiness, 
-  openOrClosed, 
-  updateOrderStatus, 
-  getBusinessProfile, 
-  updateBusinessProfile 
-} from '../controllers/businessController.js';
-
-=======
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
 import { getBusinessProfile, updateBusinessProfile } from '../controllers/businessController.js';
 import router from './recoveryRoutes.js';
->>>>>>> 67c744116448cda95900808f9dbe66f9cae03989
 import businessModel from '../models/businessModel.js';
 
 const busRouter = express.Router();
@@ -86,12 +69,8 @@ busRouter.get('/business-by-email/:email', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-export default busRouter;
-=======
 
 
 export default busRouter;
 
 
->>>>>>> 67c744116448cda95900808f9dbe66f9cae03989
