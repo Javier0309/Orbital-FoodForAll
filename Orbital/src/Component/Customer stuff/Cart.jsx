@@ -21,7 +21,7 @@ const Cart = () => {
     useEffect(() => {
         const listeners = [];
         Object.values(sliderRef.current).forEach((slider) => {
-
+            if (!slider || !slider.innerSlider) return;
             const sliderE1 = slider.innerSlider?.list;
             if (!sliderE1)  return;
             

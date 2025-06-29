@@ -5,7 +5,7 @@ import { supabase } from "../../../backend/SupabaseClient";
 const Orders = () => {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true);
-
+    
     const getNextStatuses = (mode) => {
         if (mode === 'delivery') return ['pending', 'ready', 'assigned', 'in_transit', 'delivered', 'completed']
         return ['pending', 'ready', 'collected', 'completed']
