@@ -6,6 +6,11 @@ const Orders = () => {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true);
 
+    const getNextStatuses = (mode) => {
+        if (mode === 'delivery') return ['pending', 'ready', 'assigned', 'in_transit', 'delivered', 'completed']
+        return ['pending', 'ready', 'collected', 'completed']
+    }
+
     // Fetch orders for this business   
     useEffect (() => {
         async function fetchOrders() {
@@ -45,6 +50,7 @@ const Orders = () => {
                 <div key={order._id} className="order-card">
                     <p><strong>Order:</strong> {order._id}</p>
                     <p><strong>Status:</strong> {order.status}</p>
+                    <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
                     <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
                     <div>
                         <strong>Items:</strong>
@@ -59,7 +65,7 @@ const Orders = () => {
                     </div>
 
                     <div className="actions">
-                        {['pending', 'ready', 'collected', 'completed'].map(status => (
+                        {getNextStatuses(order.deliveryMode).map(status => (
                             <button key={status} disabled={order.status === status}
                             onClick={() => updateStatus(order._id, status)}>
                                 {status.charAt(0).toUpperCase() + status.slice(1)}

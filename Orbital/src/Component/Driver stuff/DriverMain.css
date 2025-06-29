@@ -1,0 +1,63 @@
+.app{
+  width: 100%;
+  margin: auto;
+}
+
+.driver-header{
+  background-color: rgb(172, 209, 150);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px;
+}
+
+.driver-header .logo{
+  width: 250px;
+  cursor: pointer;
+  filter: hue-rotate(87deg);
+}
+
+.driver-header-menu{
+  display: flex;
+  list-style: none;
+  gap: 40px;
+  color: #425949;
+  font-size: 18px;
+} 
+
+.driver-header li{
+  cursor: pointer;
+}
+
+.driver-header-right{
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.driver-header-right img{
+  height: 30px;
+}
+
+.driver-header button{
+  background:rgb(158, 219, 146);
+  font-size: 20px;
+  color: rgb(0, 0, 0);
+  border: 1px solid whitesmoke;
+  padding: 10px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition-property: 0.3s;
+}
+
+.driver-header button:hover{
+  background-color: #c4f4c1;
+}
+
+.driver-header .active{
+  padding-bottom: 2px;
+  border-bottom: 2px solid 
+}
+
+
+

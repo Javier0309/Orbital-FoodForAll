@@ -5,6 +5,7 @@ import CustHeader from "./CustHeader.jsx";
 import FoodCard from "./FoodCard.jsx";
 import CustMenu from './CustMenu.jsx'
 import Restaurant from "./Restaurant.jsx";
+import CustomerTrackDriver from './CustomerTrackDriver.jsx';
 
 
 //import Counter from "./Counter.jsx";
@@ -18,6 +19,7 @@ function CustMain() {
         <div className="app"> 
             <CustHeader/>
             <br/>
+            <CustomerTrackDriver/>
             <CustMenu/>
         </div>
     

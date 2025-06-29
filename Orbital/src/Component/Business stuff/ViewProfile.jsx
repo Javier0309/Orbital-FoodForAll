@@ -5,6 +5,7 @@ import './EditProfile.css';
 
 function ViewProfile() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+  // Remove trailing '/api' to get the backend's base URL for static files
   const BACKEND_BASE_URL = API_BASE_URL.replace('/api', '');
   const location = useLocation();
 
@@ -99,27 +100,7 @@ function ViewProfile() {
             </div>
           </div>
 
-          {/* Recommended Items Section 
-          <div className="profile-card profile-items-card">
-            <h3 className="profile-card-title">
-              <span className="star-icon">⭐</span>
-              Recommended Items
-            </h3>
-            <div className="recommended-items-list">
-              {(profile.recommendedItems && profile.recommendedItems.length > 0) ? (
-                profile.recommendedItems.map((item, idx) => (
-                  <div key={idx} className="recommended-item">
-                    <span className="item-bullet">•</span>
-                    <span className="item-text">{item}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="no-items">No recommended items listed</div>
-              )}
-            </div>
-          </div> */}
-
-          {/* Certificate Section */}
+          {/* Food Hygiene Certificate Section */}
           <div className="profile-card profile-cert-card">
             <h3 className="profile-card-title">
               Food Hygiene Certificate
@@ -128,6 +109,56 @@ function ViewProfile() {
               {profile.hygieneCertUrl ? (
                 <a
                   href={`${BACKEND_BASE_URL}${profile.hygieneCertUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cert-link"
+                >
+                  <span className="cert-icon-small">📄</span>
+                  View Certificate
+                </a>
+              ) : (
+                <div className="cert-not-uploaded">
+                  <span className="cert-icon-small">❌</span>
+                  Not uploaded
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Business License Section */}
+          <div className="profile-card profile-cert-card">
+            <h3 className="profile-card-title">
+              Business License
+            </h3>
+            <div className="certificate-status">
+              {profile.businessLicenseUrl ? (
+                <a
+                  href={`${BACKEND_BASE_URL}${profile.businessLicenseUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cert-link"
+                >
+                  <span className="cert-icon-small">📄</span>
+                  View License
+                </a>
+              ) : (
+                <div className="cert-not-uploaded">
+                  <span className="cert-icon-small">❌</span>
+                  Not uploaded
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Halal Certificate Section */}
+          <div className="profile-card profile-cert-card">
+            <h3 className="profile-card-title">
+              Halal Certificate
+            </h3>
+            <div className="certificate-status">
+              {profile.halalCertUrl ? (
+                <a
+                  href={`${BACKEND_BASE_URL}${profile.halalCertUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cert-link"

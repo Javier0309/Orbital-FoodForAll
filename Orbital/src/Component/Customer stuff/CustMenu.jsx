@@ -28,7 +28,7 @@ const FoodDisplay = () => {
     const sliderRef = useRef({});
 
     const groupedFood = filteredFood.reduce((acc, item) => {
-        const key = item.businessId || 'unknown';
+        const key = item.businessId?._id || 'unknown';
         if (!acc[key]) acc[key] = [];
         acc[key].push(item);
         return acc;
@@ -81,7 +81,7 @@ const FoodDisplay = () => {
                 {/*<div className='food-display-list'>*/}
                 <Slider ref={(ref) => (sliderRef.current[businessId] = ref)} {...settings}>
                 {items.map((item) => {
-                    return <FoodCard key={index} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} cookedAt={item.cookedAt} consumeBy={item.consumeBy} comment={item.comment} image={item.image} businessId={item.businessId}/>
+                    return <FoodCard key={item._id} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} cookedAt={item.cookedAt} consumeBy={item.consumeBy} comment={item.comment} image={item.image} businessId={item.businessId}/>
                 })}
                 </Slider>
             </div>

@@ -26,6 +26,9 @@ const Loginsignup = () => {
     const [phone, setPhone] = useState('');
     const [dietaryNeeds, setDietaryNeeds] = useState('');
     const [proofFile, setProofFile] = useState(null);
+    const [vehicleType, setVehicleType] = useState('');
+    const [licensePlate, setLicensePlate] = useState('');
+    const [pfp, setPfp] = useState(null);
     const [files, setFiles] = useState({
         businessLicense: null,
         hygieneCert: null,
@@ -42,7 +45,9 @@ const Loginsignup = () => {
   };
 
     const FileUploadBox = ({ label, fileType, required = false, note = null, customFileSetter = null }) => {
-    const selectedFile = customFileSetter ? proofFile : files[fileType]
+    const selectedFile = customFileSetter === setPfp ? pfp 
+                        : customFileSetter === setProofFile ? proofFile 
+                        : customFileSetter ? null : files[fileType]
 
     return (
     <div className="file-upload-section">
@@ -51,7 +56,7 @@ const Loginsignup = () => {
         {note && <span className="note">{note}</span>}
       </label>
       <div 
-        className={`file-upload-box ${files[fileType] ? 'has-file' : ''}`}
+        className={`file-upload-box ${selectedFile ? 'has-file' : ''}`}
         onClick={() => document.getElementById(fileType).click()}
       >
         <input
@@ -159,7 +164,11 @@ const Loginsignup = () => {
                     navigate('/awaiting-verification');
                     }
                 } else {
-                    navigate('/busmain');
+                    const res = await axios.get(`http://localhost:4000/api/signup/driver-by-email/${localStorage.getItem('email')}`)
+                    if (res.data.success && res.data.driver?._id){
+                        localStorage.setItem('driverId', res.data.driver._id)
+                    }
+                    navigate('/drivermain')
                 }
                 setLoading(false);
             }
@@ -253,10 +262,39 @@ const Loginsignup = () => {
                         setLoading(false)
                         return
                     } 
+                } else if (userType === 'driver') {
+                    const driverForm = new FormData();
+                    driverForm.append('name', name);
+                    driverForm.append('email', localEmail);
+                    driverForm.append('phone', phone);
+                    driverForm.append('vehicleType', vehicleType);
+                    driverForm.append('licensePlate', licensePlate);
+                    driverForm.append('userId', userId);
+                    driverForm.append('userType', 'driver');
+                    
+                    // Add files if they exist
+                    if (pfp) driverForm.append('profilePicture', pfp); 
+                    const res = await axios.post("http://localhost:4000/api/signup/create-driver",
+                        driverForm, { headers: {"Content-Type" : "multipart/form-data"} }
+                    ); 
+
+                    if (res.data.success && res.data.driverId) {
+                        localStorage.setItem('email', localEmail)
+                        localStorage.setItem('userType', userType)
+                        localStorage.setItem('driverId', res.data.driverId)
+                        alert('Signup successful');
+                        navigate('/drivermain')
+                        //navigate('/awaiting-verification')
+                    } else {
+                        localStorage.removeItem("driverId")
+                        alert('Failed to create driver profile')
+                        setLoading(false)
+                        return
+                    } 
                 
                 } else {
-                    alert('Signup successful')
-                    navigate('/custmain');
+                    alert('Signup unsuccessful')
+                    return
                 }
                 setLoading(false);
             } catch (error) {
@@ -309,16 +347,33 @@ const Loginsignup = () => {
                             <option value="">Select User Type</option>
                             <option value="customer">Customer</option>
                             <option value="F&B business">F&B Business</option>
-                            <option value="rider">Rider</option>
+                            <option value="driver">Rider</option>
                         </select>
                     </div>
                 )}
 
-                {!isLogin && userType !== 'F&B business' && userType !== 'customer' && (
-                <div className="input">
-                    <img src={user_icon} alt="" />
-                    <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
-                </div> )}
+                {!isLogin && userType === 'driver' && (
+                    <>
+                    <div className='input'>
+                            <input type='text' placeholder='Full Name' value={name} onChange={(e) => setName(e.target.value)}/>
+                    </div>
+
+                    <div className='input'>
+                            <input type='text' placeholder='Phone Number' value={phone} onChange={(e) => setPhone(e.target.value)}/>
+                    </div>
+
+                    <div className='input'>
+                            <input type='text' placeholder='Vehicle Description' value={vehicleType} onChange={(e) => setVehicleType(e.target.value)}/>
+                    </div>
+
+                    <div className='input'>
+                            <input type='text' placeholder='License Plate Number' value={licensePlate} onChange={(e) => setLicensePlate(e.target.value)}/>
+                    </div>
+
+                    <FileUploadBox label="Profile Picture (Your face must be in the picture) " fileType="profilePicture" customFileSetter={setPfp} required/>
+
+                    </>
+                 )}
 
                 {!isLogin && userType === 'customer' && (
                     <>

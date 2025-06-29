@@ -1,8 +1,10 @@
 import { createContext, useState, useEffect } from "react"
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../../backend/SupabaseClient";
 
 export const StoreContext = createContext(null)
+const url = "http://localhost:4000";
 
 const StoreContextProvider = (props) => {
 
@@ -51,7 +53,8 @@ const StoreContextProvider = (props) => {
         }
     }
     
-    const placeOrder = async () => {
+    const navigate = useNavigate();
+    const placeOrder = async (deliveryMode = 'pickup') => {
         try {
             const session = await supabase.auth.getSession();
             const token = session.data.session?.access_token;
@@ -60,18 +63,51 @@ const StoreContextProvider = (props) => {
                 return;
             } 
 
-            const res = await axios.post(
-                url + "/api/order/place",
-                {},
-                {headers: {Authorization: `Bearer ${token}`}}
-            )
+            const orderItems = Object.entries(cartItems).map(([foodId, { quantity, comment}]) => ({
+                foodId, quantity, comment
+            }))
 
-            if (res.data.success){
-                alert("Order placed successfully")
-                setCartItems({});
-            } else {
-                alert ("Failed to place order")
+            const data = {
+                items: orderItems,
+                deliveryMode
             }
+
+            const sendOrder = async() => {
+                const res = await axios.post(
+                        url + "/api/order/place", data,
+                        {headers: {Authorization: `Bearer ${token}`}}
+                )
+
+                if (res.data.success){
+                    alert("Order placed successfully")
+                    setCartItems({});
+
+                    const orderId = res.data.order?._id || res.data.orders?.[0]?._id;
+                    if (orderId) navigate(`/track-delivery/${orderId}`)
+                } else {
+                    alert ("Failed to place order")
+                }     
+            }
+
+            if (deliveryMode === 'delivery'){
+                if (!navigator.geolocation){
+                    alert('Geolocation not supported')
+                    return
+                }
+
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    data.location = {latitude: position.coords.latitude, longitude: position.coords.longitude}
+                await sendOrder();
+                   
+            }, () => {
+                alert("Failed to get location");
+            });
+
+
+            } else {
+                await sendOrder();                
+            }
+
         } catch (error) {
             console.error("Error placing order:", error)
             alert("An error occured while placing the order")
@@ -83,7 +119,6 @@ const StoreContextProvider = (props) => {
     }, [cartItems])
 
 
-    const url = "http://localhost:4000";
     const [food_list,setFoodList] = useState([])
 
     const fetchFoodList = async (businessId = null) => {

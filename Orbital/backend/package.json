@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
-"scripts": {
-  "server": "nodemon server.js",
-  "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
-},
-"jest": {
-  "testEnvironment": "node",
-  "transform": {}
-},
+  "scripts": {
+    "server": "nodemon server.js",
+    "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  },
   "author": "",
   "license": "ISC",
   "description": "",
@@ -28,6 +28,7 @@
     "multer": "^2.0.1",
     "nodemailer": "^7.0.3",
     "nodemon": "^3.1.10",
+    "socket.io": "^4.8.1",
     "stripe": "^18.2.1",
     "validator": "^13.15.15"
   },

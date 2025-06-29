@@ -85,7 +85,7 @@ const Cart = () => {
                 <li onClick={()=>setCollect("delivery")} className={collect==="delivery"?"active":""}>Delivery</li>
                 </ul>
 
-                <button className="submit" onClick={placeOrder} disabled={Object.keys(cartItems).length === 0}>Place Order</button>
+                <button className="submit" onClick={()=>placeOrder(collect)} disabled={Object.keys(cartItems).length === 0}>Place Order</button>
             </div>
         </div>
     )
