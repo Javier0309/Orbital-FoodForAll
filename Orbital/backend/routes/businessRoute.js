@@ -5,6 +5,8 @@ import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
 import { getBusinessProfile, updateBusinessProfile } from '../controllers/businessController.js';
+import router from './recoveryRoutes.js';
+import businessModel from '../models/businessModel.js';
 
 const busRouter = express.Router();
 
@@ -58,6 +60,8 @@ busRouter.get('/business-by-email/:email', async (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 });
+
+
 
 export default busRouter;
 

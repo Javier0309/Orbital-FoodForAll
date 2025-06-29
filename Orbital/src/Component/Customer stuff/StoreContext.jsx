@@ -89,8 +89,12 @@ const StoreContextProvider = (props) => {
                     const orderId = res.data.order?._id || res.data.orders?.[0]?._id;
                     if (orderId) navigate(`/track-delivery/${orderId}`)
                 } else {
-                    alert ("Failed to place order")
-                }     
+            if (res.status === 400 && res.data.message) {
+                alert(res.data.message)
+            } else {
+                alert ("Failed to place order")
+            }   
+            }  
             }
 
             if (deliveryMode === 'delivery'){
@@ -113,8 +117,12 @@ const StoreContextProvider = (props) => {
             }
 
         } catch (error) {
-            console.error("Error placing order:", error)
-            alert("An error occured while placing the order")
+            if (error.response?.status === 400 && error.response?.data?.message){
+                alert(error.response.data.message)
+            } else {
+                console.error("Error placing order:", error)
+                alert("An error occured while placing the order")
+            }
         }
     }
 
