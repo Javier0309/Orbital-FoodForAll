@@ -1,14 +1,40 @@
 import './CustMain.css'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../../assets/foodforall logo.png'
 import searchicon from '../../assets/searchicon.png'
 import basketicon from '../../assets/basketicon.png'
+import { supabase } from '../../../backend/SupabaseClient';
 
 function CustHeader() {
 
     const [menu, setMenu] = useState("home");
     const navigate = useNavigate();
+    const [currentOrder, setCurrentOrder] = useState(null)
+
+    useEffect(() => {
+        const fetchCurrentOrder = async () => {
+            try {
+                const session = await supabase.auth.getSession();
+                const user = session.data.session?.user;
+
+                if (user?.email){
+                    const response = await fetch(`http://localhost:4000/api/order/customer-current/${user.email}`)
+                    const data = await response.json()
+                
+                    if (data.success && data.order) {
+                        setCurrentOrder(data.order)
+                    } else {
+                        setCurrentOrder(null)
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching current order:', error);
+                setCurrentOrder(null)
+            }
+        }
+        fetchCurrentOrder()
+    }, [])
 
     return(
         <div className='cust-header'>
@@ -30,7 +56,10 @@ function CustHeader() {
                     <Link to={'/cart'}><img src={basketicon} alt="" /></Link>
                     <div className="dot"></div>
                 </div>
-                <button>Sign in</button>
+                <button onClick={()=> currentOrder && navigate(`/track-delivery/${currentOrder._id}`)}
+                    disabled={!currentOrder}
+                    className={!currentOrder ? 'disabled' : ''}
+                    >Current Order</button>
             </div>
         </div>
     );

@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { useEffect,useState } from "react";
 import axios from "axios";
 import CustomerTrackDriver from "./CustomerTrackDriver";
+import CustHeader from "./CustHeader";
+import DriverCard from "./DriverCard";
 
 const TrackDelivery = () => {
     const { orderId } = useParams();
@@ -19,8 +21,10 @@ const TrackDelivery = () => {
 
     return (
         <div>
+            <CustHeader/>
             <h2>Track Delivery</h2>
             <CustomerTrackDriver orderId={orderId}/>
+            <DriverCard driverId={driverId}/>
         </div>
     )
 }

@@ -63,13 +63,17 @@ const StoreContextProvider = (props) => {
                 return;
             } 
 
+            // Get the customer email from the current session
+            const customerEmail = session.data.session?.user?.email;
+
             const orderItems = Object.entries(cartItems).map(([foodId, { quantity, comment}]) => ({
                 foodId, quantity, comment
             }))
 
             const data = {
                 items: orderItems,
-                deliveryMode
+                deliveryMode,
+                customerEmail // Pass the customer email explicitly
             }
 
             const sendOrder = async() => {
