@@ -7,7 +7,11 @@ import { getFullCartItems, groupCartByBusiness } from "../utils/cartUtils.js";
 const placeOrder = async (req, res) => {
     try {
         const { email } = req.user;
-        const { deliveryMode = 'pickup', location } = req.body
+        const { deliveryMode = 'pickup', location, customerEmail } = req.body
+        
+        // Use provided customerEmail or fall back to logged-in user's email
+        const orderCustomerEmail = customerEmail || email;
+        
         const user = await userModel.findOne({email});
         const cartData = user?.cartData || {}
     
@@ -22,7 +26,7 @@ const placeOrder = async (req, res) => {
 
         for (const [businessId, items] of Object.entries(groupedByBusiness)) {
             const order = await orderModel.create({
-                customerEmail: email,
+                customerEmail: orderCustomerEmail,
                 businessId, 
                 items: items.map(i => ({
                     foodId: i._id,
@@ -199,6 +203,25 @@ const getAssignedOrdersForDriver = async (req, res) => {
     }
 }
 
+const getCustomerCurrentOrder = async (req, res) => {
+    try {
+        const {email} = req.params
+
+        const order = await orderModel.findOne({
+            customerEmail: email,
+            deliveryStatus: { $in: ['pending', 'assigned', 'in_transit']}
+        }).sort({ createdAt: -1})
+
+        if (order){
+            res.json({success:true, order})
+        } else {
+            res.json({success:false, message: 'No active order found'})
+        }
+    } catch ( error) {
+        res.status(500).json({success: false, message: error.message})
+    }
+}
+
 export { placeOrder,
         getOrderById,
         assignDriverToOrder, 
@@ -206,4 +229,5 @@ export { placeOrder,
         getAvailableOrdersForDelivery, 
         selfAssignOrder,
         getAssignedOrdersForDriver, 
+        getCustomerCurrentOrder
         };

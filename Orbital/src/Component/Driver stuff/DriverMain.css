@@ -59,5 +59,158 @@
   border-bottom: 2px solid 
 }
 
+/* Remove all the Driver Profile Styles I added */
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profile-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .profile-pic {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .driver-name {
+        font-size: 24px;
+    }
+}
+
+
+.driver-pfp-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 40px;
+}
+
+.driver-pfp-container .driver-box {
+    background: rgb(172, 209, 150);
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    min-width: 700px;
+    max-width: 900px;
+}
+
+.driver-pfp-container .profile-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #3a5a40;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
+.profile-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+}
+
+.pfp-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pfp {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border: none;
+    margin-bottom: 12px;
+}
+
+
+.profile-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.driver-name {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.vehicle-info, .deliveries {
+    font-size: 1rem;
+    color: #495057;
+}
+
+.about-section {
+    margin-top: 18px;
+}
+
+.about-section h3 {
+    margin-bottom: 6px;
+    font-size: 1.1rem;
+    color: #3a5a40;
+}
+
+.about-display {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.about-text {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.edit-btn, .save-btn, .cancel-btn {
+    background: #b7e4c7;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 14px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+
+.edit-btn:hover, .save-btn:hover {
+    background: #95d5b2;
+}
+
+.cancel-btn {
+    background: #f8d7da;
+    color: #a94442;
+}
+
+.cancel-btn:hover {
+    background: #f1b0b7;
+}
+
+.edit-about {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.about-textarea {
+    width: 100%;
+    min-height: 94px;
+    border-radius: 8px;
+    border: 1px solid #b7e4c7;
+    padding: 8px;
+    font-size: 1rem;
+    resize: vertical;
+}
+
 
 

@@ -29,7 +29,9 @@ const OrderMap = ({ orderId }) => {
     const [customerLocation, setCustomerLocation] = useState(null);
     const [routePath, setRoutePath] = useState([]);
     const [staticRoute, setStaticRoute] = useState([]);
-    const [driverRoute, setDriverRoute] = useState([])
+    const [driverRoute, setDriverRoute] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [order, setOrder] = useState(null)
     const socketRef = useRef(null);
 
     useEffect(() => {
@@ -44,6 +46,7 @@ const OrderMap = ({ orderId }) => {
                 
                 if (data.success) {
                     const order = data.order;
+                    setOrder(order)
                     
                     
                     // get business location
@@ -53,11 +56,8 @@ const OrderMap = ({ orderId }) => {
 
                         if (businessData.success && businessData.business?.address){
                             const businessCoords = await geocodeAddress(businessData.business.address);
-                            if (businessCoords) {setBusinessLocation({...businessCoords, address: businessData.business.address});
-                                //if (customerLocation) {
-                                  //  updateRoutePath(driverLocation)
-                                    //getStaticRoute();
-                                //}
+                            if (businessCoords) {
+                                setBusinessLocation({...businessCoords, address: businessData.business.address});
                             }
                         }
                     }
@@ -69,14 +69,9 @@ const OrderMap = ({ orderId }) => {
                         if (customerData.success && customerData.customer?.address) {
                             const customerCoords = await geocodeAddress(customerData.customer.address);
                             setCustomerLocation({...customerCoords, address: customerData.customer.address});
-                                //if (businessLocation) {
-                                  //  updateRoutePath(driverLocation)
-                                    //getStaticRoute();
-                                //}
-
+                        }
                     }
                 }
-            }
             } catch (error) {
                 console.error("Error fetching order details:", error);
             }
@@ -171,37 +166,49 @@ const OrderMap = ({ orderId }) => {
 
     const getDriverRoute = async (driverLoc) => {
         if (driverLoc && businessLocation && customerLocation){
+            if (order?.deliveryStatus === 'assigned' || order?.deliveryStatus === 'pending'){
             // get route from driver to business
             const route1 = await getOptimalRoute(
                 {lat: driverLoc.latitude, lng: driverLoc.longitude},
                 businessLocation
             )
+            
+            if (route1 && staticRoute.length > 0) setDriverRoute([...route1, ...staticRoute])
+        } else if (order?.deliveryStatus === 'in_transit') {
+            const route2 = await getOptimalRoute({lat: driverLoc.latitude, lng: driverLoc.longitude},
+                customerLocation)
 
-            const route2 = await getOptimalRoute(businessLocation, customerLocation)
+                if (route2) setDriverRoute(route2)
+        }
 
-            if (route1 && route2) setDriverRoute([...route1, ...route2])
+            //if (route1 && route2) setDriverRoute([...route1, ...route2])
         }
     }
 
     // calculate center of map
     const getMapCenter = () => {
         if (businessLocation && customerLocation && driverLocation) {
-            return {
+            const center = {
                 lat: (businessLocation.lat + customerLocation.lat + driverLocation.latitude) / 3,
                 lng: (businessLocation.lng + customerLocation.lng + driverLocation.longitude) / 3
             };
+            return center;
         }
         if (businessLocation && customerLocation) {
-        return {
-            lat: (businessLocation.lat + customerLocation.lat) / 2,
-            lng: (businessLocation.lng + customerLocation.lng) / 2
-        };
+            const center = {
+                lat: (businessLocation.lat + customerLocation.lat) / 2,
+                lng: (businessLocation.lng + customerLocation.lng) / 2
+            };
+            return center;
         }
         return { lat: 1.3521, lng: 103.8198 }; // SG default
     };
 
     useEffect(() => {
-        if (businessLocation && customerLocation) getStaticRoute();
+        if (businessLocation && customerLocation){
+            setIsLoading(false)
+            getStaticRoute();
+        } 
     }, [businessLocation, customerLocation])
 
     const busMarker = new Icon({iconUrl: busIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
@@ -211,6 +218,11 @@ const OrderMap = ({ orderId }) => {
 
     return (
         <div style={{ height: '400px', width: '100%' }}>
+            {isLoading ? (
+                <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    Loading map...
+                </div>
+            ) : (
             <MapContainer 
                 center={getMapCenter()} 
                 zoom={13} 
@@ -268,6 +280,7 @@ const OrderMap = ({ orderId }) => {
                     <Polyline key={`static-route-${staticRoute.length}`}positions={staticRoute} color="orange" weight={10} opacity={1}/>
                 )}
             </MapContainer>
+            )}
         </div>
     );
 };

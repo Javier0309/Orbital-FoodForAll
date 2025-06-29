@@ -38,4 +38,19 @@ router.get('/drivers/:id', async (req, res) => {
     }
 })
 
+router.put('/drivers/:id/about', async (req, res) => {
+    try {
+        const { about } = req.body;
+        const driver = await driverModel.findByIdAndUpdate(
+            req.params.id, {about}, {new:true}
+        )
+
+        if (!driver) return res.status(404).json({ success: false, message: "Driver not found" });
+        res.json({ success: true, driver})
+    } catch (error) {
+        console.error("Update error", error);
+        res.status(500).json({ success: false, message: "Update failed"})
+    }
+})
+
 export default router;
