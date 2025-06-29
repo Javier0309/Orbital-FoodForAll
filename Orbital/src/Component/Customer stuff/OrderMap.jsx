@@ -8,6 +8,12 @@ import marketShadow from 'leaflet/dist/images/marker-shadow.png'
 
 import { io } from "socket.io-client";
 import 'leaflet/dist/leaflet.css';
+import polyline from "@mapbox/polyline";
+
+import busIcon from '../../assets/chefhat.png'
+import driverIcon from '../../assets/motorbike.png'
+import custIcon from '../../assets/house.png'
+
 
 // fix for default markers
 delete Icon.Default.prototype._getIconUrl;
@@ -22,6 +28,8 @@ const OrderMap = ({ orderId }) => {
     const [businessLocation, setBusinessLocation] = useState(null);
     const [customerLocation, setCustomerLocation] = useState(null);
     const [routePath, setRoutePath] = useState([]);
+    const [staticRoute, setStaticRoute] = useState([]);
+    const [driverRoute, setDriverRoute] = useState([])
     const socketRef = useRef(null);
 
     useEffect(() => {
@@ -45,8 +53,12 @@ const OrderMap = ({ orderId }) => {
 
                         if (businessData.success && businessData.business?.address){
                             const businessCoords = await geocodeAddress(businessData.business.address);
-                            if (businessCoords) setBusinessLocation({...businessCoords, address: businessData.business.address});
-
+                            if (businessCoords) {setBusinessLocation({...businessCoords, address: businessData.business.address});
+                                //if (customerLocation) {
+                                  //  updateRoutePath(driverLocation)
+                                    //getStaticRoute();
+                                //}
+                            }
                         }
                     }
                     
@@ -57,6 +69,11 @@ const OrderMap = ({ orderId }) => {
                         if (customerData.success && customerData.customer?.address) {
                             const customerCoords = await geocodeAddress(customerData.customer.address);
                             setCustomerLocation({...customerCoords, address: customerData.customer.address});
+                                //if (businessLocation) {
+                                  //  updateRoutePath(driverLocation)
+                                    //getStaticRoute();
+                                //}
+
                     }
                 }
             }
@@ -71,6 +88,7 @@ const OrderMap = ({ orderId }) => {
         socketRef.current.on(`location-${orderId}`, (location) => {
             setDriverLocation(location);
             updateRoutePath(location);
+            getDriverRoute(location);
         });
 
         return () => {
@@ -106,6 +124,65 @@ const OrderMap = ({ orderId }) => {
         }
     };
 
+    const getStaticRoute = async () => {
+        if (businessLocation && customerLocation) {
+            const route = await getOptimalRoute(businessLocation, customerLocation)
+            if (route) {
+                setStaticRoute(route);
+            } else {
+                setStaticRoute([
+                    [businessLocation.lat, businessLocation.lng],
+                    [customerLocation.lat, customerLocation.lng]
+                ])
+            }
+        }
+    }
+
+    // gives the road
+    const getOptimalRoute = async (start, end) => {
+        try {
+            const apiKey = '5b3ce3597851110001cf6248f9e27ef6749b48e181a13eebf7d7d716'
+
+            const response = await fetch(`https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}`, {
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify({coordinates: [[start.lng, start.lat], [end.lng, end.lat]], format: 'geojson'
+                })
+            })
+            
+
+            const data = await response.json();
+
+            if (data.routes && data.routes[0] && data.routes[0].geometry) {
+                const route = data.routes[0];
+                // decode the polyline to get coords
+                if ( typeof route.geometry === 'string') {
+                    const coordinates = polyline.decode(route.geometry)
+                    return coordinates.map(coord => [coord[0], coord[1]])
+                }
+            }
+
+            
+        } catch (error) {
+            console.error('Error getting optimal route:', error)
+        }
+        return null;
+    }
+
+    const getDriverRoute = async (driverLoc) => {
+        if (driverLoc && businessLocation && customerLocation){
+            // get route from driver to business
+            const route1 = await getOptimalRoute(
+                {lat: driverLoc.latitude, lng: driverLoc.longitude},
+                businessLocation
+            )
+
+            const route2 = await getOptimalRoute(businessLocation, customerLocation)
+
+            if (route1 && route2) setDriverRoute([...route1, ...route2])
+        }
+    }
+
     // calculate center of map
     const getMapCenter = () => {
         if (businessLocation && customerLocation && driverLocation) {
@@ -123,6 +200,15 @@ const OrderMap = ({ orderId }) => {
         return { lat: 1.3521, lng: 103.8198 }; // SG default
     };
 
+    useEffect(() => {
+        if (businessLocation && customerLocation) getStaticRoute();
+    }, [businessLocation, customerLocation])
+
+    const busMarker = new Icon({iconUrl: busIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
+    const driverMarker = new Icon({iconUrl: driverIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
+    const custMarker = new Icon({iconUrl: custIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
+
+
     return (
         <div style={{ height: '400px', width: '100%' }}>
             <MapContainer 
@@ -137,7 +223,7 @@ const OrderMap = ({ orderId }) => {
                 
                 {/* Business Marker */}
                 {businessLocation && (
-                    <Marker position={[businessLocation.lat, businessLocation.lng]}>
+                    <Marker position={[businessLocation.lat, businessLocation.lng]} icon={busMarker}>
                         <Popup>
                             <div>
                                 <h4>Restaurant</h4>
@@ -149,7 +235,7 @@ const OrderMap = ({ orderId }) => {
                 
                 {/* Customer Marker */}
                 {customerLocation && (
-                    <Marker position={[customerLocation.lat, customerLocation.lng]}>
+                    <Marker position={[customerLocation.lat, customerLocation.lng]} icon={custMarker}>
                         <Popup>
                             <div>
                                 <h4>Delivery Address</h4>
@@ -161,7 +247,7 @@ const OrderMap = ({ orderId }) => {
                 
                 {/* Driver Marker */}
                 {driverLocation && (
-                    <Marker position={[driverLocation.latitude, driverLocation.longitude]}>
+                    <Marker position={[driverLocation.latitude, driverLocation.longitude]} icon={driverMarker}>
                         <Popup>
                             <div>
                                 <h4>Driver</h4>
@@ -170,10 +256,16 @@ const OrderMap = ({ orderId }) => {
                         </Popup>
                     </Marker>
                 )}
-                
-                {/* Route Path */}
-                {routePath.length > 0 && (
-                    <Polyline positions={routePath} color="blue" weight={3} opacity={0.7}/>
+            
+
+                {/* Driver Route Path */}
+                {driverRoute.length > 0 && (
+                    <Polyline key={`driver-route-${driverRoute.length}`} positions={driverRoute} color="red" weight={10} opacity={1}/>
+                )}
+
+                {/* Static Route (business to customer) */}
+                {staticRoute.length > 0 && (
+                    <Polyline key={`static-route-${staticRoute.length}`}positions={staticRoute} color="orange" weight={10} opacity={1}/>
                 )}
             </MapContainer>
         </div>
