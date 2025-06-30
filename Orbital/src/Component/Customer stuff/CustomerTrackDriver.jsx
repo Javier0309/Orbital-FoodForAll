@@ -46,7 +46,10 @@ const CustomerTrackDriver = ({orderId}) => {
             {orderDetails && (
                 <div>
                     <p>Order ID: {orderDetails._id}</p>
-                    <p>Found a rider!</p>
+                    <p>{orderDetails.deliveryStatus === 'in_transit' ? 'Your order is on the way!' :
+                        orderDetails.deliveryStatus === 'delivered' ? 'Your order has arrived' :
+                        orderDetails.deliveryStatus === 'assigned' ? 'Found a rider!' :
+                        'Looking for rider...'}</p>
                 </div>
             )}
         </div>

@@ -57,7 +57,7 @@ const AvailableOrders = () => {
                                     {order.items.map((item, index) => (
                                         <li key={index} className="order-item">
                                             <span className="item-name">{item.name}</span>
-                                            <span className="item-qty">x{item.quantity}</span>
+                                            <span className="item-qty"> x{item.quantity}</span>
                                             {item.comment && (
                                                 <span className="item-comment">"{item.comment}"</span>
                                             )}
@@ -80,7 +80,7 @@ const AvailableOrders = () => {
                                     className="action-btn accept-order"
                                     onClick={() => handleAccept(order._id)}
                                 >
-                                    ✅ Accept Delivery
+                                     Accept Delivery
                                 </button>
                             </div>
                         </div>

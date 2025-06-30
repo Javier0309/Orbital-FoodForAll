@@ -24,7 +24,7 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
     return (
         <div className="assigned-orders">
             <div className="orders-header">
-                <h3 className="orders-title">�� Assigned Orders</h3>
+                <h3 className="orders-title">Assigned Orders</h3>
                 <span className="orders-count">{orders.length} order{orders.length !== 1 ? 's' : ''}</span>
             </div>
             

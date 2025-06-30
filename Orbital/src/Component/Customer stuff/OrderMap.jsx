@@ -33,6 +33,7 @@ const OrderMap = ({ orderId }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [order, setOrder] = useState(null)
     const socketRef = useRef(null);
+    const prevRouteRef = useRef({});
 
     useEffect(() => {
         // connect to socket for driver location
@@ -43,6 +44,7 @@ const OrderMap = ({ orderId }) => {
             try {
                 const res = await fetch(`http://localhost:4000/api/order/${orderId}`);
                 const data = await res.json();
+                console.log('Order fetch response:', data);
                 
                 if (data.success) {
                     const order = data.order;
@@ -53,9 +55,10 @@ const OrderMap = ({ orderId }) => {
                     if (order.businessId) {
                         const businessRes = await fetch(`http://localhost:4000/api/business/profile/${order.businessId}`)
                         const businessData = await businessRes.json();
-
+                        console.log('Business profile response:', businessData);
                         if (businessData.success && businessData.business?.address){
                             const businessCoords = await geocodeAddress(businessData.business.address);
+                            console.log('Business geocoded coords:', businessCoords);
                             if (businessCoords) {
                                 setBusinessLocation({...businessCoords, address: businessData.business.address});
                             }
@@ -66,8 +69,10 @@ const OrderMap = ({ orderId }) => {
                     if (order.customerEmail) {
                         const customerRes = await fetch(`http://localhost:4000/api/signup/customer-by-email/${order.customerEmail}`);
                         const customerData = await customerRes.json();
+                        console.log('Customer profile response:', customerData);
                         if (customerData.success && customerData.customer?.address) {
                             const customerCoords = await geocodeAddress(customerData.customer.address);
+                            console.log('Customer geocoded coords:', customerCoords);
                             setCustomerLocation({...customerCoords, address: customerData.customer.address});
                         }
                     }
@@ -95,6 +100,7 @@ const OrderMap = ({ orderId }) => {
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`);
             const data = await response.json();
+            console.log('Geocoding response for', address, ':', data);
             if (data && data.length > 0) {
                 return {
                     lat: parseFloat(data[0].lat),
@@ -103,7 +109,7 @@ const OrderMap = ({ orderId }) => {
                 };
             }
         } catch (error) {
-            console.error("Geocoding error:", error);
+            console.error("Geocoding error for address", address, error);
         }
         return null;
     };
@@ -167,21 +173,16 @@ const OrderMap = ({ orderId }) => {
     const getDriverRoute = async (driverLoc) => {
         if (driverLoc && businessLocation && customerLocation){
             if (order?.deliveryStatus === 'assigned' || order?.deliveryStatus === 'pending'){
-            // get route from driver to business
-            const route1 = await getOptimalRoute(
-                {lat: driverLoc.latitude, lng: driverLoc.longitude},
-                businessLocation
-            )
-            
-            if (route1 && staticRoute.length > 0) setDriverRoute([...route1, ...staticRoute])
-        } else if (order?.deliveryStatus === 'in_transit') {
-            const route2 = await getOptimalRoute({lat: driverLoc.latitude, lng: driverLoc.longitude},
-                customerLocation)
-
+                const route1 = await getOptimalRoute(
+                    {lat: driverLoc.latitude, lng: driverLoc.longitude},
+                    businessLocation
+                )
+                if (route1 && staticRoute.length > 0) setDriverRoute([...route1, ...staticRoute])
+            } else if (order?.deliveryStatus === 'in_transit') {
+                const route2 = await getOptimalRoute({lat: driverLoc.latitude, lng: driverLoc.longitude},
+                    customerLocation)
                 if (route2) setDriverRoute(route2)
-        }
-
-            //if (route1 && route2) setDriverRoute([...route1, ...route2])
+            }
         }
     }
 
@@ -208,13 +209,75 @@ const OrderMap = ({ orderId }) => {
         if (businessLocation && customerLocation){
             setIsLoading(false)
             getStaticRoute();
+            
         } 
     }, [businessLocation, customerLocation])
+
+    useEffect(() => {
+        if (!driverLocation || !order) return;
+        if (order.deliveryStatus === 'in_transit' && customerLocation) {
+            const prev = prevRouteRef.current;
+            if (
+                prev.status === 'in_transit' &&
+                prev.driverLat === driverLocation.latitude &&
+                prev.driverLng === driverLocation.longitude &&
+                prev.custLat === customerLocation.lat &&
+                prev.custLng === customerLocation.lng
+            ) {
+                return; // No change, skip API call
+            }
+            prevRouteRef.current = {
+                status: 'in_transit',
+                driverLat: driverLocation.latitude,
+                driverLng: driverLocation.longitude,
+                custLat: customerLocation.lat,
+                custLng: customerLocation.lng,
+            };
+            getOptimalRoute(
+                { lat: driverLocation.latitude, lng: driverLocation.longitude },
+                customerLocation
+            ).then(route2 => {
+                if (route2) setDriverRoute(route2);
+            });
+        } else if (
+            (order.deliveryStatus === 'assigned' || order.deliveryStatus === 'pending') &&
+            businessLocation && staticRoute.length > 0
+        ) {
+            const prev = prevRouteRef.current;
+            if (
+                prev.status === order.deliveryStatus &&
+                prev.driverLat === driverLocation.latitude &&
+                prev.driverLng === driverLocation.longitude &&
+                prev.busLat === businessLocation.lat &&
+                prev.busLng === businessLocation.lng &&
+                prev.staticRouteLen === staticRoute.length
+            ) {
+                return; // No change, skip API call
+            }
+            prevRouteRef.current = {
+                status: order.deliveryStatus,
+                driverLat: driverLocation.latitude,
+                driverLng: driverLocation.longitude,
+                busLat: businessLocation.lat,
+                busLng: businessLocation.lng,
+                staticRouteLen: staticRoute.length,
+            };
+            getOptimalRoute(
+                { lat: driverLocation.latitude, lng: driverLocation.longitude },
+                businessLocation
+            ).then(route1 => {
+                if (route1 && staticRoute.length > 0) setDriverRoute([...route1, ...staticRoute]);
+            });
+        }
+    }, [driverLocation, customerLocation, businessLocation, staticRoute, order]);
 
     const busMarker = new Icon({iconUrl: busIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
     const driverMarker = new Icon({iconUrl: driverIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
     const custMarker = new Icon({iconUrl: custIcon, iconSize: [32,32], iconAnchor:[16,32], popupAnchor: [0,-32]})
 
+    if (driverRoute.length > 0) {
+        console.log('Rendering driverRoute Polyline', driverRoute);
+    }
 
     return (
         <div style={{ height: '400px', width: '100%' }}>
