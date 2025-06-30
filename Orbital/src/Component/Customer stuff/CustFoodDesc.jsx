@@ -33,7 +33,7 @@ function CustFoodDesc(){
             <div>
                 <div className='custfooddesc'>
                 <div className='bg'> 
-                <img className='card-image' src={url+"/images/"+image} alt=""/>
+                <img className='card-image' src={url+"/uploads/"+image} alt=""/>
                 <div className='business-stuff'>
                     <h3>{businessId?.name}'s</h3>
                     <button>View Restaurant</button>

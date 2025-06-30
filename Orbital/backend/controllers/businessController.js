@@ -60,7 +60,14 @@ const updateOrderStatus = async (req,res) => {
         const {orderId} = req.params;
         const {status} = req.body;
 
-        await orderModel.findByIdAndUpdate(orderId, {status})
+        const order = await orderModel.findById(orderId)
+        if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+        order.status = status;
+
+        //auto-complete when driver delivers or customer collects
+        if (order.deliveryStatus === 'delivered' || status === 'collected') order.status = 'completed'
+        await order.save()
         res.json({success: true, message: "Order status updated"})
     } catch (error) {
         console.error("Error updating order status:", error);

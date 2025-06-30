@@ -5,15 +5,17 @@ import { supabase } from "../../../backend/SupabaseClient";
 const Orders = () => {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true);
-    
-    const getNextStatuses = (mode) => {
-        if (mode === 'delivery') return ['pending', 'ready', 'assigned', 'in_transit', 'delivered', 'completed']
-        return ['pending', 'ready', 'collected', 'completed']
-    }
+    const [activeTab, setActiveTab] = useState('active')
+
+
 
     // Fetch orders for this business   
     useEffect (() => {
-        async function fetchOrders() {
+        fetchOrders();
+        const interval = setInterval(fetchOrders, 30000);
+        return () => clearInterval(interval)
+        }, [])
+    const fetchOrders = async() => {
             try {
                 const businessId = localStorage.getItem('businessId');
                 const res = await axios.get(`http://localhost:4000/api/business/orders/${businessId}`)
@@ -23,9 +25,7 @@ const Orders = () => {
             } finally {
                 setLoading(false);
             }
-        }
-        fetchOrders()
-    }, [])
+    }
 
 
     // Helper to change order status
@@ -34,7 +34,8 @@ const Orders = () => {
             await axios.patch(`http://localhost:4000/api/business/orders/${orderId}/status`,
                 { status: newStatus}
             )
-            setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: newStatus} : o))
+            await fetchOrders();
+            //setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: newStatus} : o))
         } catch (error) {
             console.error('Failed updating status', error)
         }
@@ -43,39 +44,119 @@ const Orders = () => {
     if (loading) return <div>Loading orders...</div>
     if (!orders.length) return <div>No orders yet</div>
 
+    // filter orders based on tab
+    const pendingOrders = orders.filter(order => order.status === 'pending');
+    const completedOrders = orders.filter(order => order.status === 'completed' || order.deliveryStatus === 'delivered')
     return (
         <div className='orders'>
             <h2>Orders</h2> 
-            {orders.map(order => (
-                <div key={order._id} className="order-card">
-                    <p><strong>Order:</strong> {order._id}</p>
-                    <p><strong>Status:</strong> {order.status}</p>
-                    <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
-                    <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-                    <div>
-                        <strong>Items:</strong>
-                        <ul>
-                            {order.items.map(item => (
-                                <li key={item.foodId}>
-                                    {item.name} - qty: {item.quantity} 
-                                    <p>Comments: {item.comment} </p>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+            
+            {/* Add tab buttons */}
+            <div style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
+                <button 
+                    onClick={() => setActiveTab('active')}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: activeTab === 'active' ? '#3b82f6' : '#e2e8f0',
+                        color: activeTab === 'active' ? 'white' : 'black',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    To Prepare ({pendingOrders.length})
+                </button>
+                <button 
+                    onClick={() => setActiveTab('history')}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: activeTab === 'history' ? '#3b82f6' : '#e2e8f0',
+                        color: activeTab === 'history' ? 'white' : 'black',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Completed ({completedOrders.length})
+                </button>
+            </div>
 
-                    <div className="actions">
-                        {getNextStatuses(order.deliveryMode).map(status => (
-                            <button key={status} disabled={order.status === status}
-                            onClick={() => updateStatus(order._id, status)}>
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                            </button>
-                        ))}
-                            
+            {/* Show orders based on active tab */}
+            {activeTab === 'active' ? (
+                // Show only pending orders
+                pendingOrders.length === 0 ? (
+                    <div style={{textAlign: 'center', padding: '40px'}}>
+                        <h3>All caught up!</h3>
+                        <p>No orders to prepare</p>
                     </div>
-                </div>
+                ) : (
+                    pendingOrders.map(order => (
+                        <div key={order._id} className="order-card">
+                            <p><strong>Order:</strong> {order._id}</p>
+                            <p><strong>Status:</strong> {order.status}</p>
+                            <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
+                            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <div>
+                                <strong>Items:</strong>
+                                <ul>
+                                    {order.items.map(item => (
+                                        <li key={item.foodId}>
+                                            {item.name} - qty: {item.quantity} 
+                                            <p>Comments: {item.comment} </p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
 
-            ))}
+                            <div className="actions">
+                                {/* Only show "Mark as Ready" button */}
+                                <button 
+                                    onClick={() => updateStatus(order._id, 'ready')}
+                                    style={{
+                                        backgroundColor: '#10b981',
+                                        color: 'white',
+                                        padding: '10px 20px',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    ✅ Mark as Ready
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )
+            ) : (
+                // Show completed orders
+                completedOrders.length === 0 ? (
+                    <div style={{textAlign: 'center', padding: '40px'}}>
+                        <h3>📊 No completed orders yet</h3>
+                    </div>
+                ) : (
+                    completedOrders.map(order => (
+                        <div key={order._id} className="order-card" style={{opacity: 0.7}}>
+                            <p><strong>Order:</strong> {order._id}</p>
+                            <p><strong>Status:</strong> {order.status === 'completed' ? 'completed' : 'delivered'}</p>
+                            <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
+                            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <div>
+                                <strong>Items:</strong>
+                                <ul>
+                                    {order.items.map(item => (
+                                        <li key={item.foodId}>
+                                            {item.name} - qty: {item.quantity} 
+                                            <p>Comments: {item.comment} </p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            {/* No action buttons for completed orders */}
+                        </div>
+                    ))
+                )
+            )}
         </div>
     )
 }

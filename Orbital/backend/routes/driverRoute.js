@@ -1,7 +1,9 @@
 import multer from 'multer'
 import path from 'path'
 import driverModel from '../models/driverModel.js';
+import userModel from '../models/userModel.js';
 import express from 'express'
+import mongoose from 'mongoose'
 
 const router = express.Router();
 //image storing engine

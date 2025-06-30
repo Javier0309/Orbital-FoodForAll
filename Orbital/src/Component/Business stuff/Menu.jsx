@@ -59,7 +59,7 @@ const Menu = () => {
                                 <div className="flex-col">
                                 <div className='LHS'>
                                     <div className="add-img-upload flex-col">
-                                        <img src={`${url}/images/` +item.image} alt="" />
+                                        <img src={`${url}/uploads/` +item.image} alt="" />
                                     </div>
                         
                                     <div className='food-qty-menu'>
