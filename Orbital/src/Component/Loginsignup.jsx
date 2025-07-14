@@ -168,6 +168,10 @@ const Loginsignup = () => {
                     if (res.data.success && res.data.driver?._id){
                         localStorage.setItem('driverId', res.data.driver._id)
                     }
+                    // Add check for driverId
+                    if (!localStorage.getItem('driverId')) {
+                        alert('Driver ID was not set!\nEmail used: ' + localStorage.getItem('email') + '\nPlease make sure you are logging in with the correct driver email.');
+                    }
                     navigate('/drivermain')
                 }
                 setLoading(false);

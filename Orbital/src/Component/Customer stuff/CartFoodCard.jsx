@@ -27,7 +27,7 @@ function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consu
         <>
         <div className='foodcard'> 
             <div className='content'>
-                <img className='card-image' src={url+"/images/"+image} alt=""></img>
+                <img className='card-image' src={url+"/uploads/"+image} alt=""></img>
                 <h2 className='card-title'>{name}</h2>
                 <p className='card-text'>{cartItems[id]?.comment.length > 30 ? cartItems[id]?.comment.slice(0,30) + '...' : cartItems[id]?.comment}</p>
                 <div className='food-qty'>
