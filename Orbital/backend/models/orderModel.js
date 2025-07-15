@@ -15,7 +15,8 @@ const orderSchema = new mongoose.Schema({
     driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'Driver', default: null},
     deliveryStatus: {type: String, enum: ['pending', 'assigned', 'in_transit', 'delivered'], default: 'pending'},
     deliveryMode: { type: String, enum: ['pickup', 'delivery'], default: 'pickup'},
-    location: {latitude: Number, longitude: Number}
+    location: {latitude: Number, longitude: Number},
+    removedByBusiness: {type: Boolean, default: false},
 })
 
 const orderModel = mongoose.model("orders", orderSchema);

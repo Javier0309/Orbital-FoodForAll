@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react'
 import axios from 'axios'
 import Upload from '../../assets/upload_area.jpg';
 
-const DriverCard = ({driverId}) => {
+const DriverCard = ({driverId}) => {            // props from TrackDelivery.jsx
     const [driver, setDriver] = useState(null)
 
     useEffect(() => {

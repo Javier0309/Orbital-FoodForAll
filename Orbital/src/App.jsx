@@ -18,6 +18,7 @@ import AwaitingVerification from './Component/AwaitingVerification';
 import DriverMain from './Component/Driver stuff/DriverMain';
 import DriverProfile from './Component/Driver stuff/DriverProfile';
 import TrackDelivery from './Component/Customer stuff/TrackDelivery';
+import OrderHistory from './Component/Business stuff/OrderHistory';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -51,6 +52,8 @@ function App() {
           <Route path='/drivermain' element={<DriverMain />} />
           <Route path='/driverprofile' element={<DriverProfile />} />
           <Route path='/track-delivery/:orderId' element={<TrackDelivery/>}/>
+          <Route path='/order-history' element={<OrderHistory />} />
+
 
         </Routes>
       </RecoveryContext.Provider>

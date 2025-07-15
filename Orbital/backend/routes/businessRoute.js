@@ -1,4 +1,4 @@
-import { getOpenOrClosed, getOrdersForBusiness, openOrClosed, updateOrderStatus } from '../controllers/businessController.js';
+import { getOpenOrClosed, getOrdersForBusiness, openOrClosed, updateOrderStatus, removeCompletedOrder } from '../controllers/businessController.js';
 import express from 'express';
 import multer from "multer";
 import path from "path";
@@ -58,6 +58,9 @@ busRouter.get('/business-by-email/:email', async (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 });
+
+busRouter.patch('/orders/:orderId/remove', removeCompletedOrder);
+
 
 export default busRouter;
 

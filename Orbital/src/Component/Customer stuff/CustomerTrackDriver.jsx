@@ -1,17 +1,10 @@
-import { useEffect,useState,useRef } from "react";
-import io from 'socket.io-client'
-import { MapContainer, Marker, TileLayer } from 'react-leaflet'
+import { useEffect,useState } from "react";
 import 'leaflet/dist/leaflet.css'
 import OrderMap from './OrderMap'
 
-const socket = io("http://localhost:4000")
-
 const CustomerTrackDriver = ({orderId}) => {
 
-    //const [position, setPosition] = useState(null);
-    const [driverLocation, setDriverLocation] = useState(null);
     const [orderDetails , setOrderDetails ] = useState(null);
-    const socketRef = useRef(null);
 
     useEffect(() => {
         const fetchOrderDetails = async() => {
@@ -26,15 +19,6 @@ const CustomerTrackDriver = ({orderId}) => {
         }
 
         fetchOrderDetails();
-
-        // connect to socket for driver location
-        socketRef.current = io("http://localhost:4000")
-
-        socketRef.current.on(`location-${orderId}`, (location) => {
-            setDriverLocation(location)
-        })
-
-        return () => {if (socketRef.current) socketRef.current.disconnect()}
     }, [orderId])
 
     return (

@@ -87,7 +87,7 @@ const StoreContextProvider = (props) => {
                     setCartItems({});
 
                     const orderId = res.data.order?._id || res.data.orders?.[0]?._id;
-                    if (orderId) navigate(`/track-delivery/${orderId}`)
+                    if (orderId) navigate(`/track-delivery/${orderId}`)     // orderId to be used by TrackDelivery.jsx
                 } else {
                     alert ("Failed to place order")
                 }     

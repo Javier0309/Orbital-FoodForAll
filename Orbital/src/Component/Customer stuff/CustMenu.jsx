@@ -14,11 +14,6 @@ const FoodDisplay = () => {
 
     //search bar
     const [searchQuery, setSearchQuery] = useState("")
-    const filteredFood = food_list.filter(item => 
-        ((item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()))) && 
-        item.quantity > 0
-    )
 
     const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 5, slidesToScroll: 1, arrows: true, responsive: [
         {breakpoint: 704, settings: {slidesToShow: 2, slidesToScroll: 1}},
@@ -26,13 +21,6 @@ const FoodDisplay = () => {
         {breakpoint: 1280, settings: {slidesToShow: 3, slidesToScroll: 1}},
     ]};
     const sliderRef = useRef({});
-
-    const groupedFood = filteredFood.reduce((acc, item) => {
-        const key = item.businessId?._id || 'unknown';
-        if (!acc[key]) acc[key] = [];
-        acc[key].push(item);
-        return acc;
-    }, {})
 
     useEffect(() => {
         const listeners = [];
@@ -63,6 +51,19 @@ const FoodDisplay = () => {
         }
     }, [food_list]);
 
+    const filteredFood = food_list.filter(item => 
+        ((item.name && item.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.desc && item.desc.toLowerCase().includes(searchQuery.toLowerCase()))) && 
+        item.quantity > 0
+    )
+
+    const groupedFood = filteredFood.reduce((acc, item) => {
+        const key = item.businessId?._id || 'unknown';
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+    }, {})
+
     return (
         <div id='food-display' className="food-display">
         <h2>Food near you, for you</h2>
@@ -75,7 +76,7 @@ const FoodDisplay = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}/>
         </div>
 
-        {Object.entries(groupedFood).map(([businessId, items], index) => (
+        {Object.entries(groupedFood).map(([businessId, items]) => (
             <div key={businessId} className="restaurant-slider">
                 <h3>{items[0].businessId?.name}</h3>
                 {/*<div className='food-display-list'>*/}
