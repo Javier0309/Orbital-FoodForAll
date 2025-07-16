@@ -38,10 +38,26 @@ const Orders = () => {
             console.error('Failed updating status', error)
         }
     }
+<<<<<<< HEAD
     
+=======
+
+    const removeOrder = async (orderId) => {
+        try {
+            await axios.patch(`http://localhost:4000/api/business/orders/${orderId}/remove`)
+            await fetchOrders();    // refresh list after deleting
+        } catch (error) {
+            console.error('Failed to remove order', error);
+        }
+    }
+
+    if (loading) return <div>Loading orders...</div>
+    if (!orders.length) return <div>No orders yet</div>
+
+>>>>>>> 01f606119ad55e8fc24a56d0c3a4ea6940ed4730
     // filter orders based on tab
     const pendingOrders = orders.filter(order => order.status === 'pending');
-    const completedOrders = orders.filter(order => order.status === 'completed' || order.deliveryStatus === 'delivered')
+    const completedOrders = orders.filter(order => (order.status === 'completed' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && !order.removedByBusiness);
     return (
         <div className='orders'>
             <h2>Orders</h2> 
@@ -127,7 +143,7 @@ const Orders = () => {
                 // Show completed orders
                 completedOrders.length === 0 ? (
                     <div style={{textAlign: 'center', padding: '40px'}}>
-                        <h3>📊 No completed orders yet</h3>
+                        <h3>No completed orders yet</h3>
                     </div>
                 ) : (
                     completedOrders.map(order => (
@@ -147,7 +163,11 @@ const Orders = () => {
                                     ))}
                                 </ul>
                             </div>
-                            {/* No action buttons for completed orders */}
+                            {order.status === 'completed' && (
+                                <button onClick={() => removeOrder(order._id)}>
+                                    Remove
+                                </button>
+                            )}
                         </div>
                     ))
                 )

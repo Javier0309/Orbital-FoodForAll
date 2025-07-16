@@ -2,7 +2,6 @@ import './CustMain.css'
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../../assets/foodforall logo.png'
-import searchicon from '../../assets/searchicon.png'
 import basketicon from '../../assets/basketicon.png'
 import { supabase } from '../../../backend/SupabaseClient';
 

@@ -8,7 +8,6 @@ import Minus from '../../assets/minus.png';
 
 function CustFoodDesc(){
 
-    const navigate = useNavigate();
     const { state } = useLocation();
     const {id, name, desc, image, quantity, businessId, cookedAt, consumeBy, comment: stateComment} = state;
     const {url, cartItems, addToCart, removeFromCart} = useContext(StoreContext);

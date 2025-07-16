@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import Plus from '../../assets/plus.png';
 import Minus from '../../assets/minus.png';
 
-function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consumeBy, comment}){
+function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consumeBy, comment}){    //props passed from Cart.jsx
     const navigate = useNavigate();
     const handleClick = () => navigate('/cust-food-desc', {
         state: {id, name, desc, image, quantity, businessId, cookedAt, consumeBy, comment: cartItems[id]?.comment || ""}

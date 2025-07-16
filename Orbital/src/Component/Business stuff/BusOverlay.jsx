@@ -37,7 +37,7 @@ const BusOverlay = () => {
         <div className="bus-overlay">
             
             <div className="bus-content">
-                <h1 className="title">{loading ? 'Loading...' : (busData?.name)}</h1>
+                <h1 className="title">International Hotel</h1>
                 <div className="donate-button">
                 <button onClick={() => navigate('/busmenu')}>Add food to donate</button>
                 </div>
