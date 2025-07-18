@@ -1,4 +1,3 @@
-
 import './BusMain.css';
 import AddFood from './AddFood.jsx';
 import BusHeader from "./BusHeader.jsx";
@@ -46,57 +45,56 @@ const Menu = () => {
     return (
         <>
             <BusHeader/>
-                <div className="busmenu">
-                <p>
+            <div className="busmenu">
                 <button onClick={() => setPopUp(true)}>Add food to donate</button>
-            <AddFood trigger={popUp} setTrigger={setPopUp} onAdd={fetchMenu}/>  {/*props for AddFood.jsx*/} 
-            <div className='list add flex-col'>
-                <p>Food Offered</p>
-                <div className="list-table">
-                    {menu.map((item,index)=>{
-                        return(
-                            <div key={index}>
-                                <div className="flex-col">
-                                <div className='LHS'>
-                                    <div className="add-img-upload flex-col">
-                                        <img src={`${url}/uploads/` +item.image} alt="" />
-                                    </div>
-                        
-                                    <div className='food-qty-menu'>
-                                        <p>{item.quantity}</p>
-                                    </div>
-                                </div>
-                        
-                                <div className='RHS'>
-                                    <div className="add-product-name flex-col">
-                                        <h3>{item.name}</h3>
-                                    </div>
-                        
-                                    <div className="add-product-desc flex-col">
-                                        <h4>Ingredients</h4>
-                                        <p>{item.desc}</p>
-                                    </div>
-                        
-                                    <div className='time'>
-                                        <div className='time1'>
-                                            <p>Cooked at: {new Date(item.cookedAt).toLocaleString()}</p>
+                <AddFood trigger={popUp} setTrigger={setPopUp} onAdd={fetchMenu}/>  {/*props for AddFood.jsx*/} 
+                <div className='list add flex-col'>
+                    <p>Food Offered</p>
+                    <div className="list-table">
+                        {menu.map((item,index)=>{
+                            return(
+                                <div key={index}>
+                                    <div className="flex-col">
+                                        <div className='LHS'>
+                                            <div className="add-img-upload flex-col">
+                                                <img src={`${url}/uploads/` +item.image} alt="" />
+                                            </div>
+                                
+                                            <div className='food-qty-menu'>
+                                                <p>{item.quantity}</p>
+                                            </div>
                                         </div>
-                                        <div className='time2'>
-                                            <p>Consume by: {new Date(item.consumeBy).toLocaleString()}</p>
-                                        </div>
-                                    </div>
+                                
+                                        <div className='RHS'>
+                                            <div className="add-product-name flex-col">
+                                                <h3>{item.name}</h3>
+                                            </div>
+                                
+                                            <div className="add-product-desc flex-col">
+                                                <h4>Ingredients</h4>
+                                                <p>{item.desc}</p>
+                                            </div>
+                                
+                                            <div className='time'>
+                                                <div className='time1'>
+                                                    <p>Cooked at: {new Date(item.cookedAt).toLocaleString()}</p>
+                                                </div>
+                                                <div className='time2'>
+                                                    <p>Consume by: {new Date(item.consumeBy).toLocaleString()}</p>
+                                                </div>
+                                            </div>
 
-                                    <div className='remove'>
-                                        <button onClick={() => handleRemove(item._id)}>Remove</button>
-                                    </div>
+                                            <div className='remove'>
+                                                <button onClick={() => handleRemove(item._id)}>Remove</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
-            </p></div>
         </>
     )
 }

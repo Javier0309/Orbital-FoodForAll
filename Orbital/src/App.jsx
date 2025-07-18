@@ -19,6 +19,12 @@ import DriverMain from './Component/Driver stuff/DriverMain';
 import DriverProfile from './Component/Driver stuff/DriverProfile';
 import TrackDelivery from './Component/Customer stuff/TrackDelivery';
 import OrderHistory from './Component/Business stuff/OrderHistory';
+import CustomerRestaurantView from './Component/Customer stuff/CustomerRestaurantView';
+import BusAbout from './Component/Business stuff/BusAbout';
+import CustAbout from './Component/Customer stuff/CustAbout';
+import DriverAbout from './Component/Driver stuff/DriverAbout';
+import ReviewRestaurant from './Component/Customer stuff/ReviewRestaurant';
+import BusReviews from './Component/Business stuff/BusReviews';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -53,6 +59,12 @@ function App() {
           <Route path='/driverprofile' element={<DriverProfile />} />
           <Route path='/track-delivery/:orderId' element={<TrackDelivery/>}/>
           <Route path='/order-history' element={<OrderHistory />} />
+          <Route path="/restaurant/:businessId" element={<CustomerRestaurantView />} />
+          <Route path="/about" element={<BusAbout />} />
+          <Route path="/customer-about" element={<CustAbout />} />
+          <Route path="/driver-about" element={<DriverAbout />} />
+          <Route path="/restaurant/:businessId/review" element={<ReviewRestaurant />} />
+          <Route path="/reviews" element={<BusReviews />} />
 
 
         </Routes>

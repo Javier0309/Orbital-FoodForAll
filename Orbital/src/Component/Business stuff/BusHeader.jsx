@@ -59,8 +59,8 @@ function BusHeader() {
                 <li onClick={()=>{navigate("/edit-profile");setMenu("edit-profile")}} className={menu==="edit-profile"?"active":""}>Edit Profile</li>
                 <li onClick={()=>{navigate("/view-profile");setMenu("view-profile")}} className={menu==="view-profile"?"active":""}>View Profile</li>
                 <li onClick={()=>{navigate("/order-history"); setMenu("order-history")}} className={menu==="order-history"?"active":""}>Order History</li>
-                <li onClick={()=>setMenu("reviews")} className={menu==="reviews"?"active":""}>Reviews</li>
-                <li onClick={()=>setMenu("about")} className={menu==="about"?"active":""}>About</li>
+                <li onClick={()=>{navigate("/reviews");setMenu("reviews")}} className={menu==="reviews"?"active":""}>Reviews</li>
+                <li onClick={()=>{navigate("/about");setMenu("about")}} className={menu==="about"?"active":""}>About</li>
             </ul>
 
             <div className='bus-header-right'>

@@ -71,7 +71,7 @@ const getBusinessProfile = async (req, res) => {
     }
     try {
         const {userId} = req.params;
-        const business = await businessModel.findOne({ userId });
+        const business = await businessModel.findById(businessId);
         if (!business) return res.status(404).json({ success: false, message: "Business not found" });
         res.json({ success: true, business });
     } catch (error) {
@@ -158,11 +158,10 @@ const removeCompletedOrder = async (req, res) => {
 
 export { 
     openOrClosed, 
-    getOpenOrClosed, 
     updateOrderStatus, 
     getBusinessProfile, 
     updateBusinessProfile,
-    openOrClosed,
     getOpenOrClosed, 
     removeCompletedOrder,
+    getOrdersForBusiness,
 }

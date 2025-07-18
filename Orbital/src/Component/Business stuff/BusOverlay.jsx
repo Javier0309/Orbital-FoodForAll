@@ -1,4 +1,3 @@
-
 import './BusMain.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -11,19 +10,19 @@ const BusOverlay = () => {
     
     useEffect(() => {
         const fetchBusData = async ()=>{
-            try{
-                const email = localStorage.getItem('email');
-                if (!email) {
-                    console.error('No email found')
-                    setLoading(false)
-                    return
-                }
+            const email = localStorage.getItem('email');
+            if (!email) {
+                setLoading(false)
+                return; // Do not fetch if no business email
+            }
 
+            try {
                 const response = await axios.get(`http://localhost:4000/api/business/business-by-email/${email}`);
-                if (response.data.success) {
-                    setBusData(response.data.business)
+                if (response.data.success && response.data.business) {
+                    setBusData(response.data.business);
                 } else {
-                    console.error('Failed to fetch business data')
+                    // Only log if email is present but fetch fails
+                    console.error('Failed to fetch business data');
                 }
             } catch (error){
                 console.error('Error fetching business data:', error)
@@ -33,16 +32,21 @@ const BusOverlay = () => {
         }
         fetchBusData()
     }, [])
+
     return (
         <div className="bus-overlay">
-            
             <div className="bus-content">
-                <h1 className="title">International Hotel</h1>
+                <h1 className="title">
+                    {loading
+                        ? "Loading..."
+                        : busData?.name
+                            ? busData.name
+                            : "Business Name"}
+                </h1>
                 <div className="donate-button">
-                <button onClick={() => navigate('/busmenu')}>Add food to donate</button>
+                    <button onClick={() => navigate('/busmenu')}>Add food to donate</button>
                 </div>
             </div>
-
             <div className="overlay"/>
         </div>
     )

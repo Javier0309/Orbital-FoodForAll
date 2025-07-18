@@ -19,7 +19,7 @@ function DriverHeader() {
                 <li onClick={()=>{setMenu("home"), navigate('/drivermain')}} className={menu==="home"?"active":""}>Home</li>
                 <li onClick={()=>setMenu("order-history")} className={menu==="order-history"?"active":""}>Order History</li>
                 <li onClick={()=>{setMenu("view-profile"), navigate('/driverprofile')}} className={menu==="view-profile"?"active":""}>View Profile</li>
-                <li onClick={()=>setMenu("about")} className={menu==="about"?"active":""}>About</li>
+                <li onClick={()=>{setMenu("about"); navigate('/driver-about')}} className={menu==="about"?"active":""}>About</li>
             </ul>
 
             <div className='driver-header-right'>

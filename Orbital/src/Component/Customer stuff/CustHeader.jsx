@@ -46,7 +46,7 @@ function CustHeader() {
                 <li onClick={()=>{setMenu("home"), navigate('/custmain')}} className={menu==="home"?"active":""}>Home</li>
                 <li onClick={()=>setMenu("order-history")} className={menu==="order-history"?"active":""}>Order History</li>
                 <li onClick={()=>setMenu("favourites")} className={menu==="favourites"?"active":""}>Favourites</li>
-                <li onClick={()=>setMenu("about")} className={menu==="about"?"active":""}>About</li>
+                <li onClick={()=>{setMenu("about"); navigate('/customer-about')}} className={menu==="about"?"active":""}>About</li>
             </ul>
 
             <div className='cust-header-right'>

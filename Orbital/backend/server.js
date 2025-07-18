@@ -17,7 +17,7 @@ import orderRoute from "./routes/orderRoute.js";
 import path from "path";
 import userRouter from "./routes/userRoute.js";
 import driverRoute from "./routes/driverRoute.js";
-
+import reviewRouter from "./routes/reviewRoute.js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -37,7 +37,7 @@ connectDB();
 app.use('/api/food', foodRouter);
 app.use('/api/recovery', recoveryRoutes);
 // Serve all uploads (including certs and images)
-app.use('/uploads', express.static('uploads'));
+//app.use('/uploads', express.static('uploads'));
 app.use('/api/cart', cartRouter);
 app.use('/api/signup', signupRouter);
 app.use('/api/business', busRouter);
@@ -45,6 +45,7 @@ app.use('/api', driverRoute);
 app.use('/api/order', orderRoute);
 app.use('/api/user', userRouter);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/api', reviewRouter);
 
 app.get("/", (req, res) => {
     res.send("API is running!");
@@ -69,9 +70,9 @@ io.on('connection', (socket) => {
     console.log('Socket connected:', socket.id);
 
     //Handle driver location updates
-    socket.on('driverLocationUpdate', ({driverId, orderId, latitude, longitude}) => {
+    socket.on('driverLocationUpdate', ({driverId, latitude, longitude}) => {
         console.log(`Driver ${driverId} location:`, latitude, longitude);
-        socket.broadcast.emit(`location-${orderId}`, { latitude, longitude })
+        socket.broadcast.emit(`location-${driverId}`, { latitude, longitude })
     })
 
     socket.on('disconnect', () =>{

@@ -38,10 +38,6 @@ const Orders = () => {
             console.error('Failed updating status', error)
         }
     }
-<<<<<<< HEAD
-    
-=======
-
     const removeOrder = async (orderId) => {
         try {
             await axios.patch(`http://localhost:4000/api/business/orders/${orderId}/remove`)
@@ -53,8 +49,6 @@ const Orders = () => {
 
     if (loading) return <div>Loading orders...</div>
     if (!orders.length) return <div>No orders yet</div>
-
->>>>>>> 01f606119ad55e8fc24a56d0c3a4ea6940ed4730
     // filter orders based on tab
     const pendingOrders = orders.filter(order => order.status === 'pending');
     const completedOrders = orders.filter(order => (order.status === 'completed' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && !order.removedByBusiness);

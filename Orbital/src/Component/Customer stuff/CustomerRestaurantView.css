@@ -1,0 +1,246 @@
+.customer-restaurant-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Restaurant Header */
+  .restaurant-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+  }
+  
+  .restaurant-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .restaurant-info {
+    flex: 1;
+  }
+  
+  .restaurant-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 10px 0;
+  }
+  
+  .restaurant-established {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  .restaurant-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+    font-size: 1.1rem;
+  }
+  
+  .location-icon {
+    font-size: 1.2rem;
+  }
+  
+  /* Restaurant Details */
+  .restaurant-details {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .restaurant-about {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .restaurant-about h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .restaurant-about p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1.1rem;
+  }
+  
+  /* Certificates Section */
+  .restaurant-certificates {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .restaurant-certificates h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .certificates-grid {
+    display: grid;
+    gap: 15px;
+  }
+  
+  .cert-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .cert-item:last-child {
+    border-bottom: none;
+  }
+  
+  .cert-label {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .cert-link {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .cert-link:hover {
+    text-decoration: underline;
+  }
+  
+  .cert-not-available {
+    color: #dc3545;
+    font-weight: 500;
+  }
+  
+  /* Menu Section */
+  .restaurant-menu {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .restaurant-menu h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .menu-item-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .menu-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .menu-item-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .menu-item-info {
+    padding: 15px;
+  }
+  
+  .menu-item-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .menu-item-desc {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  
+  .menu-item-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #888;
+  }
+  
+  /* Loading and Error States */
+  .restaurant-loading,
+  .restaurant-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    text-align: center;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .restaurant-header {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .restaurant-name {
+      font-size: 2rem;
+    }
+    
+    .menu-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .cert-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
