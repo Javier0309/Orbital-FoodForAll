@@ -23,7 +23,7 @@ Icon.Default.mergeOptions({
     shadowUrl: marketShadow,
 });
 
-const OrderMap = ({ orderId }) => {
+const OrderMap = ({ orderId, pickupMode }) => {
     const [driverLocation, setDriverLocation] = useState(null);
     const [businessLocation, setBusinessLocation] = useState(null);
     const [customerLocation, setCustomerLocation] = useState(null);
@@ -34,45 +34,62 @@ const OrderMap = ({ orderId }) => {
     const socketRef = useRef(null);
     const prevRouteRef = useRef({});
 
+    // For pickup mode: track real-time customer location
     useEffect(() => {
-        // connect to socket for driver location
-        socketRef.current = io("http://localhost:4000");
+        let watchId;
+        if (pickupMode) {
+            if (navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        setCustomerLocation({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            address: 'Your Location'
+                        });
+                    },
+                    (error) => { console.error('Geolocation error:', error); },
+                    { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+                );
+            }
+        }
+        return () => {
+            if (pickupMode && watchId !== undefined) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        };
+    }, [pickupMode]);
+
+    useEffect(() => {
+        // connect to socket for driver location (only if not pickupMode)
+        if (!pickupMode) {
+            socketRef.current = io("http://localhost:4000");
+        }
 
         // get order details & locations
         const fetchOrderDetails = async () => {
             try {
                 const res = await fetch(`http://localhost:4000/api/order/${orderId}`);
-                const data = await res.json();          // converts the raw http response to json, data will now be a JavaScript object 
-                console.log('Order fetch response:', data);
-                
+                const data = await res.json();
                 if (data.success) {
                     const order = data.order;
                     setOrder(order)
-                    
-                    
                     // get business location
                     if (order.businessId) {
                         const businessRes = await fetch(`http://localhost:4000/api/business/profile/${order.businessId}`)
-                        const businessData = await businessRes.json();  
-                        // converts the raw http response to json, businessData will now be a JavaScript object containing the business profile
-                        console.log('Business profile response:', businessData);
+                        const businessData = await businessRes.json();
                         if (businessData.success && businessData.business?.address){
                             const businessCoords = await geocodeAddress(businessData.business.address);
-                            console.log('Business geocoded coords:', businessCoords);
                             if (businessCoords) {
                                 setBusinessLocation({...businessCoords, address: businessData.business.address});
                             }
                         }
                     }
-                    
-                    // get customer location
-                    if (order.customerEmail) {
+                    // get customer location (for delivery mode only)
+                    if (!pickupMode && order.customerEmail) {
                         const customerRes = await fetch(`http://localhost:4000/api/signup/customer-by-email/${order.customerEmail}`);
                         const customerData = await customerRes.json();
-                        console.log('Customer profile response:', customerData);
                         if (customerData.success && customerData.customer?.address) {
                             const customerCoords = await geocodeAddress(customerData.customer.address);
-                            console.log('Customer geocoded coords:', customerCoords);
                             setCustomerLocation({...customerCoords, address: customerData.customer.address});
                         }
                     }
@@ -84,15 +101,19 @@ const OrderMap = ({ orderId }) => {
 
         fetchOrderDetails();
 
-        // listen for driver location updates
-        socketRef.current.on(`location-${orderId}`, (location) => {
-            setDriverLocation(location);
-        });
+        // listen for driver location updates (only if not pickupMode)
+        if (!pickupMode && socketRef.current) {
+            socketRef.current.on(`location-${orderId}`, (location) => {
+                setDriverLocation(location);
+            });
+        }
 
         return () => {
-            socketRef.current.disconnect();
+            if (!pickupMode && socketRef.current) {
+                socketRef.current.disconnect();
+            }
         };
-    }, [orderId]);
+    }, [orderId, pickupMode]);
 
     // address --> coordinates
     const geocodeAddress = async (address) => {
@@ -148,13 +169,6 @@ const OrderMap = ({ orderId }) => {
 
     // calculate center of map
     const getMapCenter = () => {
-        if (businessLocation && customerLocation && driverLocation) {
-            const center = {
-                lat: (businessLocation.lat + customerLocation.lat + driverLocation.latitude) / 3,
-                lng: (businessLocation.lng + customerLocation.lng + driverLocation.longitude) / 3
-            };
-            return center;
-        }
         if (businessLocation && customerLocation) {
             const center = {
                 lat: (businessLocation.lat + customerLocation.lat) / 2,
@@ -162,6 +176,7 @@ const OrderMap = ({ orderId }) => {
             };
             return center;
         }
+        if (businessLocation) return { lat: businessLocation.lat, lng: businessLocation.lng };
         return { lat: 1.3521, lng: 103.8198 }; // SG default
     };
 
@@ -169,17 +184,13 @@ const OrderMap = ({ orderId }) => {
     useEffect(() => {
         if (businessLocation && customerLocation){
             setIsLoading(false)
-
-            // React’s useEffect does not support async functions directly, because the callback should either return undefined / a cleanup function — not a Promise. Need to wrap in a async function
             const fetchStaticRoute = async () => {
                 const route = await getOptimalRoute(businessLocation, customerLocation)
                 if (route) {
                     setStaticRoute(route);
                 }
             }
-
             fetchStaticRoute();
-            
         } 
     }, [businessLocation, customerLocation])
 
@@ -258,6 +269,7 @@ const OrderMap = ({ orderId }) => {
         console.log('Rendering driverRoute Polyline', driverRoute);
     }
 
+    // For pickupMode, do not show driver marker or driverRoute
     return (
         <div style={{ height: '400px', width: '100%' }}>
             {isLoading ? (
@@ -270,15 +282,10 @@ const OrderMap = ({ orderId }) => {
                 zoom={13} 
                 style={{ height: '100%', width: '100%' }}
             >
-
-                {/* Defines the actual visual map tiles that everything else is drawn on. 
-                    url: Uses OpenStreetMap tile server ({s} is subdomain, {z} zoom level, {x}/{y} are tile coordinates).
-                    attribution: Legally required credit to OpenStreetMap for using their data. */}
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                
                 {/* Business Marker */}
                 {businessLocation && (
                     <Marker position={[businessLocation.lat, businessLocation.lng]} icon={busMarker}>
@@ -290,21 +297,23 @@ const OrderMap = ({ orderId }) => {
                         </Popup>
                     </Marker>
                 )}
-                
-                {/* Customer Marker */}
+                {/* Customer Marker (real-time for pickup) */}
                 {customerLocation && (
                     <Marker position={[customerLocation.lat, customerLocation.lng]} icon={custMarker}>
                         <Popup>
                             <div>
-                                <h4>Delivery Address</h4>
+                                <h4>{pickupMode ? 'Your Location' : 'Delivery Address'}</h4>
                                 <p>{customerLocation.address}</p>
                             </div>
                         </Popup>
                     </Marker>
                 )}
-                
-                {/* Driver Marker */}
-                {driverLocation && (
+                {/* Static Route (business to customer) */}
+                {staticRoute.length > 0 && (
+                    <Polyline key={`static-route-${staticRoute.length}`}positions={staticRoute} color="orange" weight={10} opacity={1}/>
+                )}
+                {/* Only show driver marker/route if not pickupMode */}
+                {!pickupMode && driverLocation && (
                     <Marker position={[driverLocation.latitude, driverLocation.longitude]} icon={driverMarker}>
                         <Popup>
                             <div>
@@ -314,18 +323,8 @@ const OrderMap = ({ orderId }) => {
                         </Popup>
                     </Marker>
                 )}
-            
-
-                {/* Driver Route Path
-                key: for the polyline to follow to draw the route
-                     You're telling React: "Re-render this <Polyline> only when driverRoute.length changes." */}
-                {driverRoute.length > 0 && (
+                {!pickupMode && driverRoute.length > 0 && (
                     <Polyline key={`driver-route-${driverRoute.length}`} positions={driverRoute} color="red" weight={10} opacity={1}/>
-                )}
-
-                {/* Static Route (business to customer) */}
-                {staticRoute.length > 0 && (
-                    <Polyline key={`static-route-${staticRoute.length}`}positions={staticRoute} color="orange" weight={10} opacity={1}/>
                 )}
             </MapContainer>
             )}

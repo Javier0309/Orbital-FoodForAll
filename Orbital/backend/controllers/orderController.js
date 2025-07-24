@@ -147,7 +147,7 @@ const getAvailableOrdersForDelivery = async (req, res) => {
             deliveryMode: "delivery",
             deliveryStatus: "pending",
             driverId: null,
-            status: { $ne: 'rejected' } // Exclude rejected orders
+            status: { $ne: 'rejected' }
         }).populate('businessId', 'name address')
         res.json({success: true, orders: availableOrders})
     } catch (error) {
@@ -251,6 +251,22 @@ const removeOrderForCustomer = async (req, res) => {
     }
 };
 
+// Switch order to pickup mode
+const switchOrderToPickup = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await orderModel.findById(orderId);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+        order.deliveryMode = 'pickup';
+        order.deliveryStatus = 'pending';
+        order.driverId = null;
+        await order.save();
+        res.json({ success: true, message: 'Order switched to pickup mode', order });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
 export { placeOrder,
         getOrderById,
         assignDriverToOrder, 
@@ -260,5 +276,6 @@ export { placeOrder,
         getAssignedOrdersForDriver, 
         getCustomerCurrentOrder,
         removeOrderForDriver,
-        removeOrderForCustomer
+        removeOrderForCustomer,
+        switchOrderToPickup
         };
