@@ -146,7 +146,8 @@ const getAvailableOrdersForDelivery = async (req, res) => {
         const availableOrders = await orderModel.find({
             deliveryMode: "delivery",
             deliveryStatus: "pending",
-            driverId: null
+            driverId: null,
+            status: { $ne: 'rejected' } // Exclude rejected orders
         }).populate('businessId', 'name address')
         res.json({success: true, orders: availableOrders})
     } catch (error) {
@@ -222,6 +223,34 @@ const getCustomerCurrentOrder = async (req, res) => {
     }
 }
 
+// Remove order for driver
+const removeOrderForDriver = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await orderModel.findById(orderId);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+        order.removedByDriver = true;
+        await order.save();
+        res.json({ success: true, message: 'Order removed for driver' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+// Remove order for customer
+const removeOrderForCustomer = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await orderModel.findById(orderId);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+        order.removedByCustomer = true;
+        await order.save();
+        res.json({ success: true, message: 'Order removed for customer' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
 export { placeOrder,
         getOrderById,
         assignDriverToOrder, 
@@ -229,5 +258,7 @@ export { placeOrder,
         getAvailableOrdersForDelivery, 
         selfAssignOrder,
         getAssignedOrdersForDriver, 
-        getCustomerCurrentOrder
+        getCustomerCurrentOrder,
+        removeOrderForDriver,
+        removeOrderForCustomer
         };

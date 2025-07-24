@@ -1,7 +1,7 @@
 import orderModel from "../models/orderModel.js";
 import businessModel from "../models/businessModel.js";
 import mongoose from "mongoose";
-
+import driverModel from "../models/driverModel.js";
 
 
 // POST: Set business open/closed status
@@ -42,13 +42,21 @@ const getOpenOrClosed = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId } = req.params;
-        const { status } = req.body;
+        const { status, reason } = req.body;
 
-        const orer = await orderModel.findById(orderId)
+        const order = await orderModel.findById(orderId)
         if(!order) {
             return res.status(404).json({success: false, message:"Order not found"});
         }
         order.status = status;
+
+        if (status === 'rejected' && reason !== undefined) {
+            order.rejectionReason = reason;
+            // If a driver is assigned, set them as available
+            if (order.driverId) {
+                await driverModel.findByIdAndUpdate(order.driverId, { isAvailable: true });
+            }
+        }
 
         if (order.deliveryStatus === 'delivered' || status === 'collected'){
             order.status='completed';
@@ -143,7 +151,7 @@ const removeCompletedOrder = async (req, res) => {
         if (!order) 
             return res.status(404).json({message: 'Order not found'})
 
-        if (order.status !== 'completed')
+        if (order.status !== 'completed' && order.status !== 'rejected')
             return res.status(400).json({message: 'Only completed orders can be removed'})
 
         order.removedByBusiness = true;

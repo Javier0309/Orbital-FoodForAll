@@ -1,5 +1,6 @@
 import './DriverMain.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import DriverHeader from "./DriverHeader.jsx";
 import AvailableOrders from './AvailableOrders.jsx';
 import AssignedOrders from './AssignedOrders.jsx';
@@ -9,12 +10,23 @@ const driverId = localStorage.getItem('driverId')
 
 function DriverMain() {
     const [currentOrderId, setCurrentOrderId] = useState(null)
+    const [isAvailable, setIsAvailable] = useState(true);
+    const driverId = localStorage.getItem('driverId');
+
+    useEffect(() => {
+        if (!driverId) return;
+        axios.get(`http://localhost:4000/api/drivers/${driverId}`)
+            .then(res => setIsAvailable(res.data.driver.isAvailable))
+            .catch(() => setIsAvailable(true));
+    }, [driverId]);
+
     return (
         <>
             <div className="app">
                 <DriverHeader/>
                 <div className="main-content">
-                    {currentOrderId && (
+                    {/* Only show tracking/map if driver is NOT available */}
+                    {!isAvailable && currentOrderId && (
                         <div className="orders-section">
                             <DriverTracking orderId={currentOrderId}/>
                         </div>

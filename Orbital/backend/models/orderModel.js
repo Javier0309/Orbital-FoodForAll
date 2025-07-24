@@ -17,6 +17,9 @@ const orderSchema = new mongoose.Schema({
     deliveryMode: { type: String, enum: ['pickup', 'delivery'], default: 'pickup'},
     location: {latitude: Number, longitude: Number},
     removedByBusiness: {type: Boolean, default: false},
+    removedByDriver: {type: Boolean, default: false},
+    removedByCustomer: {type: Boolean, default: false},
+    rejectionReason: { type: String, default: '' },
 })
 
 const orderModel = mongoose.model("orders", orderSchema);

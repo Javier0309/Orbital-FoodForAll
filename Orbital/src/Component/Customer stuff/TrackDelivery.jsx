@@ -18,14 +18,12 @@ const TrackDelivery = () => {
     fetchOrder();
     }, [orderId])
 
-    if (!driverId) return <p>Waiting for a driver...</p>
-
     return (
         <div>
             <CustHeader/>
             <h2>Track Delivery</h2>
             <CustomerTrackDriver orderId={orderId}/>
-            <DriverCard driverId={driverId}/>
+            {driverId && <DriverCard driverId={driverId}/>} 
         </div>
     )
 }

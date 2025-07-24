@@ -21,7 +21,7 @@ function CustHeader() {
                     const response = await fetch(`http://localhost:4000/api/order/customer-current/${user.email}`)
                     const data = await response.json()
                 
-                    if (data.success && data.order) {
+                    if (data.success && data.order && !data.order.removedByCustomer && data.order.status !== 'rejected') {
                         setCurrentOrder(data.order)
                     } else {
                         setCurrentOrder(null)
@@ -58,7 +58,7 @@ function CustHeader() {
                 <button onClick={()=> currentOrder && navigate(`/track-delivery/${currentOrder._id}`)}
                     disabled={!currentOrder}
                     className={!currentOrder ? 'disabled' : ''}
-                    >Current Order</button>
+                >Current Order</button>
             </div>
         </div>
     );

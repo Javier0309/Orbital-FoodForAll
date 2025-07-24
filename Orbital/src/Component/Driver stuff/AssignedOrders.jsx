@@ -4,6 +4,7 @@ import axios from 'axios'
 const AssignedOrders = ({driverId, onOrderSelect}) => {
     //const driverId = localStorage.getItem("driverId"); 
     const [orders, setOrders] = useState([]);
+    const [removedOrderIds, setRemovedOrderIds] = useState([]);
 
     useEffect(() => {
         const fetchAssigned = async () => {
@@ -21,11 +22,27 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
         window.location.reload();
     };
 
+    // Remove order for driver (backend)
+    const removeOrderForDriver = async (orderId) => {
+        try {
+            // If you have a backend endpoint for this, use it. Otherwise, fallback to local remove.
+            await axios.patch(`http://localhost:4000/api/order/driver/remove/${orderId}`);
+            setRemovedOrderIds(ids => [...ids, orderId]);
+        } catch (error) {
+            // fallback to local remove if backend not implemented
+            setRemovedOrderIds(ids => [...ids, orderId]);
+        }
+    };
+
     return (
         <div className="assigned-orders">
             <div className="orders-header">
                 <h3 className="orders-title">Assigned Orders</h3>
-                <span className="orders-count">{orders.length} order{orders.length !== 1 ? 's' : ''}</span>
+                <span className="orders-count">{
+                   orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).length
+                 } order{
+                   orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).length !== 1 ? 's' : ''
+                 }</span>
             </div>
             
             {orders.length === 0 ? (
@@ -36,13 +53,11 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
                 </div>
             ) : (
                 <div className="orders-grid">
-                    {orders.map(order => (
-                        <div key={order._id} className="order-card assigned">
+                    {orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).map(order => (
+                        <div key={order._id} className="order-card assigned" style={order.status === 'rejected' ? { background: '#fee2e2' } : {}}>
                             <div className="order-header">
                                 <span className="order-id">#{order._id.slice(-8)}</span>
-                                <div className={`status-badge ${order.deliveryStatus}`}>
-                                    {order.deliveryStatus}
-                                </div>
+                                <div className={`status-badge ${order.deliveryStatus}`}>{order.status === 'rejected' ? 'rejected' : order.deliveryStatus}</div>
                             </div>
 
                             <div className="business-info">
@@ -74,22 +89,32 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
                             </div>
 
                             <div className="order-actions">
-                                {order.deliveryStatus === 'assigned' && (
-                                    <button 
-                                        className="action-btn start-delivery"
-                                        onClick={() => updateStatus(order._id, 'in_transit')}
+                                {order.status === 'rejected' ? (
+                                    <button
+                                        className="action-btn"
+                                        style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #991b1b' }}
+                                        onClick={() => removeOrderForDriver(order._id)}
                                     >
-                                        🚚 Start Delivery
+                                        Remove
                                     </button>
-                                )}
-                                {order.deliveryStatus === 'in_transit' && (
-                                    <button 
-                                        className="action-btn mark-delivered"
-                                        onClick={() => updateStatus(order._id, 'delivered')}
-                                    >
-                                        ✅ Mark as Delivered
-                                    </button>
-                                )}
+                                ) : <>
+                                    {order.deliveryStatus === 'assigned' && (
+                                        <button 
+                                            className="action-btn start-delivery"
+                                            onClick={() => updateStatus(order._id, 'in_transit')}
+                                        >
+                                            🚚 Start Delivery
+                                        </button>
+                                    )}
+                                    {order.deliveryStatus === 'in_transit' && (
+                                        <button 
+                                            className="action-btn mark-delivered"
+                                            onClick={() => updateStatus(order._id, 'delivered')}
+                                        >
+                                            ✅ Mark as Delivered
+                                        </button>
+                                    )}
+                                </>}
                             </div>
                         </div>
                     ))}
