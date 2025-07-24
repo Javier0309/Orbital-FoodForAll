@@ -71,12 +71,8 @@ function ViewProfile() {
             {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
           </div>
           <div className="profile-header-info">
-            <h1 className="profile-name">{profile.name}</h1>
-            <div className="profile-established">
-              <span className="established-label">Established</span>
-              <span className="established-year">{profile.yearEstablished}</span>
-            </div>
-          </div>
+  <h1 className="profile-name">{profile.name}</h1>
+</div>
         </div>
 
         {/* Main Content Grid */}

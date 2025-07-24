@@ -1,17 +1,15 @@
-import './Loginsignup.css'
+import './Loginsignup.css';
 import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { supabase } from '../../backend/SupabaseClient.js';
 import { RecoveryContext } from "../App.jsx";
+import user_icon from '../assets/person.png';
+import email_icon from '../assets/email.png';
+import password_icon from '../assets/password.png';
+import foodImage from '../assets/foood.jpeg';
+
+import { handleLogin, handleSignup } from '../utils/auth';
 import axios from 'axios';
-
-import user_icon from '../assets/person.png'
-import email_icon from '../assets/email.png'
-import password_icon from '../assets/password.png'
-import foodImage from '../assets/foood.jpeg'
-
-import { handleLogin, handleSignup } from '../utils/auth'; // Import helpers
 
 const Loginsignup = () => {
     const [localEmail, setLocalEmail] = useState('');
@@ -34,64 +32,62 @@ const Loginsignup = () => {
         hygieneCert: null,
         halalCert: null
     });
-    const [form, setForm] = useState({
-        name: '',
-        about: '',
-        address: '',
-      });
 
-  const handleFileChange = (fileType, file) => {
-    setFiles(prev => ({ ...prev, [fileType]: file }));
-  };
+    const handleFileChange = (fileType, file) => {
+        setFiles(prev => ({ ...prev, [fileType]: file }));
+    };
 
     const FileUploadBox = ({ label, fileType, required = false, note = null, customFileSetter = null }) => {
-    const selectedFile = customFileSetter === setPfp ? pfp 
-                        : customFileSetter === setProofFile ? proofFile 
-                        : customFileSetter ? null : files[fileType]
+        const selectedFile = customFileSetter === setPfp ? pfp 
+                            : customFileSetter === setProofFile ? proofFile 
+                            : customFileSetter ? null : files[fileType];
 
-    return (
-    <div className="file-upload-section">
-      <label className="file-upload-label">
-        {label} {required && <span className="required">*</span>}
-        {note && <span className="note">{note}</span>}
-      </label>
-      <div 
-        className={`file-upload-box ${selectedFile ? 'has-file' : ''}`}
-        onClick={() => document.getElementById(fileType).click()}
-      >
-        <input
-          id={fileType}
-          type="file"
-          accept="application/pdf,image/*"
-          onChange={(e) => {
-            const file = e.target.files[0]
-            if (customFileSetter) {
-                customFileSetter(file);
-            } else {
-                handleFileChange(fileType, file)}
-            }}
-            style={{ display: 'none' }}
-        />
-        {selectedFile ? (
-          <div className="file-info">
-            <div className="file-icon">📄</div>
-            <div className="file-name">{selectedFile.name}</div>
-          </div>
-        ) : (
-          <div className="upload-placeholder">
-            <div className="upload-icon">🖼️</div>
-            <div className="upload-text">Click to upload</div>
-          </div>
-        )}
-      </div>
-    </div>
-  );}
+        return (
+            <div className="file-upload-section">
+                <label className="file-upload-label">
+                    {label} {required && <span className="required">*</span>}
+                    {note && <span className="note">{note}</span>}
+                </label>
+                <div 
+                    className={`file-upload-box ${selectedFile ? 'has-file' : ''}`}
+                    onClick={() => document.getElementById(fileType).click()}
+                >
+                    <input
+                        id={fileType}
+                        type="file"
+                        accept="application/pdf,image/*"
+                        onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (customFileSetter) {
+                                customFileSetter(file);
+                            } else {
+                                handleFileChange(fileType, file);
+                            }
+                        }}
+                        style={{ display: 'none' }}
+                    />
+                    {selectedFile ? (
+                        <div className="file-info">
+                            <div className="file-icon">📄</div>
+                            <div className="file-name">{selectedFile.name}</div>
+                        </div>
+                    ) : (
+                        <div className="upload-placeholder">
+                            <div className="upload-icon">🖼️</div>
+                            <div className="upload-text">Click to upload</div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     const handleUserTypeChange = (event) => {
         setUserType(event.target.value);
     };
 
-    const handleAuth = async () => {
+    const handleAuth = async (e) => {
+        e.preventDefault();
         if (!localEmail || !password){
             alert('Please enter email and password');
             return;
@@ -99,20 +95,16 @@ const Loginsignup = () => {
         setLoading(true);
 
         if (isLogin) {
-            // Use the helper function
             const { error, data } = await handleLogin(localEmail, password);
             if (error) {
                 alert('Login error: ' + error.message);
                 setLoading(false);
             } else {
-                // Fetch the user type from user metadata
                 const { user } = data;
                 const storedUserType = user?.user_metadata?.userType;
                 localStorage.setItem('email', user.email);
                 localStorage.setItem('userType', storedUserType);
 
-
-                // ===== ADDED: Fetch MongoDB user by email and store _id =====
                 try {
                     const res = await axios.get(`http://localhost:4000/api/user/by-email/${user.email}`);
                     if (res.data.success && res.data.user) {
@@ -121,19 +113,18 @@ const Loginsignup = () => {
                 } catch (err) {
                     console.error("Error fetching MongoDB user:", err);
                 }
-                // ===== END ADDED =====
 
                 alert('Logged in!');
                 if (storedUserType === 'customer') {
-                    const res = await axios.get(`http://localhost:4000/api/signup/customer-by-email/${localStorage.getItem('email')}`)
+                    const res = await axios.get(`http://localhost:4000/api/signup/customer-by-email/${localStorage.getItem('email')}`);
                     if (res.data.success && res.data.customer?._id){
-                        localStorage.setItem('customerId', res.data.customer._id)
+                        localStorage.setItem('customerId', res.data.customer._id);
                     }
 
                     if (res.data.success && res.data.customer?.isVerified) {
                         navigate('/custmain');
                     } else {
-                    navigate('/awaiting-verification');
+                        navigate('/awaiting-verification');
                     }
                 } else if (storedUserType === 'F&B business') {
                     try {
@@ -141,7 +132,6 @@ const Loginsignup = () => {
                         if (bizRes.data.success && bizRes.data.business && bizRes.data.business._id) {
                             localStorage.setItem("businessId", bizRes.data.business._id);
                         } else {
-                            // Handle missing business profile
                             localStorage.removeItem("businessId");
                             alert("Business profile not found. Please sign up as a business.");
                             setLoading(false);
@@ -156,23 +146,22 @@ const Loginsignup = () => {
                     }
                     const businessId = localStorage.getItem('businessId');
                     if (!businessId) return;
-                    const res = await axios.get(`http://localhost:4000/api/signup/business-by-email/${localStorage.getItem('email')}`)
+                    const res = await axios.get(`http://localhost:4000/api/signup/business-by-email/${localStorage.getItem('email')}`);
 
                     if (res.data.success && res.data.business?.isVerified) {
-                        navigate("/busmain")
+                        navigate("/busmain");
                     } else {
-                    navigate('/awaiting-verification');
+                        navigate('/awaiting-verification');
                     }
                 } else {
-                    const res = await axios.get(`http://localhost:4000/api/signup/driver-by-email/${localStorage.getItem('email')}`)
+                    const res = await axios.get(`http://localhost:4000/api/signup/driver-by-email/${localStorage.getItem('email')}`);
                     if (res.data.success && res.data.driver?._id){
-                        localStorage.setItem('driverId', res.data.driver._id)
+                        localStorage.setItem('driverId', res.data.driver._id);
                     }
-                    // Add check for driverId
                     if (!localStorage.getItem('driverId')) {
                         alert('Driver ID was not set!\nEmail used: ' + localStorage.getItem('email') + '\nPlease make sure you are logging in with the correct driver email.');
                     }
-                    navigate('/drivermain')
+                    navigate('/drivermain');
                 }
                 setLoading(false);
             }
@@ -184,12 +173,11 @@ const Loginsignup = () => {
                 return;
             }
 
-            // Use your signup helper
             const { error, data } = await handleSignup(localEmail, password, { userType, name });
             if (error) {
                 alert('Signup error: ' + error.message);
                 setLoading(false);
-                return
+                return;
             }
             try {
                 const userRes = await axios.post("http://localhost:4000/api/user/create", {
@@ -206,9 +194,8 @@ const Loginsignup = () => {
                 }
 
                 const userId = userRes.data.userId;
-                localStorage.setItem("mongoUserId", userId)
+                localStorage.setItem("mongoUserId", userId);
 
-                
                 if (userType === 'F&B business') {
                     const formData = new FormData();
                     formData.append('name', name);
@@ -216,7 +203,6 @@ const Loginsignup = () => {
                     formData.append('address', address);
                     formData.append('userId', userId);
                     
-                    // Add files if they exist
                     if (files.businessLicense) formData.append('businessLicense', files.businessLicense);
                     if (files.hygieneCert) formData.append('hygieneCert', files.hygieneCert);
                     if (files.halalCert) formData.append('halalCert', files.halalCert);
@@ -227,15 +213,15 @@ const Loginsignup = () => {
 
                     if (res.data.success && res.data.businessId) {
                         localStorage.setItem('businessId', res.data.businessId);
-                        localStorage.setItem('email', localEmail)
-                        localStorage.setItem('userType', userType)
+                        localStorage.setItem('email', localEmail);
+                        localStorage.setItem('userType', userType);
                         alert('Signup successful');
-                        navigate('/awaiting-verification')
+                        navigate('/awaiting-verification');
                     } else {
-                        localStorage.removeItem("businessId")
-                        alert('Failed to create business profile')
-                        setLoading(false)
-                        return
+                        localStorage.removeItem("businessId");
+                        alert('Failed to create business profile');
+                        setLoading(false);
+                        return;
                     }
 
                 } else if (userType === 'customer') {
@@ -248,23 +234,22 @@ const Loginsignup = () => {
                     custForm.append('userId', userId);
                     custForm.append('userType', 'customer');
                     
-                    // Add files if they exist
                     if (proofFile) custForm.append('proofOfNeed', proofFile);
                     const res = await axios.post("http://localhost:4000/api/signup/create-customer",
                         custForm, { headers: {"Content-Type" : "multipart/form-data"} }
                     );
 
                     if (res.data.success && res.data.customerId) {
-                        localStorage.setItem('email', localEmail)
-                        localStorage.setItem('userType', userType)
-                        localStorage.setItem('customerId', res.data.customerId)
+                        localStorage.setItem('email', localEmail);
+                        localStorage.setItem('userType', userType);
+                        localStorage.setItem('customerId', res.data.customerId);
                         alert('Signup successful');
-                        navigate('/awaiting-verification')
+                        navigate('/awaiting-verification');
                     } else {
-                        localStorage.removeItem("customerId")
-                        alert('Failed to create business profile')
-                        setLoading(false)
-                        return
+                        localStorage.removeItem("customerId");
+                        alert('Failed to create business profile');
+                        setLoading(false);
+                        return;
                     } 
                 } else if (userType === 'driver') {
                     const driverForm = new FormData();
@@ -276,37 +261,35 @@ const Loginsignup = () => {
                     driverForm.append('userId', userId);
                     driverForm.append('userType', 'driver');
                     
-                    // Add files if they exist
                     if (pfp) driverForm.append('profilePicture', pfp); 
                     const res = await axios.post("http://localhost:4000/api/signup/create-driver",
                         driverForm, { headers: {"Content-Type" : "multipart/form-data"} }
                     ); 
 
                     if (res.data.success && res.data.driverId) {
-                        localStorage.setItem('email', localEmail)
-                        localStorage.setItem('userType', userType)
-                        localStorage.setItem('driverId', res.data.driverId)
+                        localStorage.setItem('email', localEmail);
+                        localStorage.setItem('userType', userType);
+                        localStorage.setItem('driverId', res.data.driverId);
                         alert('Signup successful');
-                        navigate('/drivermain')
-                        //navigate('/awaiting-verification')
+                        navigate('/drivermain');
                     } else {
-                        localStorage.removeItem("driverId")
-                        alert('Failed to create driver profile')
-                        setLoading(false)
-                        return
+                        localStorage.removeItem("driverId");
+                        alert('Failed to create driver profile');
+                        setLoading(false);
+                        return;
                     } 
                 
                 } else {
-                    alert('Signup unsuccessful')
-                    return
+                    alert('Signup unsuccessful');
+                    return;
                 }
                 setLoading(false);
             } catch (error) {
                 console.error('Error during user creation', error);
-                alert('Signup failed. Please try again')
+                alert('Signup failed. Please try again');
             }
 
-            setLoading(false)
+            setLoading(false);
         } 
     };
 
@@ -320,7 +303,7 @@ const Loginsignup = () => {
             await axios.post("http://localhost:4000/api/recovery/send_recovery_email", {
                 recipient_email: localEmail,
             });
-            navigate('otp');  // Navigate to OTP input page after OTP is sent
+            navigate('otp');
         } catch (error) {
             console.error("Error sending OTP:", error);
             alert("Error sending OTP. Please try again.");
@@ -328,121 +311,119 @@ const Loginsignup = () => {
     };
 
     return (
-        <div className='container'>
-            <div className="left">
-                <img src={foodImage} alt="Food"/>
-            </div>
-            <div className="right">
-            <div className="header">
-                <div className="text">Food For All</div>
-                <div className="underline"></div>
-            </div>
-            <div className="inputs">
-
-                {!isLogin && (
-                    <div className="input">
-                        <label htmlFor="userType"></label>
-                        <select
-                        id="userType"
-                        value={userType}
-                        onChange={handleUserTypeChange}
-                        className="dropdown"
-                        >
-                            <option value="">Select User Type</option>
-                            <option value="customer">Customer</option>
-                            <option value="F&B business">F&B Business</option>
-                            <option value="driver">Rider</option>
-                        </select>
-                    </div>
-                )}
-
-                {!isLogin && userType === 'driver' && (
-                    <>
-                    <div className='input'>
-                            <input type='text' placeholder='Full Name' value={name} onChange={(e) => setName(e.target.value)}/>
-                    </div>
-
-                    <div className='input'>
-                            <input type='text' placeholder='Phone Number' value={phone} onChange={(e) => setPhone(e.target.value)}/>
-                    </div>
-
-                    <div className='input'>
-                            <input type='text' placeholder='Vehicle Description' value={vehicleType} onChange={(e) => setVehicleType(e.target.value)}/>
-                    </div>
-
-                    <div className='input'>
-                            <input type='text' placeholder='License Plate Number' value={licensePlate} onChange={(e) => setLicensePlate(e.target.value)}/>
-                    </div>
-
-                    <FileUploadBox label="Profile Picture (Your face must be in the picture) " fileType="profilePicture" customFileSetter={setPfp} required/>
-
-                    </>
-                 )}
-
-                {!isLogin && userType === 'customer' && (
-                    <>
-                        <div className='input'>
-                            <input type='text' placeholder='Full Name' value={name} onChange={(e) => setName(e.target.value)}/>
-                        </div>
-
-                        <div className='input'>
-                            <input type='text' placeholder='Home Address' value={address} onChange={(e) => setAddress(e.target.value)}/>
-                        </div>
-
-                        <div className='input'>
-                            <input type='text' placeholder='Phone Number' value={phone} onChange={(e) => setPhone(e.target.value)}/>
-                        </div>
-
-                        <div className='input'>
-                            <input type='text' placeholder='Dietary Requirements / Allergies' value={dietaryNeeds} onChange={(e) => setDietaryNeeds(e.target.value)}/>
-                        </div>
-
-                        <FileUploadBox label="Proof of Need (such as income statements, number of people in household, or any government assistance programs)" fileType="proofOfNeed" customFileSetter={setProofFile}/>
-
-                    </>
-                )}
-
-                {!isLogin && userType === 'F&B business' && (
-                    <>
-                        <div className='input'>
-                            <input type='text' placeholder='Business Name' value={name} onChange={(e) => setName(e.target.value)}/>
-                        </div>
-
-                        <div className='input'>
-                            <input type='text' placeholder='Address of Shop' value={address} onChange={(e) => setAddress(e.target.value)}/>
-                        </div>
-
-                        <FileUploadBox label="BUSINESS LICENSE" fileType="businessLicense"/>
-                        <FileUploadBox label="RELEVANT HYGIENE CERTIFICATES" fileType="hygieneCert"/>
-                        <FileUploadBox label="HALAL CERTIFICATION" fileType="halalCert" note="if applicable"/>
-                        
-                    </>
-                )}
-
-                <div className="input">
-                    <img src={email_icon} alt="" />
-                    <input type="email" placeholder="Email" value={localEmail} onChange={(e) => setLocalEmail(e.target.value)}/>
+        <div className="login-bg">
+            <div className="login-card">
+                <div className="login-left">
+                    <img src={foodImage} alt="Food" className="login-foodimg"/>
                 </div>
+                <div className="login-right">
+                    <div className="login-header">
+                        <h1>Food For All</h1>
+                        <div className="login-underline"></div>
+                    </div>
+                    <form className="login-form" onSubmit={handleAuth}>
+                        {!isLogin && (
+                            <div className="login-field">
+                                <select
+                                    id="userType"
+                                    value={userType}
+                                    onChange={handleUserTypeChange}
+                                    className="login-input"
+                                    required
+                                >
+                                    <option value="">Select User Type</option>
+                                    <option value="customer">Customer</option>
+                                    <option value="F&B business">F&B Business</option>
+                                    <option value="driver">Rider</option>
+                                </select>
+                            </div>
+                        )}
 
-                <div className="input">
-                    <img src={password_icon} alt="" />
-                    <input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)}/>
+                        {!isLogin && userType === 'driver' && (
+                            <>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Vehicle Description" value={vehicleType} onChange={e => setVehicleType(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="License Plate Number" value={licensePlate} onChange={e => setLicensePlate(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-upload-group">
+                                    <FileUploadBox label="Profile Picture (Your face must be in the picture)" fileType="profilePicture" customFileSetter={setPfp} required/>
+                                </div>
+                            </>
+                        )}
+
+                        {!isLogin && userType === 'customer' && (
+                            <>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Home Address" value={address} onChange={e => setAddress(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Dietary Requirements / Allergies" value={dietaryNeeds} onChange={e => setDietaryNeeds(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-upload-group">
+                                    <FileUploadBox label="Proof of Need (such as income statements, number of people in household, or any government assistance programs)" fileType="proofOfNeed" customFileSetter={setProofFile}/>
+                                </div>
+                            </>
+                        )}
+
+                        {!isLogin && userType === 'F&B business' && (
+                            <>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Business Name" value={name} onChange={e => setName(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Address of Shop" value={address} onChange={e => setAddress(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-upload-group">
+                                    <FileUploadBox label="Business License" fileType="businessLicense"/>
+                                    <FileUploadBox label="Hygiene Certificates" fileType="hygieneCert"/>
+                                    <FileUploadBox label="Halal Certification" fileType="halalCert" note="if applicable"/>
+                                </div>
+                            </>
+                        )}
+
+                        <div className="login-field">
+                            <img src={email_icon} alt="" className="login-icon"/>
+                            <input type="email" placeholder="Email" value={localEmail} onChange={e => setLocalEmail(e.target.value)} className="login-input" required/>
+                        </div>
+                        <div className="login-field">
+                            <img src={password_icon} alt="" className="login-icon"/>
+                            <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="login-input" required/>
+                        </div>
+
+                        <div className="login-forgot" onClick={navigateToOTP}>
+                            Forgotten your password? <span>Click here</span>
+                        </div>
+                        <div className="login-buttons">
+                            <button type="submit" className="login-btn" disabled={loading}>
+                                {isLogin ? 'Log In' : 'Sign Up'}
+                            </button>
+                            <button
+                                type="button"
+                                className="login-btn secondary"
+                                onClick={() => setIsLogin(!isLogin)}
+                            >
+                                {isLogin ? 'Switch to Sign Up' : 'Switch to Log In'}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </div>
-            
-            <div className="Forgot-password" onClick={navigateToOTP}>Forgotten your password? <span>Click here</span></div>
-            <div className="submit-container">
-                <button className="submit" onClick={handleAuth} disabled={loading}>
-                    {isLogin ? 'Log In' : 'Sign Up'}
-                </button>
-                <button className="submit" onClick={() => setIsLogin(!isLogin)}>
-                    {isLogin ? 'Switch to Sign Up' : 'Switch to Log In'}
-                </button>
             </div>
         </div>
-        </div>
-    )
-}
+    );
+};
 
-export default Loginsignup
-
+export default Loginsignup;
