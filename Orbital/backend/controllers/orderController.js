@@ -293,6 +293,25 @@ const switchOrderToPickup = async (req, res) => {
     }
 };
 
+// Get customer order history (completed, rejected, or collected self-pickup orders)
+const getCustomerOrderHistory = async (req, res) => {
+    try {
+        const { email } = req.params;
+        const orders = await orderModel.find({
+            customerEmail: email,
+            removedByCustomer: { $ne: true },
+            $or: [
+                { status: 'completed' },
+                { status: 'rejected' },
+                { deliveryMode: 'pickup', deliveryStatus: 'delivered' }
+            ]
+        }).populate('businessId', 'name address');
+        res.json({ success: true, orders });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching customer order history' });
+    }
+};
+
 export { placeOrder,
         getOrderById,
         assignDriverToOrder, 
@@ -304,5 +323,6 @@ export { placeOrder,
         getDeliveredOrdersForDriver,
         removeOrderForDriver,
         removeOrderForCustomer,
-        switchOrderToPickup
+        switchOrderToPickup,
+        getCustomerOrderHistory
         };

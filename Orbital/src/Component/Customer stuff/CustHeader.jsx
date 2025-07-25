@@ -1,13 +1,13 @@
 import './CustMain.css'
 import React, { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/foodforall logo.png'
 import basketicon from '../../assets/basketicon.png'
 import { supabase } from '../../../backend/SupabaseClient';
 
 function CustHeader() {
-    const [menu, setMenu] = useState("home");
     const navigate = useNavigate();
+    const location = useLocation();
     const [currentOrder, setCurrentOrder] = useState(null)
 
     useEffect(() => {
@@ -34,22 +34,25 @@ function CustHeader() {
         fetchCurrentOrder()
     }, [])
 
+    const getActive = (path) => {
+        if (path === '/custmain' && location.pathname === '/custmain') return 'active';
+        if (path === '/order-history' && location.pathname === '/order-history') return 'active';
+        if (path === '/favourites' && location.pathname === '/favourites') return 'active';
+        if (path === '/customer-about' && location.pathname === '/customer-about') return 'active';
+        return '';
+    }
+
     return(
         <div className='cust-header'>
-            <img src={logo} alt="" className="logo" onClick={()=>{setMenu("home"), navigate('/custmain')}}></img>
+            <img src={logo} alt="" className="logo" onClick={()=>{navigate('/custmain')}}></img>
             <ul className='cust-header-menu'>
-                {/* className='active': underlined when clicked
-                    className='': not underlined because not clicked
-                    setMenu will decide whether it is underlined or not
-                eg. when i click on about, about will be underlined*/}
-                <li onClick={()=>{setMenu("home"), navigate('/custmain')}} className={menu==="home"?"active":""}>Home</li>
-                <li onClick={()=>setMenu("order-history")} className={menu==="order-history"?"active":""}>Order History</li>
-                <li onClick={()=>setMenu("favourites")} className={menu==="favourites"?"active":""}>Favourites</li>
-                <li onClick={()=>{setMenu("about"); navigate('/customer-about')}} className={menu==="about"?"active":""}>About</li>
+                <li onClick={()=>navigate('/custmain')} className={getActive('/custmain')}>Home</li>
+                <li onClick={()=>navigate('/order-history')} className={getActive('/order-history')}>Order History</li>
+                <li onClick={()=>navigate('/favourites')} className={getActive('/favourites')}>Favourites</li>
+                <li onClick={()=>navigate('/customer-about')} className={getActive('/customer-about')}>About</li>
             </ul>
 
             <div className='cust-header-right'>
-                
                 <div className="search-icon">
                     <Link to={'/cart'}><img src={basketicon} alt="" /></Link>
                     <div className="dot"></div>

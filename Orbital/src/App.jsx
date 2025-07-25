@@ -28,6 +28,8 @@ import BusReviews from './Component/Business stuff/BusReviews';
 import MessageDriver from './Component/Customer stuff/MessageDriver';
 import MessageCustomer from './Component/Driver stuff/MessageCustomer';
 import DriverOrderHistory from './Component/Driver stuff/OrderHistory';
+import CustomerOrderHistory from './Component/Customer stuff/OrderHistory';
+import Favourites from './Component/Customer stuff/Favourites';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -61,7 +63,8 @@ function App() {
           <Route path='/drivermain' element={<DriverMain />} />
           <Route path='/driverprofile' element={<DriverProfile />} />
           <Route path='/track-delivery/:orderId' element={<TrackDelivery/>}/>
-          <Route path='/order-history' element={<OrderHistory />} />
+          <Route path='/order-history' element={<CustomerOrderHistory />} />
+          <Route path='/favourites' element={<Favourites />} />
           <Route path="/restaurant/:businessId" element={<CustomerRestaurantView />} />
           <Route path="/about" element={<BusAbout />} />
           <Route path="/customer-about" element={<CustAbout />} />
