@@ -27,14 +27,30 @@ function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consu
         <>
         <div className='foodcard'> 
             <div className='content'>
-                <img className='card-image' src={url+"/uploads/"+image} alt=""></img>
+                <div style={{ position: 'relative', width: '100%' }}>
+                    <img className='card-image' src={url+"/uploads/"+image} alt="" />
+                    {hideControls && (
+                        <span style={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            background: '#f4c7c1',
+                            color: '#594842',
+                            borderRadius: '50%',
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            width: 28,
+                            height: 28,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.07)'
+                        }}>{quantity}</span>
+                    )}
+                </div>
                 <h2 className='card-title'>{name}</h2>
                 <p className='card-text'>{comment && comment.length > 30 ? comment.slice(0,30) + '...' : comment}</p>
-                {hideControls ? (
-                  <div className='food-qty' style={{justifyContent: 'center', alignItems: 'center', gap: '12px', height: '40px'}}>
-                    <span style={{fontWeight: 600, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>{quantity}</span>
-                  </div>
-                ) : (
+                {!hideControls && (
                   <div className='food-qty'>
                     <img onClick={()=>removeFromCart(id)} src={Minus} alt=""/>
                     <div>{cartItems[id]?.quantity}</div>

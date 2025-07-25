@@ -56,7 +56,7 @@ const CustomerTrackDriver = ({orderId}) => {
                 {orderDetails && orderDetails.status === 'rejected' ? (
                     <div style={{marginTop: '16px', padding: '24px', background: '#fee2e2', borderRadius: '12px', color: '#b91c1c', boxShadow: '0 2px 8px rgba(0,0,0,0.06)'}}>
                         <h4 style={{marginBottom: '10px'}}>Your order has been rejected by the restaurant:</h4>
-                        <p style={{fontWeight: 'bold'}}>{orderDetails.rejectionReason || 'No reason provided.'}</p>
+                        <p>{orderDetails.rejectionReason || 'No reason provided.'}</p>
                         <button
                             className="track-btn"
                             style={{ fontWeight: 'normal' }}
