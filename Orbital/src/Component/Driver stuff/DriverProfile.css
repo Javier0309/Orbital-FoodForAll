@@ -1,0 +1,132 @@
+.driver-pfp-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 75vh;
+    background: transparent;
+  }
+  
+  .driver-box {
+    background: #daf5db;
+    border-radius: 25px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    padding: 38px 60px 32px 60px;
+    min-width: 560px;
+    max-width: 700px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  
+  .profile-image-centered {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  .pfp-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .pfp-label:hover .pfp {
+    filter: brightness(0.92);
+    box-shadow: 0 0 0 4px #bde0fe;
+  }
+  
+  .pfp {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #b8dfbb;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(50,150,90,0.09);
+    background: #fff;
+    transition: box-shadow 0.2s, filter 0.2s;
+  }
+  
+  .upload-btn {
+    margin-top: 10px;
+    background: #219ebc;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.15s;
+  }
+  
+  .upload-btn:hover {
+    background: #176a81;
+  }
+  
+  .profile-info-centered {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .profile-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #4a7050;
+    letter-spacing: .01em;
+    margin-bottom: 8px;
+  }
+  
+  .driver-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1px;
+  }
+  
+  .vehicle-info {
+    font-size: 1.05rem;
+    color: #333;
+    margin-bottom: 1px;
+  }
+  
+  .deliveries {
+    font-size: 1rem;
+    color: #2e7d32;
+    margin-bottom: 6px;
+  }
+  
+  .about-section.wider {
+    width: 100%;
+    margin-top: 16px;
+  }
+  
+  .about-textarea {
+    width: 100%;
+    min-height: 70px;
+    border-radius: 12px;
+    border: 1.5px solid #bde0fe;
+    padding: 10px 13px;
+    font-size: 1.06rem;
+    resize: vertical;
+    margin-top: 2px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(33,158,188,0.05);
+    transition: border 0.2s;
+  }
+  .about-textarea:focus {
+    border: 2px solid #219ebc;
+    outline: none;
+  }
+  
+  @media (max-width: 800px) {
+    .driver-box {
+      min-width: 98vw;
+      padding: 24px 4vw;
+    }
+  }
