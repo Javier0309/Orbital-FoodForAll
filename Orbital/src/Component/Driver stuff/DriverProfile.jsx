@@ -11,6 +11,7 @@ const DriverProfile = () => {
     const [about, setAbout] = useState('')
     const [editingPhone, setEditingPhone] = useState(false);
     const [phone, setPhone] = useState('');
+    const [deliveredCount, setDeliveredCount] = useState(0);
 
     useEffect(() => {
         const fetchDriver = async () => {
@@ -20,6 +21,17 @@ const DriverProfile = () => {
             setPhone(res.data.driver.phone || '')
         };
         fetchDriver();
+        // Fetch delivered orders count
+        const fetchDelivered = async () => {
+            try {
+                const res = await axios.get(`http://localhost:4000/api/order/driver/delivered/${driverId}`);
+                const completedOrders = res.data.orders ? res.data.orders.filter(order => order.status === 'completed') : [];
+                setDeliveredCount(completedOrders.length);
+            } catch (error) {
+                setDeliveredCount(0);
+            }
+        };
+        fetchDelivered();
     }, [driverId])
 
     const handlePhoneSave = async () => {
@@ -54,7 +66,7 @@ const DriverProfile = () => {
         <div>
             <DriverHeader />
             <div className='driver-pfp-container'>
-                <div className='driver-box' style={{background: '#d8f3dc', borderRadius: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '32px 40px', minWidth: 900, maxWidth: 1100}}>
+                <div className='driver-box' style={{background: 'rgb(208, 244, 196)', borderRadius: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', padding: '32px 40px', minWidth: 900, maxWidth: 1100}}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                         <p className='profile-title' style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Volunteer Delivery Rider</p>
                         <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
@@ -88,7 +100,7 @@ const DriverProfile = () => {
                         <div className="profile-right">
                             <h2 className='driver-name' style={{ marginBottom: 4 }}>{driver.name}</h2>
                             <p className='vehicle-info' style={{ margin: 0 }}>{driver.vehicleType}, {driver.licensePlate}</p>
-                            <p className='deliveries' style={{ margin: 0 }}>Meals Delivered: {driver.totalDeliveries}</p>
+                            <p className='deliveries' style={{ margin: 0 }}>Meals Delivered: {deliveredCount}</p>
                             <div className='about-section'>
                                 <textarea id='about' value={about} onChange={handleAboutChange} className='about-textarea' placeholder="Tell us why you volunteered!" />
                             </div>

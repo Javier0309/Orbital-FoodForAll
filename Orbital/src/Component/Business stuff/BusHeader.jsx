@@ -1,17 +1,14 @@
 import './BusMain.css'
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/foodforall logo.png'
 import searchicon from '../../assets/searchicon.png'
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 function BusHeader() {
-
-    const [menu, setMenu] = useState("Home");
     const navigate = useNavigate();
-
-    // for open or closed
+    const location = useLocation();
     const [toggle, setToggle] = useState(false);
     const businessId = localStorage.getItem("businessId")
 
@@ -26,14 +23,12 @@ function BusHeader() {
                 console.error("Error fetching open status")
             }
         }
-
         fetchStatus()
     }, [businessId])
 
     const handleToggle = async () => {
         const newStatus = !toggle;
-        setToggle(newStatus)    //immediate ui update
-
+        setToggle(newStatus)
         try {
             await axios.post('http://localhost:4000/api/business/openOrClosed', {
                 businessId,
@@ -50,17 +45,13 @@ function BusHeader() {
         <div className='bus-header'>
             <img src={logo} alt="" className="logo"></img>
             <ul className='bus-header-menu'>
-                {/* className='active': underlined when clicked
-                    className='': not underlined because not clicked
-                    setMenu will decide whether it is underlined or not
-                eg. when i click on about, about will be underlined*/}
-                <li onClick={()=>{navigate("/busmain"); setMenu("home")}} className={menu==="home"?"active":""}>Home</li>
-                <li onClick={()=>setMenu("edit-menu")} className={menu==="edit-menu"?"active":""}>Edit Menu</li>
-                <li onClick={()=>{navigate("/edit-profile");setMenu("edit-profile")}} className={menu==="edit-profile"?"active":""}>Edit Profile</li>
-                <li onClick={()=>{navigate("/view-profile");setMenu("view-profile")}} className={menu==="view-profile"?"active":""}>View Profile</li>
-                <li onClick={()=>{navigate("/order-history"); setMenu("order-history")}} className={menu==="order-history"?"active":""}>Order History</li>
-                <li onClick={()=>{navigate("/reviews");setMenu("reviews")}} className={menu==="reviews"?"active":""}>Reviews</li>
-                <li onClick={()=>{navigate("/about");setMenu("about")}} className={menu==="about"?"active":""}>About</li>
+                <li onClick={()=>navigate("/busmain")} className={location.pathname === '/busmain' ? 'active' : ''}>Home</li>
+                <li onClick={()=>navigate('/busmenu')} className={location.pathname === '/busmenu' ? 'active' : ''}>Edit Menu</li>
+                <li onClick={()=>navigate('/edit-profile')} className={location.pathname === '/edit-profile' ? 'active' : ''}>Edit Profile</li>
+                <li onClick={()=>navigate('/view-profile')} className={location.pathname === '/view-profile' ? 'active' : ''}>View Profile</li>
+                <li onClick={()=>navigate('/order-history')} className={location.pathname === '/order-history' ? 'active' : ''}>Order History</li>
+                <li onClick={()=>navigate('/reviews')} className={location.pathname === '/reviews' ? 'active' : ''}>Reviews</li>
+                <li onClick={()=>navigate('/about')} className={location.pathname === '/about' ? 'active' : ''}>About</li>
             </ul>
 
             <div className='bus-header-right'>

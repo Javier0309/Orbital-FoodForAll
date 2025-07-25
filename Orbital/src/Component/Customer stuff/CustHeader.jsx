@@ -6,7 +6,6 @@ import basketicon from '../../assets/basketicon.png'
 import { supabase } from '../../../backend/SupabaseClient';
 
 function CustHeader() {
-
     const [menu, setMenu] = useState("home");
     const navigate = useNavigate();
     const [currentOrder, setCurrentOrder] = useState(null)

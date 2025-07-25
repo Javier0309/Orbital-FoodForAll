@@ -27,6 +27,7 @@ import ReviewRestaurant from './Component/Customer stuff/ReviewRestaurant';
 import BusReviews from './Component/Business stuff/BusReviews';
 import MessageDriver from './Component/Customer stuff/MessageDriver';
 import MessageCustomer from './Component/Driver stuff/MessageCustomer';
+import DriverOrderHistory from './Component/Driver stuff/OrderHistory';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -69,6 +70,7 @@ function App() {
           <Route path="/reviews" element={<BusReviews />} />
           <Route path="/message/:driverId" element={<MessageDriver />} />
           <Route path="/driver/message/:driverId" element={<MessageCustomer />} />
+          <Route path='/driver-order-history' element={<DriverOrderHistory />} />
 
 
         </Routes>

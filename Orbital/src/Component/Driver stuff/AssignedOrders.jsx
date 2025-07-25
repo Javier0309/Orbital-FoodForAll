@@ -4,7 +4,7 @@ import PhoneIcon from '../../assets/phone.png';
 import MessageIcon from '../../assets/message.png';
 import { useNavigate } from 'react-router-dom';
 
-const AssignedOrders = ({driverId, onOrderSelect}) => {
+const AssignedOrders = ({driverId, onOrderSelect, setHasAssignedOrders}) => {
     //const driverId = localStorage.getItem("driverId"); 
     const [orders, setOrders] = useState([]);
     const [removedOrderIds, setRemovedOrderIds] = useState([]);
@@ -14,11 +14,11 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
         const fetchAssigned = async () => {
             const res = await axios.get(`http://localhost:4000/api/order/driver/assigned/${driverId}`)
             setOrders(res.data.orders)
-
+            if (setHasAssignedOrders) setHasAssignedOrders(res.data.orders.length > 0);
             if (res.data.orders.length > 0 && onOrderSelect) onOrderSelect(res.data.orders[0]._id)
         };
         fetchAssigned();
-    }, [driverId, onOrderSelect]);
+    }, [driverId, onOrderSelect, setHasAssignedOrders]);
 
     const updateStatus = async (orderId, newStatus) => {
         await axios.post('http://localhost:4000/api/order/driver/update-status', {driverId, orderId, newStatus})
@@ -49,7 +49,7 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
                 <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
                     {orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).map(order => (
                         <div key={order._id} className="order-card" style={{
-                            background: 'rgb(172, 209, 150)',
+                            background: 'rgb(208, 244, 196)',
                             color: '#37512f',
                             borderRadius: 12,
                             boxShadow: '0 2px 10px rgba(60,100,50,0.08)',
@@ -60,7 +60,6 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
                         }}>
                             <p><strong>Order:</strong> {order._id}</p>
                             <p><strong>Status:</strong> {order.status === 'rejected' ? 'rejected' : order.deliveryStatus}</p>
-                            <p><strong>Delivery Mode:</strong> {order.deliveryMode}</p>
                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
                             <div>
                                 <strong>Items:</strong>

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
     customerEmail: String,
-    businessId: String,
+    businessId: { type: mongoose.Schema.Types.ObjectId, ref: 'Business' },
     items:[{
        foodId: { type: mongoose.Schema.Types.ObjectId, ref: 'foods'},
        name: String,

@@ -236,6 +236,19 @@ const getCustomerCurrentOrder = async (req, res) => {
     }
 }
 
+const getDeliveredOrdersForDriver = async (req, res) => {
+    try {
+        const { driverId } = req.params;
+        const orders = await orderModel.find({
+            driverId,
+            deliveryStatus: 'delivered'
+        }).populate('businessId', 'name address');
+        res.json({ success: true, orders });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching delivered orders" });
+    }
+};
+
 // Remove order for driver
 const removeOrderForDriver = async (req, res) => {
     try {
@@ -288,6 +301,7 @@ export { placeOrder,
         selfAssignOrder,
         getAssignedOrdersForDriver, 
         getCustomerCurrentOrder,
+        getDeliveredOrdersForDriver,
         removeOrderForDriver,
         removeOrderForCustomer,
         switchOrderToPickup

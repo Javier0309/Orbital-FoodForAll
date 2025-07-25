@@ -7,9 +7,14 @@ const AvailableOrders = () => {
     const [orders, setOrders] = useState([]);
 
     useEffect(()=> {
-        axios.post('http://localhost:4000/api/order/driver/available-orders')
-        .then(res => setOrders(res.data.orders))
-        .catch(err => console.error(err))
+        const fetchOrders = () => {
+            axios.post('http://localhost:4000/api/order/driver/available-orders')
+                .then(res => setOrders(res.data.orders))
+                .catch(err => console.error(err));
+        };
+        fetchOrders();
+        const interval = setInterval(fetchOrders, 5000); // Poll every 5 seconds
+        return () => clearInterval(interval);
     }, [])
 
     const handleAccept = async (orderId) => {
@@ -33,7 +38,7 @@ const AvailableOrders = () => {
                 <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
                     {orders.map(order => (
                         <div key={order._id} className="order-card" style={{
-                            background: '#74c69d',
+                            background: 'rgb(208, 244, 196)',
                             color: '#37512f',
                             borderRadius: 12,
                             boxShadow: '0 2px 10px rgba(60,100,50,0.08)',
@@ -43,7 +48,6 @@ const AvailableOrders = () => {
                         }}>
                             <p><strong>Order:</strong> {order._id}</p>
                             <p><strong>Status:</strong> pending</p>
-                            <p><strong>Delivery Mode:</strong> {order.deliveryMode}</p>
                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
                             <div>
                                 <strong>Items:</strong>

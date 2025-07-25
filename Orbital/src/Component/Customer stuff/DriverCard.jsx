@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const DriverCard = ({driverId}) => {            // props from TrackDelivery.jsx
     const [driver, setDriver] = useState(null)
+    const [deliveredCount, setDeliveredCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,6 +16,17 @@ const DriverCard = ({driverId}) => {            // props from TrackDelivery.jsx
             setDriver(res.data.driver);
         };
         fetchDriver();
+        // Fetch delivered orders count
+        const fetchDelivered = async () => {
+            try {
+                const res = await axios.get(`http://localhost:4000/api/order/driver/delivered/${driverId}`);
+                const completedOrders = res.data.orders ? res.data.orders.filter(order => order.status === 'completed') : [];
+                setDeliveredCount(completedOrders.length);
+            } catch (error) {
+                setDeliveredCount(0);
+            }
+        };
+        fetchDelivered();
     }, [driverId])
 
     if (!driver) return <p>Loading driver profile...</p>
@@ -59,7 +71,7 @@ const DriverCard = ({driverId}) => {            // props from TrackDelivery.jsx
                                     <h2 className='driver-name' style={{marginBottom: 4}}>{driver.name}</h2>
                                     <p className='vehicle-info' style={{margin: 0}}>{driver.vehicleType}, {driver.licensePlate}</p>
                                 </div>
-                                <p className='deliveries' style={{margin: 0}}>Meals Delivered: {driver.totalDeliveries}</p>
+                                <p className='deliveries' style={{margin: 0}}>Meals Delivered: {deliveredCount}</p>
                             </div>
                             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6}}>
                                 {driver.phone && (
