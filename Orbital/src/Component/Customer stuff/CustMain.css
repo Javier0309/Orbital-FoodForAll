@@ -654,7 +654,7 @@ input[type="color"]{
 
 .track-delivery-container {
   min-height: 80vh;
-  background: rgb(243, 189, 172, 0.18);
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: flex-start;

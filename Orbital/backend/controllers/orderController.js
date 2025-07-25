@@ -2,6 +2,7 @@ import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import foodModel from "../models/foodModel.js";
 import driverModel from "../models/driverModel.js";
+import customerModel from "../models/customerModel.js";
 import { getFullCartItems, groupCartByBusiness } from "../utils/cartUtils.js";
 
 const placeOrder = async (req, res) => {
@@ -131,7 +132,10 @@ const updateDeliveryStatus = async (req, res) => {
         await order.save();
 
         if (newStatus === 'delivered'){
-            await driverModel.findByIdAndUpdate(driverId, { isAvailable: true})
+            await driverModel.findByIdAndUpdate(driverId, { 
+                isAvailable: true,
+                $inc: { totalDeliveries: 1 }
+            });
         }
 
         res.json({ success: true, message: `Order marked as ${newStatus}`, order})
@@ -193,9 +197,18 @@ const getAssignedOrdersForDriver = async (req, res) => {
     try {
         const { driverId } = req.params;
 
-        const orders = await orderModel.find({
+        let orders = await orderModel.find({
             driverId, deliveryStatus: { $ne: 'delivered'}
         }).populate('businessId', 'name address')
+
+        // Attach customer info (name, phone) to each order
+        orders = await Promise.all(orders.map(async (order) => {
+            const customer = await customerModel.findOne({ email: order.customerEmail });
+            return {
+                ...order.toObject(),
+                customer: customer ? { name: customer.name, phone: customer.phone } : null
+            };
+        }));
 
         res.json({success: true, orders})
     } catch (error) {

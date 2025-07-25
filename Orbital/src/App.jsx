@@ -25,6 +25,8 @@ import CustAbout from './Component/Customer stuff/CustAbout';
 import DriverAbout from './Component/Driver stuff/DriverAbout';
 import ReviewRestaurant from './Component/Customer stuff/ReviewRestaurant';
 import BusReviews from './Component/Business stuff/BusReviews';
+import MessageDriver from './Component/Customer stuff/MessageDriver';
+import MessageCustomer from './Component/Driver stuff/MessageCustomer';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -65,6 +67,8 @@ function App() {
           <Route path="/driver-about" element={<DriverAbout />} />
           <Route path="/restaurant/:businessId/review" element={<ReviewRestaurant />} />
           <Route path="/reviews" element={<BusReviews />} />
+          <Route path="/message/:driverId" element={<MessageDriver />} />
+          <Route path="/driver/message/:driverId" element={<MessageCustomer />} />
 
 
         </Routes>

@@ -23,66 +23,45 @@ const AvailableOrders = () => {
     }
 
     return (
-        <div className="available-orders">
-            <div className="orders-header">
-                <h3 className="orders-title">🚚 Available Orders</h3>
-                <span className="orders-count">{orders.length} order{orders.length !== 1 ? 's' : ''} available</span>
-            </div>
-            
+        <div className="orders" style={{margin: '40px auto', padding: '0 10px'}}>
             {orders.length === 0 ? (
-                <div className="empty-state">
-                    <div className="empty-icon">⏳</div>
-                    <p>No available orders</p>
-                    <span>New orders will appear here</span>
+                <div style={{textAlign: 'center', padding: '40px 0', color: '#37512f', fontWeight: 500, fontSize: 18}}>
+                    No available orders<br/>
+                    <span style={{fontWeight: 400, fontSize: 15}}>New orders will appear here</span>
                 </div>
             ) : (
-                <div className="orders-grid">
+                <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
                     {orders.map(order => (
-                        <div key={order._id} className="order-card available">
-                            <div className="order-header">
-                                <span className="order-id">#{order._id.slice(-8)}</span>
-                                <div className="status-badge pending">
-                                    pending
-                                </div>
-                            </div>
-
-                            <div className="business-info">
-                                <h4 className="business-name">{order.businessId?.name}</h4>
-                                <p className="business-address">{order.businessId?.address}</p>
-                            </div>
-
-                            <div className="order-items">
-                                <h5>Items:</h5>
-                                <ul>
-                                    {order.items.map((item, index) => (
-                                        <li key={index} className="order-item">
-                                            <span className="item-name">{item.name}</span>
-                                            <span className="item-qty"> x{item.quantity}</span>
-                                            {item.comment && (
-                                                <span className="item-comment">"{item.comment}"</span>
-                                            )}
+                        <div key={order._id} className="order-card" style={{
+                            background: '#74c69d',
+                            color: '#37512f',
+                            borderRadius: 12,
+                            boxShadow: '0 2px 10px rgba(60,100,50,0.08)',
+                            padding: 24,
+                            marginBottom: 8,
+                            position: 'relative',
+                        }}>
+                            <p><strong>Order:</strong> {order._id}</p>
+                            <p><strong>Status:</strong> pending</p>
+                            <p><strong>Delivery Mode:</strong> {order.deliveryMode}</p>
+                            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <div>
+                                <strong>Items:</strong>
+                                <ul style={{margin: 0, paddingLeft: 18}}>
+                                    {order.items.map((item, idx) => (
+                                        <li key={idx}>
+                                            {item.name} - qty: {item.quantity}
+                                            {item.comment && <p style={{margin: 0, fontSize: 13}}>Comments: {item.comment}</p>}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
-
-                            <div className="order-details">
-                                <p><strong>Delivery Mode:</strong> {order.deliveryMode}</p>
-                                <p><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-                                {order.location && (
-                                    <p><strong>Delivery Location:</strong> Available</p>
-                                )}
-                                <p><strong>Total Items:</strong> {order.items.reduce((sum, item) => sum + item.quantity, 0)}</p>
-                            </div>
-
-                            <div className="order-actions">
-                                <button 
-                                    className="action-btn accept-order"
-                                    onClick={() => handleAccept(order._id)}
-                                >
-                                     Accept Delivery
-                                </button>
-                            </div>
+                            <button 
+                                style={{background: '#467844', color: 'white', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 'bold', fontSize: 15, marginTop: 16, cursor: 'pointer'}}
+                                onClick={() => handleAccept(order._id)}
+                            >
+                                Accept Delivery
+                            </button>
                         </div>
                     ))}
                 </div>

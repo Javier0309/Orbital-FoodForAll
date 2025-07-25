@@ -66,8 +66,43 @@ const io = new Server(server, {
     }
 })
 
+// Message model
+const messageSchema = new mongoose.Schema({
+    driverId: String,
+    from: String, // 'customer' or 'driver'
+    text: String,
+    timestamp: { type: Date, default: Date.now }
+});
+const Message = mongoose.models.Message || mongoose.model('Message', messageSchema);
+
+// REST endpoint to fetch message history for a driver
+app.get('/api/messages/:driverId', async (req, res) => {
+    try {
+        const { driverId } = req.params;
+        const messages = await Message.find({ driverId }).sort({ timestamp: 1 });
+        res.json({ success: true, messages });
+    } catch (err) {
+        res.json({ success: false, messages: [] });
+    }
+});
+
 io.on('connection', (socket) => {
     console.log('Socket connected:', socket.id);
+
+    // Join chat room for a driver
+    socket.on('joinChat', ({ driverId }) => {
+        socket.join(`chat-${driverId}`);
+    });
+
+    // Handle sending a message
+    socket.on('sendMessage', async ({ driverId, from, text }) => {
+        const msg = await Message.create({ driverId, from, text });
+        io.to(`chat-${driverId}`).emit('receiveMessage', {
+            from,
+            text,
+            timestamp: msg.timestamp
+        });
+    });
 
     //Handle driver location updates
     socket.on('driverLocationUpdate', ({driverId, latitude, longitude}) => {

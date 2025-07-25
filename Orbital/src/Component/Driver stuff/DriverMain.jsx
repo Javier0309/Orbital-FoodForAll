@@ -26,15 +26,17 @@ function DriverMain() {
                 <DriverHeader/>
                 <div className="main-content">
                     {/* Only show tracking/map if driver is NOT available */}
-                    {!isAvailable && currentOrderId && (
-                        <div className="orders-section">
+                    {!isAvailable && currentOrderId ? (
+                        <div className="orders-section" style={{paddingBottom: 0, marginBottom: 0, borderBottom: 'none'}}>
                             <DriverTracking orderId={currentOrderId}/>
+                            <AssignedOrders driverId={driverId} onOrderSelect={setCurrentOrderId}/>
+                        </div>
+                    ) : (
+                        <div className="orders-section">
+                            <AssignedOrders driverId={driverId} onOrderSelect={setCurrentOrderId}/>
                         </div>
                     )}
-                    <div className="orders-section">
-                        <h2 className="section-header">Assigned Orders</h2>
-                        <AssignedOrders driverId={driverId} onOrderSelect={setCurrentOrderId}/>
-                    </div>
+                    <hr style={{border: 'none', borderTop: '2px solid #e0e6d5', margin: '24px 0 16px 0'}} />
                     <div className="orders-section">
                         <h2 className="section-header">Available Orders</h2>
                         <AvailableOrders driverId={driverId}/>

@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from 'axios'
+import PhoneIcon from '../../assets/phone.png';
+import MessageIcon from '../../assets/message.png';
+import { useNavigate } from 'react-router-dom';
 
 const AssignedOrders = ({driverId, onOrderSelect}) => {
     //const driverId = localStorage.getItem("driverId"); 
     const [orders, setOrders] = useState([]);
     const [removedOrderIds, setRemovedOrderIds] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAssigned = async () => {
@@ -35,64 +39,44 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
     };
 
     return (
-        <div className="assigned-orders">
-            <div className="orders-header">
-                <h3 className="orders-title">Assigned Orders</h3>
-                <span className="orders-count">{
-                   orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).length
-                 } order{
-                   orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).length !== 1 ? 's' : ''
-                 }</span>
-            </div>
-            
+        <div className="orders" style={{margin: '0 auto', padding: '0 10px'}}>
             {orders.length === 0 ? (
-                <div className="empty-state">
-                    <div className="empty-icon">📭</div>
-                    <p>No assigned orders</p>
-                    <span>Orders will appear here once assigned</span>
+                <div style={{textAlign: 'center', padding: '40px 0', color: '#37512f', fontWeight: 500, fontSize: 18}}>
+                    No assigned orders<br/>
+                    <span style={{fontWeight: 400, fontSize: 15}}>Orders will appear here once assigned</span>
                 </div>
             ) : (
-                <div className="orders-grid">
+                <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
                     {orders.filter(order => !order.removedByDriver && !removedOrderIds.includes(order._id)).map(order => (
-                        <div key={order._id} className="order-card assigned" style={order.status === 'rejected' ? { background: '#fee2e2' } : {}}>
-                            <div className="order-header">
-                                <span className="order-id">#{order._id.slice(-8)}</span>
-                                <div className={`status-badge ${order.deliveryStatus}`}>{order.status === 'rejected' ? 'rejected' : order.deliveryStatus}</div>
-                            </div>
-
-                            <div className="business-info">
-                                <h4 className="business-name">{order.businessId?.name}</h4>
-                                <p className="business-address">{order.businessId?.address}</p>
-                            </div>
-
-                            <div className="order-items">
-                                <h5>Items:</h5>
-                                <ul>
-                                    {order.items.map((item, index) => (
-                                        <li key={index} className="order-item">
-                                            <span className="item-name">{item.name}</span>
-                                            <span className="item-qty">x{item.quantity}</span>
-                                            {item.comment && (
-                                                <span className="item-comment">"{item.comment}"</span>
-                                            )}
+                        <div key={order._id} className="order-card" style={{
+                            background: 'rgb(172, 209, 150)',
+                            color: '#37512f',
+                            borderRadius: 12,
+                            boxShadow: '0 2px 10px rgba(60,100,50,0.08)',
+                            padding: 24,
+                            marginBottom: 8,
+                            opacity: order.status === 'rejected' || order.deliveryStatus === 'delivered' ? 0.85 : 1,
+                            position: 'relative',
+                        }}>
+                            <p><strong>Order:</strong> {order._id}</p>
+                            <p><strong>Status:</strong> {order.status === 'rejected' ? 'rejected' : order.deliveryStatus}</p>
+                            <p><strong>Delivery Mode:</strong> {order.deliveryMode}</p>
+                            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <div>
+                                <strong>Items:</strong>
+                                <ul style={{margin: 0, paddingLeft: 18}}>
+                                    {order.items.map((item, idx) => (
+                                        <li key={idx}>
+                                            {item.name} - qty: {item.quantity}
+                                            {item.comment && <p style={{margin: 0, fontSize: 13}}>Comments: {item.comment}</p>}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
-
-                            <div className="order-details">
-                                <p><strong>Delivery Mode:</strong> {order.deliveryMode}</p>
-                                <p><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-                                {order.location && (
-                                    <p><strong>Delivery Location:</strong> Available</p>
-                                )}
-                            </div>
-
-                            <div className="order-actions">
+                            <div style={{display: 'flex', gap: 12, marginTop: 16}}>
                                 {order.status === 'rejected' ? (
                                     <button
-                                        className="action-btn"
-                                        style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #991b1b' }}
+                                        style={{ background: '#991b1b', color: 'white', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 'bold', fontSize: 15, cursor: 'pointer' }}
                                         onClick={() => removeOrderForDriver(order._id)}
                                     >
                                         Remove
@@ -100,21 +84,64 @@ const AssignedOrders = ({driverId, onOrderSelect}) => {
                                 ) : <>
                                     {order.deliveryStatus === 'assigned' && (
                                         <button 
-                                            className="action-btn start-delivery"
+                                            style={{background: '#467844', color: 'white', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 'bold', fontSize: 15, cursor: 'pointer'}}
                                             onClick={() => updateStatus(order._id, 'in_transit')}
                                         >
-                                            🚚 Start Delivery
+                                            Start Delivery
                                         </button>
                                     )}
                                     {order.deliveryStatus === 'in_transit' && (
                                         <button 
-                                            className="action-btn mark-delivered"
+                                            style={{background: '#467844', color: 'white', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 'bold', fontSize: 15, cursor: 'pointer'}}
                                             onClick={() => updateStatus(order._id, 'delivered')}
                                         >
-                                            ✅ Mark as Delivered
+                                            Mark as Delivered
                                         </button>
                                     )}
                                 </>}
+                            </div>
+                            {/* Phone and message buttons to the right */}
+                            <div style={{ position: 'absolute', top: 18, right: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, minHeight: 90 }}>
+                                {order.customer && order.customer.phone && (
+                                    <a
+                                        href={`tel:${order.customer.phone}`}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: 44,
+                                            height: 44,
+                                            borderRadius: '50%',
+                                            background: '#e9f5e1', // light background
+                                            boxShadow: '0 1px 4px rgba(60,100,50,0.07)',
+                                            textDecoration: 'none',
+                                            cursor: 'pointer',
+                                            padding: 0
+                                        }}
+                                        title={`Call Customer`}
+                                    >
+                                        <img src={PhoneIcon} alt="Call" style={{width: 26, height: 26, filter: 'invert(0.3)'}} />
+                                    </a>
+                                )}
+                                <button
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        width: 44,
+                                        height: 44,
+                                        borderRadius: '50%',
+                                        background: '#e9f5e1', // light background
+                                        border: 'none', // remove border
+                                        boxShadow: 'none', // remove shadow
+                                        cursor: 'pointer',
+                                        padding: 0
+                                    }}
+                                    title={`Message Customer`}
+                                    onClick={() => navigate(`/driver/message/${driverId}`)}
+                                >
+                                    <img src={MessageIcon} alt="Message" style={{width: 26, height: 26, filter: 'invert(0.3)'}} />
+                                </button>
                             </div>
                         </div>
                     ))}
