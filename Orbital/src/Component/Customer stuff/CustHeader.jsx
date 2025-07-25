@@ -42,6 +42,18 @@ function CustHeader() {
         return '';
     }
 
+    // LOGOUT button logic
+    const handleLogout = () => {
+        // Remove customer/session data as needed
+        localStorage.removeItem("customerId");
+        localStorage.removeItem("userType");
+        localStorage.removeItem("mongoUserId");
+        localStorage.removeItem("email");
+        // You might want to sign out from supabase as well:
+        if (supabase && supabase.auth) supabase.auth.signOut();
+        navigate("/");
+    };
+
     return(
         <div className='cust-header'>
             <img src={logo} alt="" className="logo" onClick={()=>{navigate('/custmain')}}></img>
@@ -61,6 +73,25 @@ function CustHeader() {
                     disabled={!currentOrder}
                     className={!currentOrder ? 'disabled' : ''}
                 >Current Order</button>
+                <button
+                    onClick={handleLogout}
+                    className="logout-btn"
+                    style={{
+                        marginLeft: "20px",
+                        padding: "8px 22px",
+                        background: "linear-gradient(90deg,#ff7979 0%,#ffb199 100%)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "20px",
+                        fontWeight: 600,
+                        fontSize: "1rem",
+                        cursor: "pointer",
+                        boxShadow: "0 2px 8px rgba(255,121,121,0.08)",
+                        transition: "background 0.2s"
+                    }}
+                >
+                    Logout
+                </button>
             </div>
         </div>
     );
