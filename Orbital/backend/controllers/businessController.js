@@ -186,18 +186,6 @@ const getCompletedOrdersCount = async (req, res) => {
 };
 
 
-
-// TEMPORARY: Debug endpoint to print all orders with businessId, status, removedByBusiness
-const debugAllOrders = async (req, res) => {
-    try {
-        const orders = await orderModel.find({}, { businessId: 1, status: 1, deliveryStatus: 1, removedByBusiness: 1 });
-        res.json({ success: true, orders });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Error fetching all orders', error });
-    }
-};
-
-
 export { 
     openOrClosed, 
     updateOrderStatus, 
@@ -207,5 +195,4 @@ export {
     removeCompletedOrder,
     getOrdersForBusiness,
     getCompletedOrdersCount,
-    debugAllOrders // TEMPORARY
 }
