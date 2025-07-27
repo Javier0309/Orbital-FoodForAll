@@ -88,4 +88,39 @@ const getCart = async (req, res) => {
     }
 }
 
-export {addToCart, removeFromCart, getCart};
+// update cart comment
+const updateCartComment = async (req, res) => {
+    try {
+        const { email } = req.user;
+        const { itemId, comment } = req.body;
+
+        console.log(`Updating comment for item ${itemId}: "${comment}"`);
+
+        let user = await userModel.findOne({ email: req.user.email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const cart = user.cartData || {};
+        
+        if (!cart[itemId]) {
+            return res.status(404).json({ success: false, message: "Item not found in cart" });
+        }
+
+        cart[itemId] = {
+            ...cart[itemId],
+            comment: comment || ""
+        };
+
+        console.log(`Updated cart for user ${email}:`, cart);
+
+        await userModel.updateOne({ email }, { cartData: cart });
+        res.json({ success: true, message: "Comment updated successfully" });
+
+    } catch (error) {
+        console.error("Update cart comment error:", error);
+        res.status(500).json({ success: false, message: "Error updating cart comment" });
+    }
+}
+
+export {addToCart, removeFromCart, getCart, updateCartComment};

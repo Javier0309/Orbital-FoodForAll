@@ -8,24 +8,42 @@ import { getFullCartItems, groupCartByBusiness } from "../utils/cartUtils.js";
 const placeOrder = async (req, res) => {
     try {
         const { email } = req.user;
-        const { deliveryMode = 'pickup', location, customerEmail } = req.body
+        const { deliveryMode = 'pickup', location, customerEmail, items } = req.body
         
-        // Use provided customerEmail or fall back to logged-in user's email
         const orderCustomerEmail = customerEmail || email;
         
-        const user = await userModel.findOne({email});
-        const cartData = user?.cartData || {}
+        // Use items from request body if provided, otherwise fall back to database cart
+        let cartData = {};
+        if (items && items.length > 0) {
+            // Convert items array to cartData format
+            items.forEach(item => {
+                cartData[item.foodId] = {
+                    quantity: item.quantity,
+                    comment: item.comment || ""
+                };
+            });
+            console.log("Using cart data from request body:", cartData);
+        } else {
+            // Fall back to database cart data
+            const user = await userModel.findOne({email});
+            cartData = user?.cartData || {};
+            console.log("Using cart data from database:", cartData);
+        }
     
         if (Object.keys(cartData).length === 0){
             return res.status(400).json({ success: false, message: "Cart is empty"})
         }
 
         const fullCartItems = await getFullCartItems(cartData);
+        console.log("Full cart items with comments:", fullCartItems.map(item => ({name: item.name, comment: item.comment})));
         const groupedByBusiness = groupCartByBusiness(fullCartItems);
 
         const createdOrders = [];
 
         for (const [businessId, items] of Object.entries(groupedByBusiness)) {
+            // Fetch customer dietaryNeeds
+            const customer = await customerModel.findOne({ email: orderCustomerEmail });
+            const dietaryNeeds = customer ? customer.dietaryNeeds : '';
             const order = await orderModel.create({
                 customerEmail: orderCustomerEmail,
                 businessId, 
@@ -36,26 +54,26 @@ const placeOrder = async (req, res) => {
                     comment: i.comment,
                     image: i.image
                 })), 
-                deliveryMode, ...(deliveryMode === 'delivery' && location ? { location } : {})
+                deliveryMode, ...(deliveryMode === 'delivery' && location ? { location } : {}),
+                dietaryNeeds
             })
-            // minus off the food ordered from the orignal quantity
-        for (const item of items){
-            const food = await foodModel.findById(item._id)
-            if (food && food.quantity >= item.quantity) {
-                await foodModel.updateOne(
-                    {_id: item._id},
-                    {$inc: { quantity: -item.quantity }}
-                )
-            } else {
-                return res.status(400).json({success: false, message: `Not enough quantity for ${item.name}`})
+            console.log("Created order with comments:", order.items.map(item => ({name: item.name, comment: item.comment})));
+            for (const item of items){
+                const food = await foodModel.findById(item._id)
+                if (food && food.quantity >= item.quantity) {
+                    await foodModel.updateOne(
+                        {_id: item._id},
+                        {$inc: { quantity: -item.quantity }}
+                    )
+                } else {
+                    return res.status(400).json({success: false, message: `Not enough quantity for ${item.name}`})
+                }
             }
-        }
             createdOrders.push(order);
         }
 
-        // Clear user cart
+        // Clear the cart in the database after successful order placement
         await userModel.updateOne({email}, {cartData: {}})
-
 
         res.json({ success: true, message: "Order(s) placed", orders: createdOrders})
     } catch (error) {
@@ -129,6 +147,9 @@ const updateDeliveryStatus = async (req, res) => {
         }
 
         order.deliveryStatus = newStatus;
+        if (newStatus === 'delivered') {
+            order.status = 'completed';
+        }
         await order.save();
 
         if (newStatus === 'delivered'){

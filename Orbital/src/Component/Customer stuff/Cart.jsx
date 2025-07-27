@@ -7,6 +7,7 @@ import { StoreContext } from './StoreContext';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import halalIcon from '../../assets/halal symbol.png';
 
 const Cart = () => {
     const {cartItems, food_list, removeFromCart, placeOrder} = useContext(StoreContext);
@@ -54,21 +55,27 @@ const Cart = () => {
         return acc;
     }, {})
 
-    const [collect, setCollect] = useState("pickup");
+    const [collect, setCollect] = useState(null); // No default selection
 
     return (
+        <>
+        <CustHeader/>
         <div className='cart'>
-            <CustHeader/>
             <h2>My Cart</h2>
             <div className='cart-items'>
                 {Object.entries(groupedFood).map(([businessId, items]) => (
                     <div key={businessId} className="restaurant-slider">
-                    <h3>{items[0].businessId?.name}</h3>
+                    <h3>
+                      {items[0].businessId?.name}
+                      {items[0].businessId?.halalCertUrl && (
+                        <img src={halalIcon} alt="Halal" style={{height: 24, marginLeft: 8, verticalAlign: 'middle'}} />
+                      )}
+                    </h3>
                     <Slider ref={(ref) => (sliderRef.current[businessId] = ref)} {...settings}>
                     {items.map((item)=>{
                         if(cartItems[item._id]?.quantity>0) {
                             return(
-                                <CartFoodCard key={item._id} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} cookedAt={item.cookedAt} consumeBy={item.consumeBy} comment={cartItems[item._id]?.comment || ""} image={item.image} businessId={item.businessId}/>
+                                <CartFoodCard key={item._id} id={item._id} name={item.name} desc={item.desc} quantity={item.quantity} cookedAt={item.cookedAt} consumeBy={item.consumeBy} image={item.image} businessId={item.businessId}/>
                             )
                         }
                     })}
@@ -79,14 +86,64 @@ const Cart = () => {
             </div>
 
             <div className="cart-bottom">
-                <ul className='collect-option'>
-                <li onClick={()=>setCollect("pickup")} className={collect==="pickup"?"active":""}>Pickup</li>
-                <li onClick={()=>setCollect("delivery")} className={collect==="delivery"?"active":""}>Delivery</li>
+                <ul className='collect-option' style={{display: 'flex', gap: 16, padding: 0, margin: 0, listStyle: 'none'}}>
+                  <li
+                    onClick={() => setCollect("pickup")}
+                    className={collect === "pickup" ? "active" : ""}
+                    style={{
+                      background: collect === "pickup" ? '#f4a395' : '#f3e8e3',
+                      color: collect === "pickup" ? '#222' : '#888',
+                      border: collect === "pickup" ? '2px solid #f4a395' : '2px solid #e0e0e0',
+                      borderRadius: 4,
+                      padding: '10px 32px',
+                      fontSize: 18,
+                      cursor: 'pointer',
+                      transition: 'background 0.2s, color 0.2s, border 0.2s',
+                    }}
+                  >
+                    Pickup
+                  </li>
+                  <li
+                    onClick={() => setCollect("delivery")}
+                    className={collect === "delivery" ? "active" : ""}
+                    style={{
+                      background: collect === "delivery" ? '#f4a395' : '#f3e8e3',
+                      color: collect === "delivery" ? '#222' : '#888',
+                      border: collect === "delivery" ? '2px solid #f4a395' : '2px solid #e0e0e0',
+                      borderRadius: 4,
+                      padding: '10px 32px',
+                      fontSize: 18,
+                      cursor: 'pointer',
+                      transition: 'background 0.2s, color 0.2s, border 0.2s',
+                    }}
+                  >
+                    Delivery
+                  </li>
                 </ul>
 
-                <button className="submit" onClick={()=>placeOrder(collect)} disabled={Object.keys(cartItems).length === 0}>Place Order</button>
+                <button
+                  className="submit"
+                  onClick={() => placeOrder(collect)}
+                  disabled={Object.keys(cartItems).length === 0 || !collect}
+                  style={{
+                    background: '#f4a395',
+                    color: '#222',
+                    border: 'none',
+                    borderRadius: 32,
+                    fontSize: 20,
+                    padding: '14px 40px',
+                    marginTop: 18,
+                    cursor: Object.keys(cartItems).length === 0 || !collect ? 'not-allowed' : 'pointer',
+                    opacity: Object.keys(cartItems).length === 0 || !collect ? 0.6 : 1,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                    transition: 'background 0.2s, color 0.2s, opacity 0.2s',
+                  }}
+                >
+                  Place Order
+                </button>
             </div>
         </div>
+        </>
     )
 }
 

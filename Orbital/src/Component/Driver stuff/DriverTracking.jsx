@@ -3,7 +3,7 @@ import io from 'socket.io-client'
 import OrderMap from "../Customer stuff/OrderMap";
 import './DriverMain.css';
 
-const DriverTracking = ({orderId}) => {
+const DriverTracking = ({orderId, refreshKey}) => {
     const [location, setLocation] = useState(null);
     const socketRef = useRef(null);
     const watchIdRef = useRef(null)
@@ -35,7 +35,7 @@ const DriverTracking = ({orderId}) => {
                     socketRef.current.disconnect();
             }
         }
-    }, [orderId])
+    }, [orderId, refreshKey])
 
     return (
         <div className="track-delivery-container" style={{minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 0 60px 0'}}>

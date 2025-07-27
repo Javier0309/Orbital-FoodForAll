@@ -139,6 +139,23 @@ signupRouter.get('/customer-by-email/:email', async (req, res) => {
     }
 });
 
+signupRouter.patch('/customer-by-email/:email', async (req, res) => {
+    try {
+        const { phone, dietaryNeeds } = req.body;
+        const customer = await custModel.findOneAndUpdate(
+            { email: req.params.email },
+            { $set: { phone, dietaryNeeds } },
+            { new: true }
+        );
+        if (!customer) {
+            return res.status(404).json({ success: false, message: 'Customer not found' });
+        }
+        res.json({ success: true, customer });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 signupRouter.patch('/verify/customer/:customerId', async (req, res) => {
     try {
         const {customerId} = req.params;

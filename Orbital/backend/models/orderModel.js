@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
     deliveryStatus: {type: String, enum: ['pending', 'assigned', 'in_transit', 'delivered'], default: 'pending'},
     deliveryMode: { type: String, enum: ['pickup', 'delivery'], default: 'pickup'},
     location: {latitude: Number, longitude: Number},
+    dietaryNeeds: { type: String },
     removedByBusiness: {type: Boolean, default: false},
     removedByDriver: {type: Boolean, default: false},
     removedByCustomer: {type: Boolean, default: false},

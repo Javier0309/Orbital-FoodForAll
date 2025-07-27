@@ -16,8 +16,10 @@ function BusMain() {
     return(
         <>
            <BusHeader/>
-           <BusOverlay/>
-           <Orders/>
+           <div className="bus-main">
+             <BusOverlay/>
+             <Orders/>
+           </div>
         </>
     );
 }

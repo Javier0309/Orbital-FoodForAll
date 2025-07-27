@@ -5,7 +5,7 @@ import BusHeader from "./BusHeader";
 const OrderHistory = () => {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('accepted');
+    const [activeTab, setActiveTab] = useState('completed');
     
     useEffect (() => {
             fetchOrders();
@@ -34,34 +34,27 @@ const OrderHistory = () => {
 
     const currentBusinessId = localStorage.getItem('businessId');
     const filteredOrders = orders.filter(order => typeof order.businessId === 'string' && order.businessId === currentBusinessId);
-    const removedOrders = filteredOrders.filter(order => (order.status === 'completed' || order.status === 'rejected' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && order.removedByBusiness);
-    const acceptedOrders = removedOrders.filter(order => (order.status === 'completed' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready'))
-    const rejectedOrders = removedOrders.filter(order => order.status === 'rejected')
+    const completedOrders = filteredOrders.filter(order => order.status === 'completed');
+    const rejectedOrders = filteredOrders.filter(order => order.status === 'rejected');
     
     return (
         <>
         <BusHeader />
-        <div className='order-history'>
+        <div className='order-history' style={{margin: '0 auto', padding: '0 10px', minWidth: 900, maxWidth: 1100, marginTop: 32}}>
             <h2>Order History</h2> 
-            {removedOrders.length === 0 ? (
-                <div style={{textAlign: 'center', padding: '40px'}}>
-                    <h3>No order history</h3>
-                </div>
-            ) : (
-            <>
             <div style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
                 <button 
-                    onClick={() => setActiveTab('accepted')}
+                    onClick={() => setActiveTab('completed')}
                     style={{
                         padding: '10px 20px',
-                        backgroundColor: activeTab === 'accepted' ? '#3b82f6' : '#e2e8f0',
-                        color: activeTab === 'accepted' ? 'white' : 'black',
+                        backgroundColor: activeTab === 'completed' ? '#3b82f6' : '#e2e8f0',
+                        color: activeTab === 'completed' ? 'white' : 'black',
                         border: 'none',
                         borderRadius: '8px',
                         cursor: 'pointer'
                     }}
                 >
-                    Accepted
+                    Completed
                 </button>
                 <button 
                     onClick={() => setActiveTab('rejected')}
@@ -77,23 +70,32 @@ const OrderHistory = () => {
                     Rejected
                 </button>
             </div>
-            {activeTab === 'accepted' ? (
-                acceptedOrders.length === 0 ? (
+            {activeTab === 'completed' ? (
+                completedOrders.length === 0 ? (
                     <div style={{textAlign: 'center', padding: '40px'}}>
-                        <h3>No accepted order history</h3>
+                        <h3>No completed orders yet</h3>
                     </div>
                 ) : (
                     <>
-                    <h3 style={{marginBottom: '10px'}}>Accepted Orders</h3>
-                    {acceptedOrders.map(order => (
-                        <div key={order._id} className="order-card" style={{backgroundColor: getOrderColor(order), marginBottom: '16px'}}>
+                    <h3 style={{marginBottom: '10px'}}>Completed Orders</h3>
+                    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
+                    {completedOrders.map(order => (
+                        <div key={order._id} className="order-card" style={{
+                            background: 'rgb(174, 212, 237)',
+                            color: '#1e293b',
+                            borderRadius: 12,
+                            padding: 24,
+                            marginBottom: 8,
+                            position: 'relative',
+                        }}>
                             <p><strong>Order:</strong> {order._id}</p>
                             <p><strong>Status:</strong> {order.status}</p>
                             <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Dietary needs:</strong> {order.dietaryNeeds || 'N/A'}</p>
                             <div>
                                 <strong>Items:</strong>
-                                <ul>
+                                <ul style={{margin: 0, paddingLeft: 18}}>
                                     {order.items.map(item => (
                                         <li key={item.foodId}>
                                             {item.name} - qty: {item.quantity} 
@@ -104,6 +106,7 @@ const OrderHistory = () => {
                             </div>
                         </div>
                     ))}
+                    </div>
                     </>
                 )
             ) : (
@@ -114,15 +117,25 @@ const OrderHistory = () => {
                 ) : (
                     <>
                     <h3 style={{marginBottom: '10px'}}>Rejected Orders</h3>
+                    <div style={{display: 'flex', flexDirection: 'column', gap: 32}}>
                     {rejectedOrders.map(order => (
-                        <div key={order._id} className="order-card" style={{backgroundColor: getOrderColor(order), marginBottom: '16px'}}>
+                        <div key={order._id} className="order-card" style={{
+                            background: 'rgb(174, 212, 237)',
+                            color: '#1e293b',
+                            borderRadius: 12,
+                            boxShadow: '0 2px 10px rgba(235, 30, 112, 0.08)',
+                            padding: 24,
+                            marginBottom: 8,
+                            position: 'relative',
+                        }}>
                             <p><strong>Order:</strong> {order._id}</p>
                             <p><strong>Status:</strong> {order.status}</p>
                             <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Dietary needs:</strong> {order.dietaryNeeds || 'N/A'}</p>
                             <div>
                                 <strong>Items:</strong>
-                                <ul>
+                                <ul style={{margin: 0, paddingLeft: 18}}>
                                     {order.items.map(item => (
                                         <li key={item.foodId}>
                                             {item.name} - qty: {item.quantity} 
@@ -139,12 +152,11 @@ const OrderHistory = () => {
                             )}
                         </div>
                     ))}
+                    </div>
                     </>
                 )
             )}
-            </>
-                )}
-            </div>
+        </div>
         </>
     )
 }

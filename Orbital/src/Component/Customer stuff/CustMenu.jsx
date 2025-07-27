@@ -7,6 +7,7 @@ import { StoreContext } from "./StoreContext.jsx";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import halalIcon from '../../assets/halal symbol.png';
 
 const FoodDisplay = () => {
 
@@ -77,7 +78,12 @@ const FoodDisplay = () => {
 
         {Object.entries(groupedFood).map(([businessId, items]) => (
             <div key={businessId} className="restaurant-slider">
-                <h3>{items[0].businessId?.name}</h3>
+                <h3>
+                  {items[0].businessId?.name}
+                  {items[0].businessId?.halalCertUrl && (
+                    <img src={halalIcon} alt="Halal" style={{height: 24, marginLeft: 8, verticalAlign: 'middle'}} />
+                  )}
+                </h3>
                 {/*<div className='food-display-list'>*/}
                 <Slider ref={(ref) => (sliderRef.current[businessId] = ref)} {...settings}>
                 {items.map((item) => {

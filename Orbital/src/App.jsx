@@ -13,7 +13,6 @@ import Recovered from './Component/Recovered';
 import Cart from './Component/Customer stuff/Cart';
 import Orders from './Component/Business stuff/Orders';
 import EditProfile from './Component/Business stuff/EditProfile';
-import ViewProfile from './Component/Business stuff/ViewProfile';
 import AwaitingVerification from './Component/AwaitingVerification';
 import DriverMain from './Component/Driver stuff/DriverMain';
 import DriverProfile from './Component/Driver stuff/DriverProfile';
@@ -31,6 +30,7 @@ import DriverOrderHistory from './Component/Driver stuff/OrderHistory';
 import CustomerOrderHistory from './Component/Customer stuff/OrderHistory';
 import ViewCustProfile from './Component/Customer stuff/ViewProfile';
 import RestaurantPickupMap from './Component/Customer stuff/RestaurantPickupMap';
+import ViewProfile from './Component/Business stuff/ViewProfile';
 
 //import { Route, Routes } from 'react-router-dom'
 

@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import Plus from '../../assets/plus.png';
 import Minus from '../../assets/minus.png';
 
-function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consumeBy, comment, hideControls}){    //props passed from Cart.jsx
+function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consumeBy, hideControls}){    //props passed from Cart.jsx
     const navigate = useNavigate();
     const handleClick = () => navigate('/cust-food-desc', {
         state: {id, name, desc, image, quantity, businessId, cookedAt, consumeBy, comment: cartItems[id]?.comment || ""}
@@ -19,7 +19,7 @@ function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consu
             alert(`Cannot add more items. Only ${quantity} available.`);
             return;
         } 
-        addToCart(id, comment);
+        addToCart(id, cartItems[id]?.comment || "");
     };
     
 
@@ -49,7 +49,7 @@ function CartFoodCard({id,name,desc,image, quantity, businessId, cookedAt, consu
                     )}
                 </div>
                 <h2 className='card-title'>{name}</h2>
-                <p className='card-text'>{comment && comment.length > 30 ? comment.slice(0,30) + '...' : comment}</p>
+                <p className='card-text'>{cartItems[id]?.comment && cartItems[id]?.comment.length > 30 ? cartItems[id]?.comment.slice(0,30) + '...' : cartItems[id]?.comment}</p>
                 {!hideControls && (
                   <div className='food-qty'>
                     <img onClick={()=>removeFromCart(id)} src={Minus} alt=""/>

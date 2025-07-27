@@ -93,7 +93,7 @@ const getOrdersForBusiness = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid businessId" });
     }
     try {
-      const orders = await orderModel.find({ businessId });
+      const orders = await orderModel.find({ businessId, removedByBusiness: { $ne: true } });
       res.json({ success: true, orders });
     } catch (error) {
       res.status(500).json({ success: false, message: "Error fetching orders" });

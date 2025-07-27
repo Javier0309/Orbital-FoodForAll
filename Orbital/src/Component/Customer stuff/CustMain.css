@@ -205,14 +205,22 @@
   font-size: 18px;
 } 
 
-.cart-bottom li{
+.cart-bottom li {
   cursor: pointer;
+  border-radius: 16px;
+  border: 1.5px solid #e0e0e0;
+  padding: 10px 32px;
+  background: #f3e8e3;
+  color: #888;
+  font-size: 18px;
+  transition: background 0.2s, color 0.2s, border 0.2s;
 }
 
-
-.cart-bottom .active{
-  background-color: #d39e97;
-  border-radius: 20%;
+.cart-bottom .active {
+  background-color: #f4a395;
+  color: #222;
+  border: 1.5px solid #f4a395;
+  border-radius: 16px;
 }
 
 
@@ -753,6 +761,23 @@ input[type="color"]{
   margin: 0 auto;
   border-radius: 12px;
   overflow: hidden;
+}
+
+.cart {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 24px 24px;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+@media (max-width: 600px) {
+  .cart {
+    padding: 16px 6vw 16px 6vw;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 

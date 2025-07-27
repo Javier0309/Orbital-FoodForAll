@@ -11,6 +11,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import FoodCard from "./FoodCard.jsx";
 import { StoreContext } from "./StoreContext.jsx";
+import halalIcon from '../../assets/halal symbol.png';
 
 function CustomerRestaurantView() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
@@ -156,7 +157,12 @@ function CustomerRestaurantView() {
             <div className="restaurant-overlay"></div>
             <div className="restaurant-hero-content">
               <div className="restaurant-hero-main-content">
-                <h1 className="restaurant-hero-name">{restaurant.name}</h1>
+                <h1 className="restaurant-hero-name">
+                  {restaurant.name}
+                  {restaurant.halalCertUrl && (
+                    <img src={halalIcon} alt="Halal" style={{height: 32, marginLeft: 12, verticalAlign: 'middle'}} />
+                  )}
+                </h1>
                 
                 {/* Restaurant About Section */}
                 <div className="restaurant-about-section">

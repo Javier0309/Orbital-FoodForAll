@@ -10,7 +10,7 @@ function CustFoodDesc() {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { id, name, desc, image, quantity, businessId, cookedAt, consumeBy, comment: stateComment } = state || {};
-    const { url, cartItems, addToCart, removeFromCart } = useContext(StoreContext);
+    const { url, cartItems, addToCart, removeFromCart, updateCartComment } = useContext(StoreContext);
     const [localComment, setLocalComment] = useState(cartItems?.[id]?.comment ?? stateComment ?? '');
 
     if (!state) {
@@ -95,8 +95,7 @@ function CustFoodDesc() {
                         }
 
                         if (alreadyInCart === totalRequested) {
-                            addToCart(id, localComment);
-                            removeFromCart(id);
+                            updateCartComment(id, localComment);
                             alert("Basket updated");
                             return;
                         }

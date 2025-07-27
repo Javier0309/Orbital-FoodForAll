@@ -34,7 +34,14 @@ const BusOverlay = () => {
     }, [])
 
     return (
-        <div className="bus-overlay">
+        <div
+            className="bus-overlay"
+            style={busData && busData.backgroundImageUrl ? {
+                backgroundImage: `url(${busData.backgroundImageUrl.startsWith('http') ? busData.backgroundImageUrl : 'http://localhost:4000' + busData.backgroundImageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            } : {}}
+        >
             <div className="bus-content">
                 <h1 className="title">
                     {loading
