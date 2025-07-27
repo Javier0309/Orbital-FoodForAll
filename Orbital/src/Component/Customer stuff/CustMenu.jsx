@@ -15,11 +15,10 @@ const FoodDisplay = () => {
     //search bar
     const [searchQuery, setSearchQuery] = useState("")
 
-    const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 5, slidesToScroll: 1, arrows: true, responsive: [
-        {breakpoint: 704, settings: {slidesToShow: 2, slidesToScroll: 1}},
-        {breakpoint: 480, settings: {slidesToShow: 1, slidesToScroll: 1}},
-        {breakpoint: 1280, settings: {slidesToShow: 3, slidesToScroll: 1}},
-    ]};
+    const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 4, slidesToScroll: 1, arrows: true, responsive: [
+        { breakpoint: 900, settings: { slidesToShow: 2, slidesToScroll: 1, variableWidth: true } },
+        { breakpoint: 600, settings: { slidesToShow: 1, slidesToScroll: 1, variableWidth: true } },
+            ]};
     const sliderRef = useRef({});
 
     useEffect(() => {

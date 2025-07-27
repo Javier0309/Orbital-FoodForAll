@@ -106,8 +106,8 @@
   position: relative;
   text-align: center;
   width: 100%;
-  height: 260px;
-  max-width: 200px;
+  height: 290px;
+  max-width: 250px;
   overflow: hidden;
   display: inline-block;
   background-color:rgb(220, 151, 151);
@@ -116,9 +116,10 @@
 
 
 .foodcard .content .card-image{
-  max-width: 100%;
-  height: 130px;
-  border-radius: 10%;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
   margin-bottom: 10px;
 }
 
@@ -174,6 +175,9 @@
 
 .food-qty{
   z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .cart-items-list{
@@ -373,6 +377,10 @@
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 1.3em;
   padding: 3px;
+}
+
+.restaurant-slider .slick-slide {
+  padding: 0 10px;
 }
 
 /*

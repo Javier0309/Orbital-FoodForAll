@@ -49,7 +49,7 @@ function BusHeader() {
                 <li onClick={()=>navigate('/busmenu')} className={location.pathname === '/busmenu' ? 'active' : ''}>Edit Menu</li>
                 <li onClick={()=>navigate('/edit-profile')} className={location.pathname === '/edit-profile' ? 'active' : ''}>Edit Profile</li>
                 <li onClick={()=>navigate('/view-profile')} className={location.pathname === '/view-profile' ? 'active' : ''}>View Profile</li>
-                <li onClick={()=>navigate('/order-history')} className={location.pathname === '/order-history' ? 'active' : ''}>Order History</li>
+                <li onClick={()=>navigate('/business-order-history')} className={location.pathname === '/business-order-history' ? 'active' : ''}>Order History</li>
                 <li onClick={()=>navigate('/reviews')} className={location.pathname === '/reviews' ? 'active' : ''}>Reviews</li>
                 <li onClick={()=>navigate('/about')} className={location.pathname === '/about' ? 'active' : ''}>About</li>
             </ul>

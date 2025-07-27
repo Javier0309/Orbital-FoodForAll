@@ -7,7 +7,6 @@ const OrderHistory = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('accepted');
     
-    // Fetch orders for this business   
     useEffect (() => {
             fetchOrders();
             }, [])
@@ -25,16 +24,17 @@ const OrderHistory = () => {
     }
 
     const getOrderColor = (order) => {
-        if (order.status === 'rejected') return '#ef4444'; //red
-        if (order.status === 'ready' || order.status === 'completed' || order.deliveryStatus === 'delivered') return '#10b981'; //green
+        if (order.status === 'rejected') return '#ef4444';
+        if (order.status === 'ready' || order.status === 'completed' || order.deliveryStatus === 'delivered') return '#10b981';
         return 'rgb(174, 212, 237)';
     }
-
 
     if (loading) return <div>Loading orders...</div>
     if (!orders.length) return <div>No orders yet</div>
 
-    const removedOrders = orders.filter(order => (order.status === 'completed' || order.status === 'rejected' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && order.removedByBusiness);
+    const currentBusinessId = localStorage.getItem('businessId');
+    const filteredOrders = orders.filter(order => typeof order.businessId === 'string' && order.businessId === currentBusinessId);
+    const removedOrders = filteredOrders.filter(order => (order.status === 'completed' || order.status === 'rejected' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && order.removedByBusiness);
     const acceptedOrders = removedOrders.filter(order => (order.status === 'completed' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready'))
     const rejectedOrders = removedOrders.filter(order => order.status === 'rejected')
     
@@ -43,7 +43,6 @@ const OrderHistory = () => {
         <BusHeader />
         <div className='order-history'>
             <h2>Order History</h2> 
-            
             {removedOrders.length === 0 ? (
                 <div style={{textAlign: 'center', padding: '40px'}}>
                     <h3>No order history</h3>

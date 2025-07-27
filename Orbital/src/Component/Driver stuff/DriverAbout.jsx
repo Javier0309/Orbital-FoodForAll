@@ -1,5 +1,6 @@
 import React from "react";
 import DriverHeader from "./DriverHeader.jsx";
+import logoFood from '../../assets/logofood.png';
 
 function DriverAbout() {
   return (
@@ -22,9 +23,13 @@ function DriverAbout() {
           Our platform makes it easy for you to connect with food donors and recipients, ensuring every delivery helps someone in need.<br /><br />
           <strong>Thank you for helping us make every meal count!</strong>
         </p>
+        <img 
+          src={logoFood} 
+          alt="Food For All Logo" 
+          style={{ display: 'block', margin: '40px auto 0 auto', maxWidth: '200px', opacity: 0.85 }}
+        />
       </div>
     </div>
   );
 }
-
 export default DriverAbout;

@@ -29,6 +29,11 @@ const CustomerTrackDriver = ({orderId}) => {
         }
 
         fetchOrderDetails();
+        
+        // Set up polling to automatically refresh order details every 5 seconds
+        const interval = setInterval(fetchOrderDetails, 5000);
+        
+        return () => clearInterval(interval);
     }, [orderId])
 
     // Timer for delivery orders
@@ -48,6 +53,8 @@ const CustomerTrackDriver = ({orderId}) => {
         // Clean up timer if order assigned or status changes
         return () => searchTimer && clearTimeout(searchTimer);
     }, [orderDetails]);
+
+
 
     return (
         <div className="track-delivery-container">
@@ -95,11 +102,32 @@ const CustomerTrackDriver = ({orderId}) => {
                             <button
                               className="track-btn track-btn-green"
                               onClick={async () => {
-                                await axios.patch(`http://localhost:4000/api/order/customer/remove/${orderDetails._id}`);
-                                navigate('/custmain');
+                                await axios.patch(`http://localhost:4000/api/business/orders/${orderDetails._id}/status`, { status: "completed" });
+                                // Redirect to review restaurant page
+                                const businessId = typeof orderDetails.businessId === 'object' ? orderDetails.businessId._id : orderDetails.businessId;
+                                navigate(`/restaurant/${businessId}/review`, {
+                                  state: { restaurant: orderDetails.businessId }
+                                });
                               }}
                             >
                               Collected
+                            </button>
+                          </>
+                        )}
+                        
+                        {/* Review Restaurant button for delivered orders */}
+                        {orderDetails.deliveryStatus === 'delivered' && (
+                          <>
+                            <button
+                              className="track-btn track-btn-green"
+                              onClick={() => {
+                                const businessId = typeof orderDetails.businessId === 'object' ? orderDetails.businessId._id : orderDetails.businessId;
+                                navigate(`/restaurant/${businessId}/review`, {
+                                  state: { restaurant: orderDetails.businessId }
+                                });
+                              }}
+                            >
+                              Review Restaurant
                             </button>
                           </>
                         )}

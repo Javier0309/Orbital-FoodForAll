@@ -1,5 +1,6 @@
 import React from "react";
 import CustHeader from "./CustHeader";
+import logoFood from '../../assets/logofood.png'; // <-- fixed here
 
 function CustAbout() {
   return (
@@ -22,9 +23,13 @@ function CustAbout() {
           By using FoodForAll, you’re helping reduce food waste and supporting a movement that brings people together. Whether you’re here to enjoy a great meal or help others, you’re making a positive impact.<br /><br />
           <strong>Thank you for being part of the FoodForAll community!</strong>
         </p>
+        <img 
+          src={logoFood} 
+          alt="Food For All Logo" 
+          style={{ display: 'block', margin: '40px auto 0 auto', maxWidth: '200px', opacity: 0.85 }}
+        />
       </div>
     </div>
   );
 }
-
 export default CustAbout;

@@ -29,7 +29,8 @@ import MessageDriver from './Component/Customer stuff/MessageDriver';
 import MessageCustomer from './Component/Driver stuff/MessageCustomer';
 import DriverOrderHistory from './Component/Driver stuff/OrderHistory';
 import CustomerOrderHistory from './Component/Customer stuff/OrderHistory';
-import Favourites from './Component/Customer stuff/Favourites';
+import ViewCustProfile from './Component/Customer stuff/ViewProfile';
+import RestaurantPickupMap from './Component/Customer stuff/RestaurantPickupMap';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -63,9 +64,11 @@ function App() {
           <Route path='/drivermain' element={<DriverMain />} />
           <Route path='/driverprofile' element={<DriverProfile />} />
           <Route path='/track-delivery/:orderId' element={<TrackDelivery/>}/>
-          <Route path='/order-history' element={<CustomerOrderHistory />} />
-          <Route path='/favourites' element={<Favourites />} />
+          <Route path='/business-order-history' element={<OrderHistory />} />
+          <Route path='/customer-order-history' element={<CustomerOrderHistory />} />
+          <Route path='/customer-profile' element={<ViewCustProfile />} />
           <Route path="/restaurant/:businessId" element={<CustomerRestaurantView />} />
+          <Route path="/restaurant/:businessId/map" element={<RestaurantPickupMap address={""} restaurantName={""} />} />
           <Route path="/about" element={<BusAbout />} />
           <Route path="/customer-about" element={<CustAbout />} />
           <Route path="/driver-about" element={<DriverAbout />} />

@@ -10,7 +10,6 @@ const Orders = () => {
     const [rejectOrder, setRejectOrder] = useState(null);
     const [rejReason, setRejReason] = useState('')
 
-    // Fetch orders for this business   
     useEffect (() => {
         fetchOrders();
         const interval = setInterval(fetchOrders, 30000);
@@ -34,7 +33,6 @@ const Orders = () => {
                 reason !== undefined ? {status: newStatus, reason} : {status: newStatus}
             )
             await fetchOrders();
-            //setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: newStatus} : o))
         } catch (error) {
             console.error('Failed updating status', error)
         }
@@ -42,29 +40,33 @@ const Orders = () => {
     const removeOrder = async (orderId) => {
         try {
             await axios.patch(`http://localhost:4000/api/business/orders/${orderId}/remove`)
-            await fetchOrders();    // refresh list after deleting
+            await fetchOrders();
         } catch (error) {
             console.error('Failed to remove order', error);
         }
     }
 
     const getOrderColor = (order) => {
-        if (order.status === 'rejected') return '#ef4444'; //red
-        if (order.status === 'ready' || order.status === 'completed' || order.deliveryStatus === 'delivered') return '#10b981'; //green
+        if (order.status === 'rejected') return '#ef4444';
+        if (order.status === 'ready' || order.status === 'completed' || order.deliveryStatus === 'delivered') return '#10b981';
         return 'rgb(174, 212, 237)';
     }
 
-
     if (loading) return <div>Loading orders...</div>
     if (!orders.length) return <div>No orders yet</div>
-    // filter orders based on tab
-    const pendingOrders = orders.filter(order => order.status === 'pending');
-    const completedOrders = orders.filter(order => (order.status === 'completed' || order.status === 'rejected' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && !order.removedByBusiness);
+    const currentBusinessId = localStorage.getItem('businessId');
+    const pendingOrders = orders.filter(order => order.status === 'pending' && typeof order.businessId === 'string' && order.businessId === currentBusinessId);
+    const completedOrders = orders.filter(order => {
+      const businessId = order.businessId;
+      return (
+        (order.status === 'completed' || order.status === 'rejected' || order.status === 'ready' || order.deliveryStatus === 'delivered') &&
+        typeof businessId === 'string' && businessId === currentBusinessId
+      );
+    });
     const acceptedOrders = completedOrders.filter(order => order.status !== 'rejected');
     const rejectedOrders = completedOrders.filter(order => order.status === 'rejected');
     return (
         <div className='orders'>
-            {/* Modal for rejecting order */}
             {rejPopUp && rejectOrder && (
                 <div className="modal-overlay" style={{
                     position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
@@ -135,8 +137,6 @@ const Orders = () => {
                 </div>
             )}
             <h2>Orders</h2> 
-            
-            {/* Add tab buttons */}
             <div style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
                 <button 
                     onClick={() => setActiveTab('active')}
@@ -165,10 +165,7 @@ const Orders = () => {
                     Completed ({completedOrders.length})
                 </button>
             </div>
-
-            {/* Show orders based on active tab */}
             {activeTab === 'active' ? (
-                // Show only pending orders
                 pendingOrders.length === 0 ? (
                     <div style={{textAlign: 'center', padding: '40px'}}>
                         <h3>All caught up!</h3>
@@ -192,9 +189,7 @@ const Orders = () => {
                                     ))}
                                 </ul>
                             </div>
-
                             <div className="actions">
-                                {/* Only show "Mark as Ready" button */}
                                 <button 
                                     onClick={() => updateStatus(order._id, 'ready')}
                                     style={{
@@ -209,7 +204,6 @@ const Orders = () => {
                                 >
                                     Mark as Ready
                                 </button>
-
                                 <button 
                                     onClick={() => {
                                         setRejectOrder(order);
@@ -227,8 +221,6 @@ const Orders = () => {
                                 >
                                     Reject
                                 </button>
-
-                            
                             </div>
                         </div>
                     ))

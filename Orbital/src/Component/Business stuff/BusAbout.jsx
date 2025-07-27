@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BusHeader from "./BusHeader";
+import logoFood from '../../assets/logofood.png';
 
 function BusAbout() {
   return (
@@ -23,9 +24,13 @@ function BusAbout() {
           <br /><br />
           <strong>Join us in making a meaningful impact—one meal at a time.</strong>
         </p>
+        <img 
+          src={logoFood} 
+          alt="Food For All Logo" 
+          style={{ display: 'block', margin: '40px auto 0 auto', maxWidth: '200px', opacity: 0.85 }}
+        />
       </div>
     </div>
   );
 }
-
 export default BusAbout;

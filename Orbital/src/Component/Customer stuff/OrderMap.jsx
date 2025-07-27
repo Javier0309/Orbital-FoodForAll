@@ -74,8 +74,12 @@ const OrderMap = ({ orderId, pickupMode }) => {
                     const order = data.order;
                     setOrder(order)
                     // get business location
-                    if (order.businessId) {
-                        const businessRes = await fetch(`http://localhost:4000/api/business/profile/${order.businessId}`)
+                    let businessId = order.businessId;
+                    if (typeof businessId === 'object' && businessId._id) {
+                        businessId = businessId._id;
+                    }
+                    if (businessId) {
+                        const businessRes = await fetch(`http://localhost:4000/api/business/profile/${businessId}`)
                         const businessData = await businessRes.json();
                         if (businessData.success && businessData.business?.address){
                             const businessCoords = await geocodeAddress(businessData.business.address);

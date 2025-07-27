@@ -1,4 +1,4 @@
-import { getOpenOrClosed, getOrdersForBusiness, openOrClosed, updateOrderStatus, removeCompletedOrder } from '../controllers/businessController.js';
+import { getOpenOrClosed, getOrdersForBusiness, openOrClosed, updateOrderStatus, removeCompletedOrder, debugAllOrders, getCompletedOrdersCount } from '../controllers/businessController.js';
 import express from 'express';
 import multer from "multer";
 import path from "path";
@@ -31,6 +31,9 @@ busRouter.get('/status/:businessId', getOpenOrClosed);
 // Get orders for business
 busRouter.get('/orders/:businessId', getOrdersForBusiness);
 
+// Get completed orders count for business
+busRouter.get('/completed-orders/:businessId', getCompletedOrdersCount);
+
 // Update order status
 busRouter.patch('/orders/:orderId/status', updateOrderStatus);
 
@@ -47,7 +50,8 @@ busRouter.get('/profile/:businessId', async (req, res, next) => {
 busRouter.put('/profile/:businessId', upload.fields([
   { name: 'hygieneCert', maxCount: 1 },
   { name: 'businessLicense', maxCount: 1 },
-  { name: 'halalCert', maxCount: 1 }
+  { name: 'halalCert', maxCount: 1 },
+  { name: 'backgroundImage', maxCount: 1 }
 ]), async (req, res, next) => {
   const { businessId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(businessId)) {
@@ -71,7 +75,7 @@ busRouter.get('/business-by-email/:email', async (req, res) => {
 });
 
 busRouter.patch('/orders/:orderId/remove', removeCompletedOrder);
-
+busRouter.get('/debug-orders', debugAllOrders); // TEMPORARY
 
 export default busRouter;
 

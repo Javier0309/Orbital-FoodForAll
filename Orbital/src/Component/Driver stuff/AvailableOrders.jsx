@@ -21,7 +21,8 @@ const AvailableOrders = () => {
         try {
             await axios.post('http://localhost:4000/api/order/driver/self-assign', {driverId, orderId});
             alert('Order accepted!');
-            window.location.reload();
+            // Remove the accepted order from the local state immediately
+            setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
         } catch (error) {
             alert('Failed to accept order: ' + (error.response?.data?.message || error.message));
         }

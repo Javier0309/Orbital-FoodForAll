@@ -1,6 +1,6 @@
 import CustHeader from "./CustHeader";
 
-function Favourites() {
+function ViewProfile() {
     return (
         <>
             <CustHeader />
@@ -8,4 +8,4 @@ function Favourites() {
     );
 }
 
-export default Favourites; 
+export default ViewProfile; 

@@ -57,7 +57,6 @@ function CustFoodDesc() {
                         <div className='business-stuff'>
                             <h3>{businessId?.name}'s</h3>
                             <button onClick={handleViewRestaurant}>View Restaurant</button>
-                            <button onClick={handleReviewRestaurant}>Review Restaurant</button>
                         </div>
 
                         <div className='food-desc-content'>

@@ -65,26 +65,57 @@ function ViewProfile() {
     <div className="edit-profile-bg">
       <BusHeader />
       <div className="view-profile-container">
-        {/* Header Card */}
-        <div className="profile-header-card">
-          <div className="profile-avatar">
-            {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
+        {/* Hero Section with Background Image */}
+        <div className="profile-hero">
+          <div 
+            className="profile-background"
+            style={{
+              backgroundImage: profile.backgroundImageUrl 
+                ? `url(${BACKEND_BASE_URL}${profile.backgroundImageUrl})`
+                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            }}
+          >
+            <div className="profile-overlay"></div>
+            <div className="profile-hero-content">
+              <h1 className="profile-hero-name">{profile.name}</h1>
+              
+              {/* About Section */}
+              <div className="profile-about-section">
+                <div className="profile-about-card">
+                  <h3>About {profile.name}</h3>
+                  <p>{profile.about || "No description provided"}</p>
+                </div>
+              </div>
+
+              {/* Certificate Buttons Section */}
+              <div className="certificate-buttons-section">
+                <div className="certificate-buttons">
+                                       <a
+                       href={profile.businessLicenseUrl ? `${BACKEND_BASE_URL}${profile.businessLicenseUrl}` : '#'}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className={`cert-button ${!profile.businessLicenseUrl ? 'disabled' : ''}`}
+                       onClick={e => !profile.businessLicenseUrl && e.preventDefault()}
+                     >
+                       Business License
+                     </a>
+                                       <a
+                       href={profile.hygieneCertUrl ? `${BACKEND_BASE_URL}${profile.hygieneCertUrl}` : '#'}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className={`cert-button ${!profile.hygieneCertUrl ? 'disabled' : ''}`}
+                       onClick={e => !profile.hygieneCertUrl && e.preventDefault()}
+                     >
+                       Hygiene Certificate
+                     </a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="profile-header-info">
-  <h1 className="profile-name">{profile.name}</h1>
-</div>
         </div>
 
         {/* Main Content Grid */}
         <div className="profile-content-grid">
-          {/* About Section */}
-          <div className="profile-card profile-about-card">
-            <h3 className="profile-card-title">About</h3>
-            <div className="profile-about-text">
-              {profile.about || "No description provided"}
-            </div>
-          </div>
-
           {/* Location Section */}
           <div className="profile-card profile-location-card">
             <h3 className="profile-card-title">
@@ -93,56 +124,6 @@ function ViewProfile() {
             </h3>
             <div className="profile-location-text">
               {profile.address || "Address not provided"}
-            </div>
-          </div>
-
-          {/* Food Hygiene Certificate Section */}
-          <div className="profile-card profile-cert-card">
-            <h3 className="profile-card-title">
-              Food Hygiene Certificate
-            </h3>
-            <div className="certificate-status">
-              {profile.hygieneCertUrl ? (
-                <a
-                  href={`${BACKEND_BASE_URL}${profile.hygieneCertUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cert-link"
-                >
-                  <span className="cert-icon-small">📄</span>
-                  View Certificate
-                </a>
-              ) : (
-                <div className="cert-not-uploaded">
-                  <span className="cert-icon-small">❌</span>
-                  Not uploaded
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Business License Section */}
-          <div className="profile-card profile-cert-card">
-            <h3 className="profile-card-title">
-              Business License
-            </h3>
-            <div className="certificate-status">
-              {profile.businessLicenseUrl ? (
-                <a
-                  href={`${BACKEND_BASE_URL}${profile.businessLicenseUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cert-link"
-                >
-                  <span className="cert-icon-small">📄</span>
-                  View License
-                </a>
-              ) : (
-                <div className="cert-not-uploaded">
-                  <span className="cert-icon-small">❌</span>
-                  Not uploaded
-                </div>
-              )}
             </div>
           </div>
 
@@ -159,7 +140,7 @@ function ViewProfile() {
                   rel="noopener noreferrer"
                   className="cert-link"
                 >
-                  <span className="cert-icon-small">📄</span>
+                  <span className="cert-icon-small">☪️</span>
                   View Certificate
                 </a>
               ) : (

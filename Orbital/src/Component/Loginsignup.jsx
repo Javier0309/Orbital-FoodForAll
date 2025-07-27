@@ -202,6 +202,7 @@ const Loginsignup = () => {
                     formData.append('email', localEmail);
                     formData.append('address', address);
                     formData.append('userId', userId);
+                    formData.append('phone', phone);
                     
                     if (files.businessLicense) formData.append('businessLicense', files.businessLicense);
                     if (files.hygieneCert) formData.append('hygieneCert', files.hygieneCert);
@@ -386,6 +387,9 @@ const Loginsignup = () => {
                                 </div>
                                 <div className="login-field">
                                     <input type="text" placeholder="Address of Shop" value={address} onChange={e => setAddress(e.target.value)} className="login-input"/>
+                                </div>
+                                <div className="login-field">
+                                    <input type="text" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="login-input"/>
                                 </div>
                                 <div className="login-upload-group">
                                     <FileUploadBox label="Business License" fileType="businessLicense"/>

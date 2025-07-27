@@ -125,6 +125,9 @@ const updateBusinessProfile = async (req, res) => {
             if (req.files.halalCert && req.files.halalCert[0]) {
                 updateData.halalCertUrl = `/uploads/certs/${req.files.halalCert[0].filename}`;
             }
+            if (req.files.backgroundImage && req.files.backgroundImage[0]) {
+                updateData.backgroundImageUrl = `/uploads/certs/${req.files.backgroundImage[0].filename}`;
+            }
         } else if (req.file) {
             // Backward compatibility for single file upload (hygieneCert)
             updateData.hygieneCertUrl = `/uploads/certs/${req.file.filename}`;
@@ -162,6 +165,37 @@ const removeCompletedOrder = async (req, res) => {
     }
 }
 
+// GET: Get completed orders count for a business
+const getCompletedOrdersCount = async (req, res) => {
+    const { businessId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(businessId)) {
+        return res.status(400).json({ success: false, message: "Invalid businessId" });
+    }
+    try {
+        // Count all orders with status 'completed' for this business
+        const completedCount = await orderModel.countDocuments({
+            businessId: businessId,
+            status: 'completed'
+        });
+        
+        res.json({ success: true, completedCount });
+    } catch (error) {
+        console.error("Error fetching completed orders count:", error);
+        res.status(500).json({ success: false, message: "Error fetching completed orders count" });
+    }
+};
+
+
+
+// TEMPORARY: Debug endpoint to print all orders with businessId, status, removedByBusiness
+const debugAllOrders = async (req, res) => {
+    try {
+        const orders = await orderModel.find({}, { businessId: 1, status: 1, deliveryStatus: 1, removedByBusiness: 1 });
+        res.json({ success: true, orders });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching all orders', error });
+    }
+};
 
 
 export { 
@@ -172,4 +206,6 @@ export {
     getOpenOrClosed, 
     removeCompletedOrder,
     getOrdersForBusiness,
+    getCompletedOrdersCount,
+    debugAllOrders // TEMPORARY
 }

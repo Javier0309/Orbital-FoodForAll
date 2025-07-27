@@ -31,15 +31,20 @@ const TrackDelivery = () => {
     useEffect(() => {
         const fetchBusinessName = async () => {
             if (orderDetails && orderDetails.businessId) {
-                try {
-                    const res = await axios.get(`http://localhost:4000/api/business/profile/${orderDetails.businessId}`);
-                    if (res.data.success && res.data.business && res.data.business.name) {
-                        setBusinessName(res.data.business.name);
-                    } else {
+                if (typeof orderDetails.businessId === 'object' && orderDetails.businessId.name) {
+                    setBusinessName(orderDetails.businessId.name);
+                } else {
+                    try {
+                        const id = typeof orderDetails.businessId === 'object' ? orderDetails.businessId._id : orderDetails.businessId;
+                        const res = await axios.get(`http://localhost:4000/api/business/profile/${id}`);
+                        if (res.data.success && res.data.business && res.data.business.name) {
+                            setBusinessName(res.data.business.name);
+                        } else {
+                            setBusinessName('Business');
+                        }
+                    } catch {
                         setBusinessName('Business');
                     }
-                } catch {
-                    setBusinessName('Business');
                 }
             }
         };
@@ -55,21 +60,10 @@ const TrackDelivery = () => {
     }, [orderDetails]);
 
     // Slider settings (copied from Cart.jsx)
-    const settings = {
-        centerMode: false,
-        accessibility: true,
-        dots: false,
-        infinite: false,
-        speed: 500,
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        arrows: true,
-        responsive: [
-            {breakpoint: 704, settings: {slidesToShow: 2, slidesToScroll: 1}},
-            {breakpoint: 480, settings: {slidesToShow: 1, slidesToScroll: 1}},
-            {breakpoint: 1280, settings: {slidesToShow: 3, slidesToScroll: 1}},
-        ]
-    };
+    const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 4, slidesToScroll: 1, arrows: true, responsive: [
+        { breakpoint: 900, settings: { slidesToShow: 2, slidesToScroll: 1, variableWidth: true } },
+        { breakpoint: 600, settings: { slidesToShow: 1, slidesToScroll: 1, variableWidth: true } },
+            ]};
     const sliderRef = useRef({});
 
     return (
@@ -77,7 +71,6 @@ const TrackDelivery = () => {
             <CustHeader/>
             <CustomerTrackDriver orderId={orderId}/>
             {driverId && <DriverCard driverId={driverId}/>} 
-            {/* Order Summary below driver card */}
             {orderDetails && orderDetails.items && orderDetails.items.length > 0 && (
                 <div className='cart-items' style={{margin: '40px auto', maxWidth: '1100px'}}>
                     <hr />

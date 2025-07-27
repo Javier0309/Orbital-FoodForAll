@@ -152,7 +152,8 @@ const getAvailableOrdersForDelivery = async (req, res) => {
             deliveryStatus: "pending",
             driverId: null,
             status: { $ne: 'rejected' }
-        }).populate('businessId', 'name address')
+        }).populate('businessId', 'name address').sort({ createdAt: -1 })
+        
         res.json({success: true, orders: availableOrders})
     } catch (error) {
         console.error("Error fetching available orders:", error);
@@ -170,16 +171,24 @@ const selfAssignOrder = async (req,res) => {
             return res.status(400).json({ success: false, message: "Driver not available or not found"})
         }
 
-        // validate order
-        const order = await orderModel.findById(orderId);
-        if (!order || order.deliveryStatus !== 'pending' || order.driverId) {
-            return res.status(400).json({ success: false, message: "Order not available for assignment"})
-        }
+        // validate order - use findOneAndUpdate for atomicity
+        const order = await orderModel.findOneAndUpdate(
+            { 
+                _id: orderId, 
+                deliveryStatus: 'pending', 
+                driverId: null,
+                status: { $ne: 'rejected' }
+            },
+            { 
+                driverId: driverId, 
+                deliveryStatus: 'assigned' 
+            },
+            { new: true }
+        );
 
-        // assign order
-        order.driverId = driverId;
-        order.deliveryStatus = 'assigned';
-        await order.save()
+        if (!order) {
+            return res.status(400).json({ success: false, message: "Order not available for assignment or already taken by another driver"})
+        }
 
         // set driver unavailable
         driver.isAvailable = false;

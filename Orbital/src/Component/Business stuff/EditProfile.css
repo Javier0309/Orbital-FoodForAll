@@ -207,13 +207,132 @@
 .view-profile-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0;
   gap: 20px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
+
+/* Profile Hero Section */
+.profile-hero {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+  .profile-background {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+.profile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+  .profile-hero-content {
+    z-index: 2;
+    text-align: left;
+    color: white;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+
+  .profile-hero-name {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    color: white;
+  }
+
+  /* Profile About Section */
+  .profile-about-section {
+    margin-bottom: 30px;
+  }
+  
+  .profile-about-card {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    backdrop-filter: none;
+  }
+  
+  .profile-about-card h3 {
+    display: none;
+  }
+  
+  .profile-about-card p {
+    color: white;
+    line-height: 1.7;
+    font-size: 1.1rem;
+  }
+
+  /* Certificate Buttons Section */
+  .certificate-buttons-section {
+    margin-bottom: 30px;
+  }
+
+.certificate-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+}
+
+  .cert-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 30px;
+    background: #6b7280;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 2px solid white;
+    cursor: pointer;
+  }
+
+  .cert-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background: #4b5563;
+  }
+
+.cert-button.disabled {
+  background: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.cert-button.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+  .cert-icon {
+    display: none;
+  }
 
 /* Header Card */
 .profile-header-card {
@@ -510,31 +629,35 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .view-profile-container {
-    padding: 15px;
+    padding: 0;
   }
   
-  .profile-header-card {
+  .profile-hero-name {
+    font-size: 2.5rem;
+  }
+  
+  .certificate-buttons {
     flex-direction: column;
-    text-align: center;
-    padding: 30px 20px;
+    align-items: flex-start;
   }
   
-  .profile-name {
-    font-size: 2.2rem;
+  .cert-button {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
   }
   
   .profile-content-grid {
     grid-template-columns: 1fr;
     gap: 20px;
+    padding: 0 20px;
   }
   
   .profile-card {
     padding: 25px;
   }
   
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-    font-size: 2rem;
+  .profile-about-card {
+    padding: 20px;
   }
 }

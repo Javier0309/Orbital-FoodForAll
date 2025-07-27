@@ -36,8 +36,8 @@ function CustHeader() {
 
     const getActive = (path) => {
         if (path === '/custmain' && location.pathname === '/custmain') return 'active';
-        if (path === '/order-history' && location.pathname === '/order-history') return 'active';
-        if (path === '/favourites' && location.pathname === '/favourites') return 'active';
+        if (path === '/customer-order-history' && location.pathname === '/customer-order-history') return 'active';
+        if (path === '/customer-profile' && location.pathname === '/customer-profile') return 'active';
         if (path === '/customer-about' && location.pathname === '/customer-about') return 'active';
         return '';
     }
@@ -47,8 +47,8 @@ function CustHeader() {
             <img src={logo} alt="" className="logo" onClick={()=>{navigate('/custmain')}}></img>
             <ul className='cust-header-menu'>
                 <li onClick={()=>navigate('/custmain')} className={getActive('/custmain')}>Home</li>
-                <li onClick={()=>navigate('/order-history')} className={getActive('/order-history')}>Order History</li>
-                <li onClick={()=>navigate('/favourites')} className={getActive('/favourites')}>Favourites</li>
+                <li onClick={()=>navigate('/customer-order-history')} className={getActive('/customer-order-history')}>Order History</li>
+                <li onClick={()=>navigate('/customer-profile')} className={getActive('/customer-profile')}>View Profile</li>
                 <li onClick={()=>navigate('/customer-about')} className={getActive('/customer-about')}>About</li>
             </ul>
 
