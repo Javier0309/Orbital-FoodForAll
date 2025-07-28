@@ -34,6 +34,7 @@ const TrackDelivery = () => {
     useEffect(() => {
         const fetchBusinessData = async () => {
             if (orderDetails && orderDetails.businessId) {
+<<<<<<< HEAD
                 const businessId = typeof orderDetails.businessId === "object"
                     ? orderDetails.businessId._id
                     : orderDetails.businessId;
@@ -43,12 +44,29 @@ const TrackDelivery = () => {
                         setBusinessName(res.data.business.name || 'Business');
                         setBusinessObj(res.data.business);
                     } else {
+=======
+                if (typeof orderDetails.businessId === 'object' && orderDetails.businessId.name) {
+                    setBusinessName(orderDetails.businessId.name);
+                } else {
+                    try {
+                        const id = typeof orderDetails.businessId === 'object' ? orderDetails.businessId._id : orderDetails.businessId;
+                        const res = await axios.get(`http://localhost:4000/api/business/profile/${id}`);
+                        if (res.data.success && res.data.business && res.data.business.name) {
+                            setBusinessName(res.data.business.name);
+                        } else {
+                            setBusinessName('Business');
+                        }
+                    } catch {
+>>>>>>> d609edb9152fce127253cf98aae254fbb5ce321b
                         setBusinessName('Business');
                         setBusinessObj(null);
                     }
+<<<<<<< HEAD
                 } catch {
                     setBusinessName('Business');
                     setBusinessObj(null);
+=======
+>>>>>>> d609edb9152fce127253cf98aae254fbb5ce321b
                 }
             }
         };
@@ -77,6 +95,7 @@ const TrackDelivery = () => {
         }, 800); 
     };
 
+<<<<<<< HEAD
     const settings = {
         centerMode: false,
         accessibility: true,
@@ -99,6 +118,49 @@ const TrackDelivery = () => {
             <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
                 <CustomerTrackDriver orderId={orderId} />
                 {driverId && <DriverCard driverId={driverId} />}
+=======
+    // Slider settings (copied from Cart.jsx)
+    const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 4, slidesToScroll: 1, arrows: true, responsive: [
+        { breakpoint: 900, settings: { slidesToShow: 2, slidesToScroll: 1, variableWidth: true } },
+        { breakpoint: 600, settings: { slidesToShow: 1, slidesToScroll: 1, variableWidth: true } },
+            ]};
+    const sliderRef = useRef({});
+
+    return (
+        <div>
+            <CustHeader/>
+            <CustomerTrackDriver orderId={orderId}/>
+            {driverId && <DriverCard driverId={driverId}/>} 
+            {orderDetails && orderDetails.items && orderDetails.items.length > 0 && (
+                <div className='cart-items' style={{margin: '40px auto', maxWidth: '1100px'}}>
+                    <hr />
+                    <h2>Order Summary</h2>
+                    <div className="restaurant-slider">
+                        <h3>{businessName}</h3>
+                        <Slider ref={(ref) => (sliderRef.current['main'] = ref)} {...settings}>
+                            {orderDetails.items.map((item, idx) => (
+                                <CartFoodCard
+                                    key={item.foodId || idx}
+                                    id={item.foodId}
+                                    name={item.name}
+                                    desc={item.desc}
+                                    quantity={item.quantity}
+                                    cookedAt={item.cookedAt}
+                                    consumeBy={item.consumeBy}
+                                    comment={item.comment}
+                                    image={item.image}
+                                    businessId={orderDetails.businessId}
+                                    hideControls={true}
+                                />
+                            ))}
+                        </Slider>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+>>>>>>> d609edb9152fce127253cf98aae254fbb5ce321b
 
                 {/* Restaurant actions */}
                 <div style={{ display: "flex", justifyContent: "flex-end", gap: "16px", margin: "24px 0" }}>

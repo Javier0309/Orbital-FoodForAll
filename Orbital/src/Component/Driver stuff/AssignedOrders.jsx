@@ -4,7 +4,7 @@ import PhoneIcon from '../../assets/phone.png';
 import MessageIcon from '../../assets/message.png';
 import { useNavigate } from 'react-router-dom';
 
-const AssignedOrders = ({driverId, onOrderSelect, setHasAssignedOrders}) => {
+const AssignedOrders = ({driverId, onOrderSelect, setHasAssignedOrders, refreshKey}) => {
     //const driverId = localStorage.getItem("driverId"); 
     const [orders, setOrders] = useState([]);
     const [removedOrderIds, setRemovedOrderIds] = useState([]);
@@ -18,7 +18,9 @@ const AssignedOrders = ({driverId, onOrderSelect, setHasAssignedOrders}) => {
             if (res.data.orders.length > 0 && onOrderSelect) onOrderSelect(res.data.orders[0]._id)
         };
         fetchAssigned();
-    }, [driverId, onOrderSelect, setHasAssignedOrders]);
+        const interval = setInterval(fetchAssigned, 5000); 
+        return () => clearInterval(interval);
+    }, [driverId, onOrderSelect, setHasAssignedOrders, refreshKey]);
 
     const updateStatus = async (orderId, newStatus) => {
         await axios.post('http://localhost:4000/api/order/driver/update-status', {driverId, orderId, newStatus})
@@ -83,10 +85,22 @@ const AssignedOrders = ({driverId, onOrderSelect, setHasAssignedOrders}) => {
                                 ) : <>
                                     {order.deliveryStatus === 'assigned' && (
                                         <button 
-                                            style={{background: '#467844', color: 'white', border: 'none', borderRadius: 6, padding: '10px 20px', fontWeight: 'bold', fontSize: 15, cursor: 'pointer'}}
-                                            onClick={() => updateStatus(order._id, 'in_transit')}
+                                            style={{
+                                                background: order.status === 'ready' ? '#467844' : '#cccccc',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: 6,
+                                                padding: '10px 20px',
+                                                fontWeight: 'bold',
+                                                fontSize: 15,
+                                                marginTop: 0,
+                                                cursor: order.status === 'ready' ? 'pointer' : 'not-allowed',
+                                                opacity: order.status === 'ready' ? 1 : 0.6
+                                            }}
+                                            onClick={() => order.status === 'ready' && updateStatus(order._id, 'in_transit')}
+                                            disabled={order.status !== 'ready'}
                                         >
-                                            Start Delivery
+                                            {order.status === 'ready' ? 'Start Delivery' : 'Order not ready'}
                                         </button>
                                     )}
                                     {order.deliveryStatus === 'in_transit' && (
@@ -99,7 +113,7 @@ const AssignedOrders = ({driverId, onOrderSelect, setHasAssignedOrders}) => {
                                     )}
                                 </>}
                             </div>
-                            {/* Phone and message buttons to the right */}
+                            {/* Phone and message buttons*/}
                             <div style={{ position: 'absolute', top: 18, right: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, minHeight: 90 }}>
                                 {order.customer && order.customer.phone && (
                                     <a

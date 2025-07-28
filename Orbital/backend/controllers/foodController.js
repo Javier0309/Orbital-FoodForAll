@@ -37,7 +37,7 @@ const listFood = async (req,res) => {
             query.businessId = businessId;
         }
 
-        const foods = await foodModel.find(query).populate('businessId', 'isOpen name');
+        const foods = await foodModel.find(query).populate('businessId', 'isOpen name halalCertUrl');
         const openShops = foods.filter(food => food.businessId?.isOpen)  // doesnt show food if shop closed
         res.json({success:true,data:openShops})
     } catch (error) {

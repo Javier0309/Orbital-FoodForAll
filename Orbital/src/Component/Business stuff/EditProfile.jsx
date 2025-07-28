@@ -14,12 +14,14 @@ function EditProfile() {
     name: '',
     about: '',
     address: '',
+    phone: '',
   });
   
   const [files, setFiles] = useState({
     businessLicense: null,
     hygieneCert: null,
-    halalCert: null
+    halalCert: null,
+    backgroundImage: null
   });
   
   const [message, setMessage] = useState('');
@@ -38,6 +40,7 @@ function EditProfile() {
             name: data.business.name || '',
             about: data.business.about || '',
             address: data.business.address || '',
+            phone: data.business.phone || '',
           });
         }
       })
@@ -65,11 +68,13 @@ function EditProfile() {
     formData.append('name', form.name);
     formData.append('about', form.about);
     formData.append('address', form.address);
+    formData.append('phone', form.phone);
     
     // Add files if they exist
     if (files.businessLicense) formData.append('businessLicense', files.businessLicense);
     if (files.hygieneCert) formData.append('hygieneCert', files.hygieneCert);
     if (files.halalCert) formData.append('halalCert', files.halalCert);
+    if (files.backgroundImage) formData.append('backgroundImage', files.backgroundImage);
 
     try {
       const response = await fetch(`${API_BASE_URL}/business/profile/${businessId}`, {
@@ -183,6 +188,20 @@ function EditProfile() {
             />
           </div>
 
+          <div className="form-section">
+            <label className="form-label">
+              PHONE NUMBER
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              placeholder="Add your restaurant phone number"
+              className="form-input"
+            />
+          </div>
+
           <FileUploadBox 
             label="BUSINESS LICENSE" 
             fileType="businessLicense"
@@ -197,6 +216,12 @@ function EditProfile() {
             label="HALAL CERTIFICATION" 
             fileType="halalCert" 
             note="if applicable"
+          />
+
+          <FileUploadBox 
+            label="BACKGROUND IMAGE" 
+            fileType="backgroundImage"
+            note="optional - will be displayed behind your restaurant name"
           />
 
           <button 

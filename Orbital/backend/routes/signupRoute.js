@@ -41,9 +41,9 @@ signupRouter.post('/create-business',
     busUpload.fields([{name: 'hygieneCert'}, {name: 'businessLicense'}, {name: 'halalCert'}]),
     async (req, res) => {
     try {
-        const { name, email, address, userId } = req.body;
-        if (!name || !email || !address || !userId){
-            return res.status(400).json({ success: false, message: "Missing name or email" })
+        const { name, email, address, userId, phone } = req.body;
+        if (!name || !email || !address || !userId || !phone){
+            return res.status(400).json({ success: false, message: "Missing name, email, address, userId, or phone" })
         }
 
         const existing = await businessModel.findOne( {email});
@@ -51,7 +51,7 @@ signupRouter.post('/create-business',
             return res.status(200).json({ success: true, businessId: existing._id })
         }
 
-        const newBusiness = await businessModel.create({ name, email, address, userId, isVerified: false, 
+        const newBusiness = await businessModel.create({ name, email, address, userId, phone, isVerified: false, 
             hygieneCertUrl: 
                 req.files.hygieneCert?.[0]?.path ? `/uploads/certs/${req.files.hygieneCert[0].filename}` : null,
             businessLicenseUrl:
@@ -136,6 +136,23 @@ signupRouter.get('/customer-by-email/:email', async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ success: false, message: "Server error", error: err.message });
+    }
+});
+
+signupRouter.patch('/customer-by-email/:email', async (req, res) => {
+    try {
+        const { phone, dietaryNeeds } = req.body;
+        const customer = await custModel.findOneAndUpdate(
+            { email: req.params.email },
+            { $set: { phone, dietaryNeeds } },
+            { new: true }
+        );
+        if (!customer) {
+            return res.status(404).json({ success: false, message: 'Customer not found' });
+        }
+        res.json({ success: true, customer });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 

@@ -32,5 +32,4 @@ function DriverAbout() {
     </div>
   );
 }
-
 export default DriverAbout;

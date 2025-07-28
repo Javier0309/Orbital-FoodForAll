@@ -10,7 +10,6 @@ const Orders = () => {
     const [rejectOrder, setRejectOrder] = useState(null);
     const [rejReason, setRejReason] = useState('')
 
-    // Fetch orders for this business   
     useEffect (() => {
         fetchOrders();
         const interval = setInterval(fetchOrders, 30000);
@@ -34,37 +33,34 @@ const Orders = () => {
                 reason !== undefined ? {status: newStatus, reason} : {status: newStatus}
             )
             await fetchOrders();
-            //setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: newStatus} : o))
         } catch (error) {
             console.error('Failed updating status', error)
         }
     }
-    const removeOrder = async (orderId) => {
-        try {
-            await axios.patch(`http://localhost:4000/api/business/orders/${orderId}/remove`)
-            await fetchOrders();    // refresh list after deleting
-        } catch (error) {
-            console.error('Failed to remove order', error);
-        }
+    // Remove order from the current view only, do not call backend
+    const removeOrder = (orderId) => {
+        setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
     }
 
     const getOrderColor = (order) => {
-        if (order.status === 'rejected') return '#ef4444'; //red
-        if (order.status === 'ready' || order.status === 'completed' || order.deliveryStatus === 'delivered') return '#10b981'; //green
+        if (order.status === 'rejected') return '#ef4444';
+        if (order.status === 'ready' || order.status === 'completed' || order.deliveryStatus === 'delivered') return '#10b981';
         return 'rgb(174, 212, 237)';
     }
 
-
     if (loading) return <div>Loading orders...</div>
     if (!orders.length) return <div>No orders yet</div>
-    // filter orders based on tab
-    const pendingOrders = orders.filter(order => order.status === 'pending');
-    const completedOrders = orders.filter(order => (order.status === 'completed' || order.status === 'rejected' || order.deliveryStatus === 'delivered' || order.deliveryStatus === 'ready') && !order.removedByBusiness);
-    const acceptedOrders = completedOrders.filter(order => order.status !== 'rejected');
-    const rejectedOrders = completedOrders.filter(order => order.status === 'rejected');
+    const currentBusinessId = localStorage.getItem('businessId');
+    const pendingOrders = orders.filter(order => order.status === 'pending' && typeof order.businessId === 'string' && order.businessId === currentBusinessId);
+    const readyOrders = orders.filter(order => {
+      const businessId = order.businessId;
+      return (
+        order.status === 'ready' &&
+        typeof businessId === 'string' && businessId === currentBusinessId
+      );
+    });
     return (
         <div className='orders'>
-            {/* Modal for rejecting order */}
             {rejPopUp && rejectOrder && (
                 <div className="modal-overlay" style={{
                     position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
@@ -135,8 +131,6 @@ const Orders = () => {
                 </div>
             )}
             <h2>Orders</h2> 
-            
-            {/* Add tab buttons */}
             <div style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
                 <button 
                     onClick={() => setActiveTab('active')}
@@ -152,23 +146,20 @@ const Orders = () => {
                     To Prepare ({pendingOrders.length})
                 </button>
                 <button 
-                    onClick={() => setActiveTab('history')}
+                    onClick={() => setActiveTab('ready')}
                     style={{
                         padding: '10px 20px',
-                        backgroundColor: activeTab === 'history' ? '#3b82f6' : '#e2e8f0',
-                        color: activeTab === 'history' ? 'white' : 'black',
+                        backgroundColor: activeTab === 'ready' ? '#3b82f6' : '#e2e8f0',
+                        color: activeTab === 'ready' ? 'white' : 'black',
                         border: 'none',
                         borderRadius: '8px',
                         cursor: 'pointer'
                     }}
                 >
-                    Completed ({completedOrders.length})
+                    Ready ({readyOrders.length})
                 </button>
             </div>
-
-            {/* Show orders based on active tab */}
             {activeTab === 'active' ? (
-                // Show only pending orders
                 pendingOrders.length === 0 ? (
                     <div style={{textAlign: 'center', padding: '40px'}}>
                         <h3>All caught up!</h3>
@@ -181,9 +172,10 @@ const Orders = () => {
                             <p><strong>Status:</strong> {order.status}</p>
                             <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Dietary needs:</strong> {order.dietaryNeeds || 'N/A'}</p>
                             <div>
                                 <strong>Items:</strong>
-                                <ul>
+                                <ul style={{paddingLeft: 18}}>
                                     {order.items.map(item => (
                                         <li key={item.foodId}>
                                             {item.name} - qty: {item.quantity} 
@@ -192,9 +184,7 @@ const Orders = () => {
                                     ))}
                                 </ul>
                             </div>
-
                             <div className="actions">
-                                {/* Only show "Mark as Ready" button */}
                                 <button 
                                     onClick={() => updateStatus(order._id, 'ready')}
                                     style={{
@@ -209,7 +199,6 @@ const Orders = () => {
                                 >
                                     Mark as Ready
                                 </button>
-
                                 <button 
                                     onClick={() => {
                                         setRejectOrder(order);
@@ -227,29 +216,28 @@ const Orders = () => {
                                 >
                                     Reject
                                 </button>
-
-                            
                             </div>
                         </div>
                     ))
                 )
             ) : (
-                completedOrders.length === 0 ? (
+                readyOrders.length === 0 ? (
                     <div style={{textAlign: 'center', padding: '40px'}}>
-                        <h3>No completed orders yet</h3>
+                        <h3>No ready orders yet</h3>
                     </div>
                 ) : (
                     <>
-                    <h3 style={{marginBottom: '10px'}}>Completed Orders</h3>
-                    {completedOrders.map(order => (
+                    <h3 style={{marginBottom: '10px'}}>Ready Orders</h3>
+                    {readyOrders.map(order => (
                         <div key={order._id} className="order-card" style={{opacity: 0.7, backgroundColor: getOrderColor(order), marginBottom: '16px'}}>
                             <p><strong>Order:</strong> {order._id}</p>
                             <p><strong>Status:</strong> {order.status}</p>
                             <p><strong>Delivery Mode:</strong>{order.deliveryMode}</p>
                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                            <p><strong>Dietary needs:</strong> {order.dietaryNeeds || 'N/A'}</p>
                             <div>
                                 <strong>Items:</strong>
-                                <ul>
+                                <ul style={{paddingLeft: 18}}>
                                     {order.items.map(item => (
                                         <li key={item.foodId}>
                                             {item.name} - qty: {item.quantity} 
@@ -258,17 +246,6 @@ const Orders = () => {
                                     ))}
                                 </ul>
                             </div>
-                            {order.status === 'rejected' && order.rejectionReason && (
-                                <div style={{background: '#ef4444', color: 'white', padding: '10px', borderRadius: '6px', marginTop: '10px'}}>
-                                    <strong>Rejection Reason:</strong>
-                                    <p>{order.rejectionReason}</p>
-                                </div>
-                            )}
-                            {(order.status === 'completed' || order.status === 'rejected') && (
-                                <button onClick={() => removeOrder(order._id)}>
-                                    Remove
-                                </button>
-                            )}
                         </div>
                     ))}
                     </>

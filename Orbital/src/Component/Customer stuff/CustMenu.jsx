@@ -7,6 +7,7 @@ import { StoreContext } from "./StoreContext.jsx";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import halalIcon from '../../assets/halal symbol.png';
 
 const FoodDisplay = () => {
 
@@ -15,11 +16,10 @@ const FoodDisplay = () => {
     //search bar
     const [searchQuery, setSearchQuery] = useState("")
 
-    const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 5, slidesToScroll: 1, arrows: true, responsive: [
-        {breakpoint: 704, settings: {slidesToShow: 2, slidesToScroll: 1}},
-        {breakpoint: 480, settings: {slidesToShow: 1, slidesToScroll: 1}},
-        {breakpoint: 1280, settings: {slidesToShow: 3, slidesToScroll: 1}},
-    ]};
+    const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 4, slidesToScroll: 1, arrows: true, responsive: [
+        { breakpoint: 900, settings: { slidesToShow: 2, slidesToScroll: 1, variableWidth: true } },
+        { breakpoint: 600, settings: { slidesToShow: 1, slidesToScroll: 1, variableWidth: true } },
+            ]};
     const sliderRef = useRef({});
 
     useEffect(() => {
@@ -78,7 +78,12 @@ const FoodDisplay = () => {
 
         {Object.entries(groupedFood).map(([businessId, items]) => (
             <div key={businessId} className="restaurant-slider">
-                <h3>{items[0].businessId?.name}</h3>
+                <h3>
+                  {items[0].businessId?.name}
+                  {items[0].businessId?.halalCertUrl && (
+                    <img src={halalIcon} alt="Halal" style={{height: 24, marginLeft: 8, verticalAlign: 'middle'}} />
+                  )}
+                </h3>
                 {/*<div className='food-display-list'>*/}
                 <Slider ref={(ref) => (sliderRef.current[businessId] = ref)} {...settings}>
                 {items.map((item) => {

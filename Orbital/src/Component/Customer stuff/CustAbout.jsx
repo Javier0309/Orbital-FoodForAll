@@ -32,5 +32,4 @@ function CustAbout() {
     </div>
   );
 }
-
 export default CustAbout;

@@ -2,8 +2,7 @@ import { useEffect,useState } from "react";
 import axios from 'axios'
 import './DriverMain.css'
 
-const AvailableOrders = () => {
-    const driverId = localStorage.getItem("driverId"); 
+const AvailableOrders = ({ driverId, onOrderAccepted }) => {
     const [orders, setOrders] = useState([]);
 
     useEffect(()=> {
@@ -21,7 +20,9 @@ const AvailableOrders = () => {
         try {
             await axios.post('http://localhost:4000/api/order/driver/self-assign', {driverId, orderId});
             alert('Order accepted!');
-            window.location.reload();
+            // Remove the accepted order from the local state immediately
+            setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
+            if (onOrderAccepted) onOrderAccepted();
         } catch (error) {
             alert('Failed to accept order: ' + (error.response?.data?.message || error.message));
         }

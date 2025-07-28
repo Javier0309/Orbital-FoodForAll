@@ -1,0 +1,435 @@
+.business-profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.business-hero {
+  width: 90%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+}
+
+.business-background {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.business-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.business-hero-content {
+  z-index: 2;
+  text-align: left;
+  color: white;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 60px;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 120px;
+}
+
+.business-hero-name {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  color: white;
+}
+
+.business-hero-main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 600px;
+}
+
+.business-about-section {
+  margin-bottom: 30px;
+}
+
+.business-about-card {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  backdrop-filter: none;
+}
+
+.business-about-card h3 {
+  display: none;
+}
+
+.business-about-card p {
+  color: white;
+  line-height: 1.7;
+  font-size: 1.1rem;
+}
+
+.business-certificate-buttons-section {
+  margin-bottom: 30px;
+}
+
+.business-certificate-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+}
+
+.business-cert-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 30px;
+  background: #6b7280;
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: normal;
+  font-size: 20px;
+  transition: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid white;
+  cursor: default;
+}
+.business-cert-button:hover {
+  cursor: pointer;
+}
+.business-cert-disabled {
+  background: #e2e8f0;
+  color: #a0aec0;
+  box-shadow: none;
+  cursor: default;
+}
+
+.business-hero-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 3;
+}
+
+.business-hero-action-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #9ca3af;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  padding: 0;
+}
+.business-hero-action-btn:active {
+  transform: scale(0.96);
+}
+.business-hero-action-btn img {
+  filter: brightness(0) invert(1);
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.business-profile-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.business-reviews-section {
+  background: rgb(170, 205, 237);
+  color: white;
+  padding: 30px 20px;
+  margin-top: 0;
+  margin-bottom: 0;
+  box-shadow: 0 2px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.business-meals-delivered-info {
+  margin-bottom: 25px;
+  padding: 0 20px;
+}
+.business-meals-delivered-info p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: black;
+  margin: 0;
+}
+.business-meals-count {
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.business-reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 0 20px;
+}
+.business-reviews-header h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: black;
+  margin: 0;
+}
+.business-average-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.business-stars {
+  color: #f5b301;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.business-rating-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgb(0, 0, 0);
+}
+.business-review-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e9ecef;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.business-review-customer-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+.business-review-stars {
+  color: #f5b301;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.business-review-text {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 3.2em;
+}
+
+.business-details {
+  margin-top: 30px;
+}
+
+.business-available-items-section {
+  background: white;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  width: 90%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.business-available-items-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.business-reviews-slider-container {
+  padding: 0 20px;
+  width: 98%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.business-reviews-slider-container .slick-slide {
+  padding: 0 15px;
+}
+.business-reviews-slider-container .slick-prev,
+.business-reviews-slider-container .slick-next {
+  width: 40px;
+  height: 40px;
+  z-index: 1;
+}
+.business-reviews-slider-container .slick-prev:before,
+.business-reviews-slider-container .slick-next:before {
+  color: #fff;
+  font-size: 20px;
+}
+.business-reviews-slider-container .slick-prev {
+  left: -50px;
+}
+.business-reviews-slider-container .slick-next {
+  right: -50px;
+}
+
+.business-foodcard {
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(62, 93, 156, 0.4);
+  padding: 20px;
+  margin: 10px;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  height: 290px;
+  max-width: 250px;
+  overflow: hidden;
+  display: inline-block;
+  background-color: rgb(170, 205, 237);
+}
+.business-content .business-card-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.business-content .business-card-title {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  margin: 0;
+  font-size: 1.5em;
+  height: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.business-content .business-card-text {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: black;
+  font-size: 14px;
+}
+.business-available-items-slider-container {
+  padding: 0 20px;
+}
+
+.business-phone-bubble, .business-address-bubble {
+  pointer-events: none;
+  cursor: default;
+  z-index: 100;
+}
+.business-phone-bubble,
+.business-address-bubble {
+  position: absolute;
+  right: 0;
+  background: white;
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 18px 24px;
+  min-width: 220px;
+  max-width: 320px;
+  animation: fadeIn 0.2s;
+}
+.business-phone-bubble {
+  bottom: 60px;
+}
+.business-address-bubble {
+  top: 60px;
+}
+.business-address-bubble-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.business-address-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+  color: #222;
+}
+.business-address-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1200px) {
+  .business-slider-track {
+    gap: 12px;
+  }
+  .business-review-card {
+    min-width: 180px;
+    max-width: 200px;
+    padding: 12px;
+  }
+}
+@media (max-width: 900px) {
+  .business-hero-content {
+    gap: 40px;
+    padding: 0 20px;
+  }
+  .business-reviews-slider-container .slick-prev {
+    left: -30px;
+  }
+  .business-reviews-slider-container .slick-next {
+    right: -30px;
+  }
+  .business-review-card {
+    min-height: 100px;
+    padding: 15px;
+  }
+}
+@media (max-width: 768px) {
+  .business-hero-name {
+    font-size: 2.5rem;
+  }
+  .business-certificate-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .business-cert-button {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+  .business-about-card {
+    padding: 20px;
+  }
+} 

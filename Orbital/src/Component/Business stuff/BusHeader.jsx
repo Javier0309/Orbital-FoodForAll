@@ -57,6 +57,7 @@ function BusHeader() {
         <div className='bus-header'>
             <img src={logo} alt="" className="logo"></img>
             <ul className='bus-header-menu'>
+<<<<<<< HEAD
                 <li onClick={()=>{navigate("/busmain"); setMenu("home")}} className={menu==="home"?"active":""}>Home</li>
                 <li onClick={()=>setMenu("edit-menu")} className={menu==="edit-menu"?"active":""}>Edit Menu</li>
                 <li onClick={()=>{navigate("/edit-profile");setMenu("edit-profile")}} className={menu==="edit-profile"?"active":""}>Edit Profile</li>
@@ -64,6 +65,15 @@ function BusHeader() {
                 <li onClick={()=>{navigate("/order-history"); setMenu("order-history")}} className={menu==="order-history"?"active":""}>Order History</li>
                 <li onClick={()=>{navigate("/reviews");setMenu("reviews")}} className={menu==="reviews"?"active":""}>Reviews</li>
                 <li onClick={()=>{navigate("/about");setMenu("about")}} className={menu==="about"?"active":""}>About</li>
+=======
+                <li onClick={()=>navigate("/busmain")} className={location.pathname === '/busmain' ? 'active' : ''}>Home</li>
+                <li onClick={()=>navigate('/busmenu')} className={location.pathname === '/busmenu' ? 'active' : ''}>Edit Menu</li>
+                <li onClick={()=>navigate('/edit-profile')} className={location.pathname === '/edit-profile' ? 'active' : ''}>Edit Profile</li>
+                <li onClick={()=>navigate('/view-profile')} className={location.pathname === '/view-profile' ? 'active' : ''}>View Profile</li>
+                <li onClick={()=>navigate('/business-order-history')} className={location.pathname === '/business-order-history' ? 'active' : ''}>Order History</li>
+                <li onClick={()=>navigate('/reviews')} className={location.pathname === '/reviews' ? 'active' : ''}>Reviews</li>
+                <li onClick={()=>navigate('/about')} className={location.pathname === '/about' ? 'active' : ''}>About</li>
+>>>>>>> d609edb9152fce127253cf98aae254fbb5ce321b
             </ul>
 
             <div className='bus-header-right'>

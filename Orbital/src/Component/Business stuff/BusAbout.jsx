@@ -33,5 +33,4 @@ function BusAbout() {
     </div>
   );
 }
-
 export default BusAbout;

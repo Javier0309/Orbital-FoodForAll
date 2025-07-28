@@ -52,7 +52,37 @@ const StoreContextProvider = (props) => {
             console.error("Error removing from cart:", error)
         }
     }
-    
+
+    const updateCartComment = async (id, newComment) => {
+        try {
+            const session = await supabase.auth.getSession();
+            const token = session.data.session.access_token;
+
+            const res = await axios.post(url + "/api/cart/update-comment", {itemId: id, comment: newComment}, {headers: {Authorization: `Bearer ${token}`}});
+
+            if (res.data.success) {
+                setCartItems(prev => {
+                    const existingQuantity = prev[id]?.quantity || 0;
+
+                    return {
+                        ...prev,
+                        [id]: {
+                            quantity: existingQuantity,
+                            comment: newComment !== undefined && newComment !== "" ? newComment : ""
+                        }
+                    };
+                });
+            }
+        } catch (error) {
+            console.error("Error updating cart comment:", error);
+            if (error.response?.data?.message) {
+                alert(error.response.data.message);
+            } else {
+                alert("Error updating comment");
+            }
+        }
+    };    
+
     const navigate = useNavigate();
     const placeOrder = async (deliveryMode = 'pickup') => {
         try {
@@ -85,6 +115,7 @@ const StoreContextProvider = (props) => {
                 if (res.data.success){
                     alert("Order placed successfully")
                     setCartItems({});
+                    await fetchFoodList();
 
                     const orderId = res.data.order?._id || res.data.orders?.[0]?._id;
                     if (orderId) navigate(`/track-delivery/${orderId}`)     // orderId to be used by TrackDelivery.jsx
@@ -169,7 +200,7 @@ const StoreContextProvider = (props) => {
     }, [])
 
     const contextValue = {
-        food_list, setFoodList, url, cartItems, setCartItems, addToCart, removeFromCart, fetchFoodList, placeOrder
+        food_list, setFoodList, url, cartItems, setCartItems, addToCart, removeFromCart, fetchFoodList, placeOrder, updateCartComment
     };
     
     return (

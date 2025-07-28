@@ -9,6 +9,8 @@ const businessSchema = new mongoose.Schema({
     hygieneCertUrl: { type: String },
     businessLicenseUrl: { type: String },
     halalCertUrl: { type: String },
+    backgroundImageUrl: { type: String },
+    phone: { type: String },
 
     // Other business fields
     recommendedItems: [{ type: String }],
@@ -18,5 +20,5 @@ const businessSchema = new mongoose.Schema({
     isOpen: {type: Boolean, default: true}
 });
 
-const businessModel = mongoose.models.business || mongoose.model("Business", businessSchema)
-export default businessModel
+const businessModel = mongoose.models.Business || mongoose.model("Business", businessSchema);
+export default businessModel;
