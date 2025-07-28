@@ -18,6 +18,7 @@ const DriverTracking = ({orderId}) => {
             const watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
+                    console.log('Driver position:', latitude, longitude);
                     setLocation({ latitude, longitude })
                     const driverId = localStorage.getItem("driverId")
                     if (driverId && socketRef.current && orderId){

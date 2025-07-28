@@ -14,7 +14,6 @@ import busIcon from '../../assets/chefhat.png'
 import driverIcon from '../../assets/motorbike.png'
 import custIcon from '../../assets/house.png'
 
-
 // fix for default markers
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -103,8 +102,11 @@ const OrderMap = ({ orderId, pickupMode }) => {
 
         // listen for driver location updates (only if not pickupMode)
         if (!pickupMode && socketRef.current) {
-            socketRef.current.on(`location-${orderId}`, (location) => {
-                setDriverLocation(location);
+            socketRef.current.on('driverLocationUpdate', (data) => {
+                // Only set if orderId matches
+                if (data.orderId === orderId) {
+                    setDriverLocation(data);
+                }
             });
         }
 
@@ -134,7 +136,6 @@ const OrderMap = ({ orderId, pickupMode }) => {
         return null;
     };
 
-
     // gives the road
     const getOptimalRoute = async (start, end) => {
         try {
@@ -159,8 +160,6 @@ const OrderMap = ({ orderId, pickupMode }) => {
                     return coordinates.map(coord => [coord[0], coord[1]])
                 }
             }
-
-            
         } catch (error) {
             console.error('Error getting optimal route:', error)
         }

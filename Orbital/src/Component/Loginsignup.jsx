@@ -1,7 +1,8 @@
+import React from 'react';
 import './Loginsignup.css';
 import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { RecoveryContext } from "../App.jsx";
 import user_icon from '../assets/person.png';
 import email_icon from '../assets/email.png';

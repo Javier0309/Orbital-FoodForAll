@@ -1,0 +1,50 @@
+{
+	"info": {
+		"_postman_id": "00026182-a2d6-48ec-9748-dce2f2ae2ff1",
+		"name": "Integration Testing Reviews",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45908119",
+		"_collection_link": "https://javierlee-2647164.postman.co/workspace/Javier-Lee-'s-Workspace~88d46320-7799-40a2-81ae-78762aeef1db/collection/45908119-00026182-a2d6-48ec-9748-dce2f2ae2ff1?action=share&source=collection_link&creator=45908119"
+	},
+	"item": [
+		{
+			"name": "Get request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Post Review",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerName\": \"Alice\",\n    \"rating\": 5,\n    \"review\": \"Great place!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/business/686016f48d9c06958c170b84/reviews",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"686016f48d9c06958c170b84",
+						"reviews"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
