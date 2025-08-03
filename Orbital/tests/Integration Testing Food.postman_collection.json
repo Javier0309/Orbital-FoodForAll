@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "86380f92-d9bf-4387-9117-d45d85acf678",
+		"name": "Integration Testing Food",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45908119",
+		"_collection_link": "https://javierlee-2647164.postman.co/workspace/Javier-Lee-'s-Workspace~88d46320-7799-40a2-81ae-78762aeef1db/collection/45908119-86380f92-d9bf-4387-9117-d45d85acf678?action=share&source=collection_link&creator=45908119"
+	},
+	"item": [
+		{
+			"name": "Place Order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsImtpZCI6IkJIMGM0RGI5OXF4Y0VnUkUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2t4bmxpenBrbnptbXFob2x3a2tvLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI0OTAyNjdlYS1lN2JjLTQ2MDItODU3Zi1lZjQ2ZGRlZGQwNzgiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzNjUwNzUzLCJpYXQiOjE3NTM2NDcxNTMsImVtYWlsIjoiY2sxNjEyNzFAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImNrMTYxMjcxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiSmF2aWVyJyBEaW5lciAiLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6IjQ5MDI2N2VhLWU3YmMtNDYwMi04NTdmLWVmNDZkZGVkZDA3OCIsInVzZXJUeXBlIjoiRlx1MDAyNkIgYnVzaW5lc3MifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc1MzY0MDE2MX1dLCJzZXNzaW9uX2lkIjoiNTQ4MzhiOGYtZGVhMC00Nzk2LTgyZTAtYzkxN2YxYTA5ODEwIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name ",
+							"value": "Pizza ",
+							"type": "text"
+						},
+						{
+							"key": "desc ",
+							"value": "chessy ",
+							"type": "text"
+						},
+						{
+							"key": "quantity ",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "cookedAt",
+							"value": "2025-07-27T18:00:00Z",
+							"type": "text"
+						},
+						{
+							"key": "consumeBy",
+							"value": "2025-07-28T18:00:00Z",
+							"type": "text"
+						},
+						{
+							"key": "comment",
+							"value": "Fresh",
+							"type": "text"
+						},
+						{
+							"key": "businessId",
+							"value": "686016f48d9c06958c170b84",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/private/var/folders/hv/d6x6d6416zqg2v9nxpwdmvwh0000gn/T/com.apple.Photos.NSItemProvider/uuid=DC031CE1-546F-4947-87F8-4412F6DDF3BA&library=1&type=1&mode=1&loc=true&cap=true.jpeg/Image 5.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/food/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"food",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All food items",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Food by business",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/food/list/686016f48d9c06958c170b84",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"food",
+						"list",
+						"686016f48d9c06958c170b84"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Food",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"id\": \"688696b93420937f44a216d8\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/food/remove",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"food",
+						"remove"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
