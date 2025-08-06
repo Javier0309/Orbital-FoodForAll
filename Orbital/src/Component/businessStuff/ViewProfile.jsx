@@ -6,7 +6,7 @@ import locationIcon from '../../assets/location.png';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { StoreContext } from '../Customer stuff/StoreContext.jsx';
+import { StoreContext } from '../customerStuff/StoreContext.jsx';
 import halalIcon from '../../assets/halal symbol.png';
 
 function ViewProfile() {

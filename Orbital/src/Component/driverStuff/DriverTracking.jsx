@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import io from 'socket.io-client'
-import OrderMap from "../Customer stuff/OrderMap";
+import OrderMap from "../customerStuff/OrderMap";
 import './DriverMain.css';
 
 const DriverTracking = ({orderId, refreshKey}) => {

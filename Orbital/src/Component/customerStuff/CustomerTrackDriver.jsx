@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css'
 import OrderMap from './OrderMap'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './CustMain.css'; // Use the same CSS file for color variables and base styles
+import './CustMain.css';
 import Slider from "react-slick";
 import CartFoodCard from './CartFoodCard';
 import "slick-carousel/slick/slick.css";

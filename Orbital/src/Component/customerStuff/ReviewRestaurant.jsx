@@ -11,6 +11,7 @@ function ReviewRestaurant() {
 
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [message, setMessage] = useState('');
@@ -50,6 +51,54 @@ function ReviewRestaurant() {
     }
   };
 
+  const handleStarClick = (starValue) => {
+    setRating(starValue);
+  };
+
+  const handleStarHover = (starValue) => {
+    setHoverRating(starValue);
+  };
+
+  const handleStarLeave = () => {
+    setHoverRating(0);
+  };
+
+  const renderStars = (starCount, isInteractive = false) => {
+    const stars = [];
+    const displayRating = isInteractive ? hoverRating || rating : starCount;
+    
+    for (let i = 1; i <= 5; i++) {
+      const starStyle = {
+        fontSize: '32px',
+        cursor: isInteractive ? 'pointer' : 'default',
+        color: i <= displayRating ? '#f5b301' : '#ddd',
+        marginRight: '6px',
+        transition: 'color 0.2s ease'
+      };
+
+      if (isInteractive) {
+        stars.push(
+          <span
+            key={i}
+            style={starStyle}
+            onClick={() => handleStarClick(i)}
+            onMouseEnter={() => handleStarHover(i)}
+            onMouseLeave={handleStarLeave}
+          >
+            ★
+          </span>
+        );
+      } else {
+        stars.push(
+          <span key={i} style={starStyle}>
+            ★
+          </span>
+        );
+      }
+    }
+    return stars;
+  };
+
   return (
     <div>
       <CustHeader />
@@ -64,27 +113,58 @@ function ReviewRestaurant() {
         <h2>Review {restaurant?.name || 'Restaurant'}</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Your Name: <input value={customerName} onChange={e => setCustomerName(e.target.value)} />
+            Your Name: <input 
+              value={customerName} 
+              onChange={e => setCustomerName(e.target.value)} 
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "2px solid #e0e0e0",
+                borderRadius: "8px",
+                fontSize: "16px",
+                marginTop: "8px",
+                boxSizing: "border-box",
+                transition: "border-color 0.3s ease"
+              }}
+            />
           </label>
           <br />
-          <label>
-            Rating:
-            <select value={rating} onChange={e => setRating(Number(e.target.value))}>
-              <option value={0}>Select rating</option>
-              {[1,2,3,4,5].map(r => (
-                <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>
-              ))}
-            </select>
-          </label>
           <br />
-          <label>
-            Your Review:
-            <textarea value={reviewText} onChange={e => setReviewText(e.target.value)} rows={4} style={{width: "100%", marginTop: "8px"}} />
+          <label style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            Your Review: {renderStars(rating, true)}
           </label>
-          <button type="submit" style={{marginTop: "16px"}}>Submit Review</button>
+          <textarea 
+            value={reviewText} 
+            onChange={e => setReviewText(e.target.value)} 
+            rows={4} 
+            style={{
+              width: "100%", 
+              marginTop: "8px",
+              padding: "12px 16px",
+              border: "2px solid #e0e0e0",
+              borderRadius: "8px",
+              fontSize: "16px",
+              fontFamily: "inherit",
+              resize: "vertical",
+              boxSizing: "border-box",
+              transition: "border-color 0.3s ease"
+            }}
+          />
+          <button type="submit" style={{
+            background: "rgb(244, 163, 149)",
+            fontSize: "20px",
+            color: "rgb(0, 0, 0)",
+            border: "1px solid whitesmoke",
+            padding: "14px 20px",
+            borderRadius: "50px",
+            cursor: "pointer",
+            width: "100%",
+            transition: "background-color 0.3s",
+            marginTop: "20px"
+          }}>Submit Review</button>
         </form>
         {message && <div style={{marginTop: "12px", color: "#d62828"}}>{message}</div>}
-        <hr />
+        <hr style={{marginTop: "40px"}} />
         <h3>Other Customers' Reviews</h3>
         {reviews.length === 0 ? <p>No reviews yet.</p> : (
           <ul style={{listStyle: "none", padding: 0}}>
@@ -97,8 +177,8 @@ function ReviewRestaurant() {
                 <div style={{fontWeight: "bold", fontSize: "1.1rem"}}>
                   {review.customerName}
                 </div>
-                <div style={{color: "#f5b301", fontWeight: "bold"}}>
-                  {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                <div style={{marginTop: "6px"}}>
+                  {renderStars(review.rating)}
                 </div>
                 <div style={{marginTop: "6px"}}>
                   {review.review}

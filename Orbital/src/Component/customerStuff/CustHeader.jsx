@@ -42,6 +42,19 @@ function CustHeader() {
         return '';
     }
 
+    const handleLogout = async () => {
+        try {
+            await supabase.auth.signOut();
+            localStorage.removeItem("customerEmail");
+            navigate('/');
+        } catch (error) {
+            console.error('Error logging out:', error);
+            // Still clear localStorage and redirect even if supabase logout fails
+            localStorage.removeItem("customerEmail");
+            navigate('/');
+        }
+    }
+
     return(
         <div className='cust-header'>
             <img src={logo} alt="" className="logo" onClick={()=>{navigate('/custmain')}}></img>
@@ -50,6 +63,7 @@ function CustHeader() {
                 <li onClick={()=>navigate('/customer-order-history')} className={getActive('/customer-order-history')}>Order History</li>
                 <li onClick={()=>navigate('/customer-profile')} className={getActive('/customer-profile')}>View Profile</li>
                 <li onClick={()=>navigate('/customer-about')} className={getActive('/customer-about')}>About</li>
+                <li onClick={handleLogout}>Log Out</li>
             </ul>
 
             <div className='cust-header-right'>

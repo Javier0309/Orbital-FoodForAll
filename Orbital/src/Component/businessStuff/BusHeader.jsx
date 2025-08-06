@@ -41,6 +41,12 @@ function BusHeader() {
         }
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem("businessId");
+        localStorage.removeItem("businessEmail");
+        navigate('/');
+    }
+
     return(
         <div className='bus-header'>
             <img src={logo} alt="" className="logo"></img>
@@ -52,10 +58,10 @@ function BusHeader() {
                 <li onClick={()=>navigate('/business-order-history')} className={location.pathname === '/business-order-history' ? 'active' : ''}>Order History</li>
                 <li onClick={()=>navigate('/reviews')} className={location.pathname === '/reviews' ? 'active' : ''}>Reviews</li>
                 <li onClick={()=>navigate('/about')} className={location.pathname === '/about' ? 'active' : ''}>About</li>
+                <li onClick={handleLogout}>Log Out</li>
             </ul>
 
             <div className='bus-header-right'>
-                <img src={searchicon} alt=""></img>
                 <button onClick={handleToggle} className={`toggle-btn ${toggle ? 'toggle' : ''}`}>
                     <div className="thumb"></div>
                 </button>

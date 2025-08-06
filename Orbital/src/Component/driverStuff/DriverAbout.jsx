@@ -1,4 +1,3 @@
-import React from "react";
 import DriverHeader from "./DriverHeader.jsx";
 import logoFood from '../../assets/logofood.png';
 

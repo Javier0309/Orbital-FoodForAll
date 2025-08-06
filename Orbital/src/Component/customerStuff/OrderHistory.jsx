@@ -34,7 +34,9 @@ const OrderHistory = () => {
     };
 
     const filteredOrders = orders.filter(order =>
-        !order.removedByCustomer &&
+        // For rejected orders, always show them regardless of removedByCustomer status
+        // For other orders, only show if not removed by customer
+        (order.status === 'rejected' || !order.removedByCustomer) &&
         (order.status === 'completed' || order.status === 'rejected' || (order.deliveryMode === 'pickup' && order.deliveryStatus === 'delivered'))
     );
 

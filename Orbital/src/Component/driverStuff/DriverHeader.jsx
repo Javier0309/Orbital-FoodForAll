@@ -6,6 +6,12 @@ function DriverHeader() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const handleLogout = () => {
+        localStorage.removeItem("driverId");
+        localStorage.removeItem("driverEmail");
+        navigate('/');
+    }
+
     return(
         <div className='driver-header' style={{padding: '10px 10px', minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <img src={logo} alt="" className="logo" style={{width: 250, cursor: 'pointer'}} onClick={()=>navigate('/drivermain')}></img>
@@ -14,6 +20,7 @@ function DriverHeader() {
                 <li onClick={()=>navigate('/driver-order-history')} className={location.pathname === '/driver-order-history' ? 'active' : ''}>Order History</li>
                 <li onClick={()=>navigate('/driverprofile')} className={location.pathname === '/driverprofile' ? 'active' : ''}>View Profile</li>
                 <li onClick={()=>navigate('/driver-about')} className={location.pathname === '/driver-about' ? 'active' : ''}>About</li>
+                <li onClick={handleLogout}>Log Out</li>
             </ul>
             <div className='driver-header-right' style={{gap: 40, alignItems: 'center'}}>
                 <div className="search-icon">

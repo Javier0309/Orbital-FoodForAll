@@ -1,36 +1,35 @@
 import { Routes, Route } from 'react-router-dom';
 import Loginsignup from './Component/Loginsignup'
-import SignupPage from './Component/SignupPage';
-import CustMain from './Component/Customer stuff/CustMain';
-import BusMain from './Component/Business stuff/BusMain';
-import Menu from './Component/Business stuff/Menu';
-import CustFoodDesc from './Component/Customer stuff/CustFoodDesc'
+import CustMain from './Component/customerStuff/CustMain';
+import BusMain from './Component/businessStuff/BusMain';
+import Menu from './Component/businessStuff/Menu';
+import CustFoodDesc from './Component/customerStuff/CustFoodDesc'
 import { ToastContainer } from 'react-toastify';
 import { useState, createContext } from 'react';
 import OTPInput from './Component/OTPInput';
 import Reset from './Component/Reset';
 import Recovered from './Component/Recovered';
-import Cart from './Component/Customer stuff/Cart';
-import Orders from './Component/Business stuff/Orders';
-import EditProfile from './Component/Business stuff/EditProfile';
+import Cart from './Component/customerStuff/Cart';
+import Orders from './Component/businessStuff/Orders';
+import EditProfile from './Component/businessStuff/EditProfile';
 import AwaitingVerification from './Component/AwaitingVerification';
-import DriverMain from './Component/Driver stuff/DriverMain';
-import DriverProfile from './Component/Driver stuff/DriverProfile';
-import TrackDelivery from './Component/Customer stuff/TrackDelivery';
-import OrderHistory from './Component/Business stuff/OrderHistory';
-import CustomerRestaurantView from './Component/Customer stuff/CustomerRestaurantView';
-import BusAbout from './Component/Business stuff/BusAbout';
-import CustAbout from './Component/Customer stuff/CustAbout';
-import DriverAbout from './Component/Driver stuff/DriverAbout';
-import ReviewRestaurant from './Component/Customer stuff/ReviewRestaurant';
-import BusReviews from './Component/Business stuff/BusReviews';
-import MessageDriver from './Component/Customer stuff/MessageDriver';
-import MessageCustomer from './Component/Driver stuff/MessageCustomer';
-import DriverOrderHistory from './Component/Driver stuff/OrderHistory';
-import CustomerOrderHistory from './Component/Customer stuff/OrderHistory';
-import ViewCustProfile from './Component/Customer stuff/ViewProfile';
-import RestaurantPickupMap from './Component/Customer stuff/RestaurantPickupMap';
-import ViewProfile from './Component/Business stuff/ViewProfile';
+import DriverMain from './Component/driverStuff/DriverMain';
+import DriverProfile from './Component/driverStuff/DriverProfile';
+import TrackDelivery from './Component/customerStuff/TrackDelivery';
+import OrderHistory from './Component/businessStuff/OrderHistory';
+import CustomerRestaurantView from './Component/customerStuff/CustomerRestaurantView';
+import BusAbout from './Component/businessStuff/BusAbout';
+import CustAbout from './Component/customerStuff/CustAbout';
+import DriverAbout from './Component/driverStuff/DriverAbout';
+import ReviewRestaurant from './Component/customerStuff/ReviewRestaurant';
+import BusReviews from './Component/businessStuff/BusReviews';
+import MessageDriver from './Component/customerStuff/MessageDriver';
+import MessageCustomer from './Component/driverStuff/MessageCustomer';
+import DriverOrderHistory from './Component/driverStuff/OrderHistory';
+import CustomerOrderHistory from './Component/customerStuff/OrderHistory';
+import ViewCustProfile from './Component/customerStuff/ViewProfile';
+import RestaurantPickupMap from './Component/customerStuff/RestaurantPickupMap';
+import ViewProfile from './Component/businessStuff/ViewProfile';
 
 //import { Route, Routes } from 'react-router-dom'
 
@@ -48,7 +47,6 @@ function App() {
       <RecoveryContext.Provider value={{ otp, setOTP, setEmail, email }}>
         <Routes>
           <Route path="/" element={<Loginsignup />} />
-          <Route path="/signup" element={<SignupPage />} />
           <Route path="/otp" element={<OTPInput />} />
           <Route path="/reset" element={<Reset />} />
           <Route path="/recovered" element={<Recovered />} />

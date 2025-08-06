@@ -60,12 +60,7 @@ const OrderMap = ({ orderId, pickupMode }) => {
     }, [pickupMode]);
 
     useEffect(() => {
-        // connect to socket for driver location (only if not pickupMode)
-        if (!pickupMode) {
-            socketRef.current = io("http://localhost:4000");
-        }
-
-        // get order details & locations
+        // get order details & locations first
         const fetchOrderDetails = async () => {
             try {
                 const res = await fetch(`http://localhost:4000/api/order/${orderId}`);
@@ -97,20 +92,27 @@ const OrderMap = ({ orderId, pickupMode }) => {
                             setCustomerLocation({...customerCoords, address: customerData.customer.address});
                         }
                     }
+                    return order; // Return the order data
                 }
             } catch (error) {
                 console.error("Error fetching order details:", error);
             }
+            return null; // Return null if there was an error
         };
 
-        fetchOrderDetails();
-
-        // listen for driver location updates (only if not pickupMode)
-        if (!pickupMode && socketRef.current) {
-            socketRef.current.on(`location-${orderId}`, (location) => {
-                setDriverLocation(location);
-            });
-        }
+        fetchOrderDetails().then((fetchedOrder) => {
+            // connect to socket for driver location (only if not pickupMode and order has a driver)
+            if (!pickupMode && fetchedOrder && fetchedOrder.driverId) {
+                console.log('OrderMap: Order has driver, setting up socket connection');
+                socketRef.current = io("http://localhost:4000");
+                socketRef.current.on(`location-${orderId}`, (location) => {
+                    console.log('OrderMap received driver location:', location);
+                    setDriverLocation(location);
+                });
+            } else if (!pickupMode && fetchedOrder && !fetchedOrder.driverId) {
+                console.log('OrderMap: Order has no driver assigned');
+            }
+        });
 
         return () => {
             if (!pickupMode && socketRef.current) {
@@ -204,39 +206,11 @@ const OrderMap = ({ orderId, pickupMode }) => {
         const fetchDriverRoute = async () => {
             const prev = prevRouteRef.current;
         
-            if (order.deliveryStatus === 'in_transit' && customerLocation) {
-                // to avoid unnecessary API calls too many times, only fetch if driver location or customer location has changed
-                const unchanged =
-                    prev.status === 'in_transit' &&
-                    prev.driverLat === driverLocation.latitude &&
-                    prev.driverLng === driverLocation.longitude &&
-                    prev.custLat === customerLocation.lat &&
-                    prev.custLng === customerLocation.lng
-
-                if (unchanged) return; // No change, skip API call
-
-                prevRouteRef.current = {
-                    status: 'in_transit',
-                    driverLat: driverLocation.latitude,
-                    driverLng: driverLocation.longitude,
-                    custLat: customerLocation.lat,
-                    custLng: customerLocation.lng,
-                };
-                
-                const route2 = await getOptimalRoute(
-                    { lat: driverLocation.latitude, lng: driverLocation.longitude },
-                    customerLocation      // (start,end)
-                );
-
-                if (route2) setDriverRoute(route2);
-
-            } else if (
-                (order.deliveryStatus === 'assigned' || order.deliveryStatus === 'pending') &&
-                businessLocation && staticRoute.length > 0
-            ) {
+            // TEMPORARILY: Always show route1 (driver to business + static route) regardless of status
+            if (businessLocation && staticRoute.length > 0) {
                 // to avoid unnecessary API calls too many times, only fetch if driver location or business location has changed
                 const unchanged =
-                    prev.status === order.deliveryStatus &&
+                    prev.status === 'route1' &&
                     prev.driverLat === driverLocation.latitude &&
                     prev.driverLng === driverLocation.longitude &&
                     prev.busLat === businessLocation.lat &&
@@ -246,7 +220,7 @@ const OrderMap = ({ orderId, pickupMode }) => {
                 if (unchanged) return; // No change, skip API call
 
                 prevRouteRef.current = {
-                    status: order.deliveryStatus,
+                    status: 'route1',
                     driverLat: driverLocation.latitude,
                     driverLng: driverLocation.longitude,
                     busLat: businessLocation.lat,
@@ -259,7 +233,12 @@ const OrderMap = ({ orderId, pickupMode }) => {
                     businessLocation
                 );
 
-                if (route1) setDriverRoute([...route1, ...staticRoute])
+                if (route1) {
+                    console.log('OrderMap: Setting route1 (driver to business) + static route - TEMPORARY');
+                    setDriverRoute([...route1, ...staticRoute]);
+                }
+            } else {
+                console.log('OrderMap: Business location or static route not loaded yet');
             }
         }
         fetchDriverRoute();

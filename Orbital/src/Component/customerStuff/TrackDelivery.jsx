@@ -15,6 +15,7 @@ const TrackDelivery = () => {
     const [driverId, setDriverId] = useState(null)
     const [orderDetails, setOrderDetails] = useState(null);
     const [businessName, setBusinessName] = useState('');
+    const [driversOnline, setDriversOnline] = useState(0);
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -51,13 +52,33 @@ const TrackDelivery = () => {
         fetchBusinessName();
     }, [orderDetails]);
 
-    // Debug: Log orderDetails.items and businessId
+    // Fetch drivers online count
     useEffect(() => {
-        if (orderDetails && orderDetails.items) {
-            console.log('orderDetails.items:', orderDetails.items);
-            console.log('orderDetails.businessId:', orderDetails.businessId);
+        const fetchDriversOnline = async () => {
+            try {
+                const res = await axios.get('http://localhost:4000/api/driver/online-count');
+                if (res.data.success) {
+                    setDriversOnline(res.data.count);
+                }
+            } catch (error) {
+                console.error('Error fetching drivers online:', error);
+            }
+        };
+
+        fetchDriversOnline();
+        // Refresh every 30 seconds
+        const interval = setInterval(fetchDriversOnline, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleSwitchToPickup = async () => {
+        try {
+            await axios.patch(`http://localhost:4000/api/order/${orderId}/switch-to-pickup`);
+            window.location.reload();
+        } catch (error) {
+            console.error('Error switching to pickup:', error);
         }
-    }, [orderDetails]);
+    };
 
     // Slider settings (copied from Cart.jsx)
     const settings = {accessibility: true,dots: false, infinite: false, speed: 500, slidesToShow: 4, slidesToScroll: 1, arrows: true, responsive: [
@@ -69,6 +90,46 @@ const TrackDelivery = () => {
     return (
         <div>
             <CustHeader/>
+            
+            {/* Drivers Online and Pickup Option */}
+            {orderDetails && orderDetails.deliveryMode === 'delivery' && orderDetails.deliveryStatus === 'pending' && (
+                <div style={{
+                    maxWidth: '1100px',
+                    margin: '20px auto',
+                    padding: '16px',
+                    background: '#f8f9fa',
+                    borderRadius: '8px',
+                    border: '1px solid #e9ecef'
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '12px'
+                    }}>
+                        <div style={{ fontSize: '16px', color: '#495057' }}>
+                            <strong>{driversOnline}</strong> drivers online
+                        </div>
+                        <button
+                            onClick={handleSwitchToPickup}
+                            style={{
+                                background: 'rgb(244, 163, 149)',
+                                color: 'black',
+                                border: 'none',
+                                padding: '8px 16px',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '500'
+                            }}
+                        >
+                            Switch to Pickup
+                        </button>
+                    </div>
+                </div>
+            )}
+            
             <CustomerTrackDriver orderId={orderId}/>
             {driverId && <DriverCard driverId={driverId}/>} 
             {orderDetails && orderDetails.items && orderDetails.items.length > 0 && (
