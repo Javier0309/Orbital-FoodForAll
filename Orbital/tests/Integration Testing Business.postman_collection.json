@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "1c19e96a-7bf8-4774-8fb4-9bf4fe59b74a",
+		"name": "Integration Testing Business",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45908119",
+		"_collection_link": "https://javierlee-2647164.postman.co/workspace/Javier-Lee-'s-Workspace~88d46320-7799-40a2-81ae-78762aeef1db/collection/45908119-1c19e96a-7bf8-4774-8fb4-9bf4fe59b74a?action=share&source=collection_link&creator=45908119"
+	},
+	"item": [
+		{
+			"name": "Post Business open/closed status",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IkJIMGM0RGI5OXF4Y0VnUkUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2t4bmxpenBrbnptbXFob2x3a2tvLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzYzg5OTg5ZS03ZTA2LTRiNTktYjVlOC1mMTM3ZTkyMmNmOTkiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUzNjQzNzEzLCJpYXQiOjE3NTM2NDAxMTMsImVtYWlsIjoibGVlejAxMDdAbnR1LmVkdS5zZyIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWwiOiJsZWV6MDEwN0BudHUuZWR1LnNnIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJKYXZpZXIgTGVlIFpvbmd4dW4gIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIzYzg5OTg5ZS03ZTA2LTRiNTktYjVlOC1mMTM3ZTkyMmNmOTkiLCJ1c2VyVHlwZSI6ImRyaXZlciJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzUzNjA2OTQ1fV0sInNlc3Npb25faWQiOiJmY2I5Y2Q5ZS03YThlLTQ5NTItODAzNS0yZGNmZDY1YTIxMTkiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.z5a1jkBTlhNejChNDMVJ9oBC0X",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"businessId\": \"686016f48d9c06958c170b84\",\n  \"isOpen\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/business/openOrClosed",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"openOrClosed"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update business status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/business/status/686016f48d9c06958c170b84",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"status",
+						"686016f48d9c06958c170b84"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Business Orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/business/orders/686016f48d9c06958c170b84",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"orders",
+						"686016f48d9c06958c170b84"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Business Orders",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"status\": \"preparing\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/business/orders/6883c9cecf695ae7e773bd07/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"orders",
+						"6883c9cecf695ae7e773bd07",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove completed order",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/business/orders/68828c0d2b687e1cb7794a59/remove",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"orders",
+						"68828c0d2b687e1cb7794a59",
+						"remove"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/business/profile/686016f48d9c06958c170b84",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"business",
+						"profile",
+						"686016f48d9c06958c170b84"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
